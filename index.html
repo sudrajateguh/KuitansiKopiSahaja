@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kuitansi Sahaja</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  @font-face{
+    font-family: 'SF Pro Display Heavy';
+    src: url('assets/fonts/SF-Pro-Display-Heavy.otf') format('opentype');
+    font-weight: 800; font-style: normal; font-display: swap;
+  }
+  @font-face{
+    font-family: 'SF Pro Display Heavy Italic';
+    src: url('assets/fonts/SF-Pro-Display-HeavyItalic.otf') format('opentype');
+    font-weight: 800; font-style: italic; font-display: swap;
+  }
+  @font-face{
+    font-family: 'SF Pro Display Light';
+    src: url('assets/fonts/SF-Pro-Display-Light.otf') format('opentype');
+    font-weight: 300; font-style: normal; font-display: swap;
+  }
+
+  :root{
+    --body-bg: #41708d;
+    --panel-bg: #ffffff;
+    --panel-border: #dfe6ea;
+    --ink-dark: #1c2b36;
+    --ink-muted: #6b7c87;
+    --accent: #41708d;
+    --accent-dark: #2c5069;
+    --danger: #e0503a;
+    --header-label: #415e75;
+    --total-color: #2a5070;
+    --item-color: #1a1a1a;
+    --bar-bg: #dedede;
+  }
+
+  *{ box-sizing: border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--body-bg);
+    font-family: 'SF Pro Display Light', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--ink-dark);
+    min-height: 100vh;
+  }
+
+  /* ---------------- LOGIN SCREEN ---------------- */
+  #loginScreen{
+    min-height: 100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 24px;
+  }
+  .login-card{
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 360px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    text-align:center;
+  }
+  .login-card img.brand{
+    width: 140px;
+    margin: 0 auto 18px;
+    display:block;
+  }
+  .login-card h1{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-size: 20px;
+    margin: 0 0 6px;
+    color: var(--accent-dark);
+  }
+  .login-card p{
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin: 0 0 22px;
+  }
+  .login-card input[type="password"]{
+    width:100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #d7dee2;
+    font-size: 15px;
+    outline:none;
+    margin-bottom: 12px;
+  }
+  .login-card input[type="password"]:focus{
+    border-color: var(--accent);
+  }
+  .login-card button{
+    width:100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border:none;
+    background: var(--accent);
+    color:#fff;
+    font-size: 15px;
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    cursor:pointer;
+    transition: background .15s ease;
+  }
+  .login-card button:hover{ background: var(--accent-dark); }
+  #loginError{
+    color: var(--danger);
+    font-size: 13px;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* ---------------- APP LAYOUT ---------------- */
+  #app{ display:none; }
+  #app.visible{ display:block; }
+
+  .topbar{
+    background: rgba(0,0,0,0.15);
+    padding: 14px 22px;
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    color:#fff;
+  }
+  .topbar h2{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-size: 16px;
+    margin:0;
+    letter-spacing: .3px;
+  }
+  .logout-btn{
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.35);
+    color:#fff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    cursor:pointer;
+  }
+  .logout-btn:hover{ background: rgba(255,255,255,0.28); }
+
+  .main-layout{
+    display:flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    padding: 28px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items:flex-start;
+  }
+
+  /* ---------------- EDITOR PANEL ---------------- */
+  .editor-panel{
+    background: var(--panel-bg);
+    border-radius: 16px;
+    padding: 24px;
+    flex: 1 1 400px;
+    max-width: 480px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+  }
+  .editor-panel h3{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-size: 15px;
+    color: var(--accent-dark);
+    margin: 0 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--panel-border);
+  }
+  .field-group{ margin-bottom: 18px; }
+  .field-row{ display:flex; gap: 12px; }
+  .field-row .field-group{ flex:1; }
+  label{
+    display:block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+  }
+  input[type="text"], input[type="date"], textarea, input[type="number"]{
+    width:100%;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: 1.5px solid #d7dee2;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--ink-dark);
+    outline:none;
+    resize: vertical;
+  }
+  input:focus, textarea:focus{ border-color: var(--accent); }
+
+  .items-table{ margin-top: 4px; }
+  .item-row-editor{
+    display:grid;
+    grid-template-columns: 56px 1fr 130px 34px;
+    gap: 8px;
+    margin-bottom: 10px;
+    align-items:start;
+  }
+  .item-row-editor textarea{ min-height: 40px; }
+  .remove-row-btn{
+    width: 34px;
+    height: 40px;
+    border-radius: 9px;
+    border: 1.5px solid #f0c7c0;
+    background: #fdf1ef;
+    color: var(--danger);
+    font-size: 16px;
+    cursor:pointer;
+    line-height:1;
+  }
+  .remove-row-btn:hover{ background: #fbe3de; }
+  .col-labels{
+    display:grid;
+    grid-template-columns: 56px 1fr 130px 34px;
+    gap: 8px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    color: var(--ink-muted);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .add-row-btn{
+    width:100%;
+    padding: 10px;
+    border-radius: 9px;
+    border: 1.5px dashed var(--accent);
+    background: #eef4f7;
+    color: var(--accent-dark);
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor:pointer;
+    margin-top: 4px;
+  }
+  .add-row-btn:hover{ background: #e2edf2; }
+
+  .checkbox-row{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    padding: 10px 4px;
+  }
+  .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--accent); }
+  .checkbox-row label{ margin:0; text-transform:none; font-size:14px; color: var(--ink-dark); font-weight:500; }
+
+  .total-preview{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    background: #f4f7f9;
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin: 6px 0 20px;
+    font-weight: 700;
+    color: var(--accent-dark);
+  }
+
+  .download-btn{
+    width:100%;
+    padding: 14px;
+    border-radius: 11px;
+    border:none;
+    background: var(--accent-dark);
+    color:#fff;
+    font-size: 15px;
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+  }
+  .download-btn:hover{ background: #234258; }
+  .download-btn:disabled{ opacity:.6; cursor:default; }
+
+  /* ---------------- PREVIEW / RECEIPT ---------------- */
+  .preview-panel{
+    flex: 1 1 420px;
+    display:flex;
+    justify-content:center;
+  }
+  .receipt-scale-wrap{
+    width:100%;
+    max-width: 500px;
+  }
+
+  #receiptCapture{
+    background: transparent;
+  }
+  .paper-wrap{
+    position: relative;
+    width: 100%;
+  }
+  .paper-texture{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+    pointer-events:none;
+    z-index: 3;
+  }
+  img.cap-img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+
+  .middle-section{
+    position: relative;
+    width:100%;
+    z-index: 1;
+  }
+  .middle-bg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    z-index: 0;
+    line-height:0;
+  }
+  .middle-bg img{
+    display:block;
+    width:100%;
+    height:auto;
+  }
+  .middle-content{
+    position:relative;
+    z-index: 1;
+    padding: 0 9%;
+  }
+
+  .meta-block{
+    text-align:center;
+    padding: 3.2% 0 2.6%;
+  }
+  .kwitansi-no{
+    font-size: 13px;
+    color: var(--ink-muted);
+    letter-spacing: .3px;
+    margin-bottom: 4px;
+    font-family: 'SF Pro Display Light', sans-serif;
+  }
+  .kwitansi-date{
+    font-size: 17px;
+    color: var(--item-color);
+    font-family: 'SF Pro Display Light', sans-serif;
+  }
+
+  .table-header-bar{
+    display:flex;
+    background: var(--bar-bg);
+    padding: 2.6% 0;
+    margin: 0 -9%;
+    padding-left: 9%;
+    padding-right: 9%;
+  }
+  .col-qty{ width: 14%; }
+  .col-desc{ flex:1; }
+  .col-amt{ width: 32%; text-align:right; }
+
+  .table-header-bar .col-qty,
+  .table-header-bar .col-desc,
+  .table-header-bar .col-amt{
+    font-family: 'SF Pro Display Heavy Italic', sans-serif;
+    font-style: italic;
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--header-label);
+  }
+
+  .items-list{ padding: 2.6% 0 1%; }
+  .item-row{
+    display:flex;
+    padding-bottom: 2.4%;
+  }
+  .item-row .col-qty,
+  .item-row .col-desc{
+    font-family: 'SF Pro Display Light', sans-serif;
+    font-size: 14.5px;
+    color: var(--item-color);
+    white-space: pre-line;
+    line-height: 1.5;
+  }
+  .item-row .col-amt{
+    font-family: 'SF Pro Display Light', sans-serif;
+    font-size: 14.5px;
+    color: var(--item-color);
+    white-space: nowrap;
+  }
+
+  .total-row{
+    display:flex;
+    align-items:center;
+    padding: 2% 0 3%;
+  }
+  .total-row .col-qty{ width:14%; }
+  .total-row .col-desc{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--total-color);
+  }
+  .total-row .col-amt{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    color: var(--total-color);
+  }
+
+  .bottom-section{
+    position: relative;
+    width:100%;
+  }
+  .lunas-stamp{
+    position:absolute;
+    z-index: 5;
+    mix-blend-mode: normal;
+    filter: drop-shadow(0 10px 16px rgba(0,0,0,0.35));
+    pointer-events:none;
+  }
+
+  .footer-section{
+    background:#fff;
+    padding: 3.5% 9%;
+  }
+  .footer-section img{
+    display:block;
+    width:100%;
+    height:auto;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 860px){
+    .main-layout{ flex-direction:column; padding: 16px; }
+    .editor-panel{ max-width: 100%; }
+    .preview-panel{ max-width:100%; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- ================= LOGIN SCREEN ================= -->
+  <div id="loginScreen">
+    <div class="login-card">
+      <img class="brand" src="assets/Logo.webp" alt="Kopi Sahaja">
+      <h1>Kuitansi Sahaja</h1>
+      <p>Masukkan password untuk mengakses editor</p>
+      <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
+      <button onclick="tryLogin()">Masuk</button>
+      <div id="loginError"></div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN APP ================= -->
+  <div id="app">
+    <div class="topbar">
+      <h2>Kuitansi Sahaja</h2>
+      <button class="logout-btn" onclick="logout()">Keluar</button>
+    </div>
+
+    <div class="main-layout">
+
+      <!-- -------- EDITOR PANEL -------- -->
+      <div class="editor-panel">
+        <h3>Informasi Kwitansi</h3>
+        <div class="field-row">
+          <div class="field-group">
+            <label>No. Kwitansi</label>
+            <input type="text" id="inputNomor" value="001/KS/X/2025">
+          </div>
+          <div class="field-group">
+            <label>Tanggal</label>
+            <input type="date" id="inputTanggal">
+          </div>
+        </div>
+
+        <h3>Daftar Item</h3>
+        <div class="items-table">
+          <div class="col-labels">
+            <span>Qty</span><span>Deskripsi</span><span>Jumlah (Rp)</span><span></span>
+          </div>
+          <div id="itemsEditor"></div>
+        </div>
+        <button class="add-row-btn" onclick="addItemRow()">+ Tambah Baris Item</button>
+
+        <h3 style="margin-top:22px;">Status Pembayaran</h3>
+        <div class="checkbox-row">
+          <input type="checkbox" id="inputLunas" checked onchange="renderReceipt()">
+          <label for="inputLunas">Tampilkan stempel LUNAS</label>
+        </div>
+
+        <div class="total-preview">
+          <span>Total</span>
+          <span id="totalPreviewText">Rp 0,-</span>
+        </div>
+
+        <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
+      </div>
+
+      <!-- -------- PREVIEW PANEL -------- -->
+      <div class="preview-panel">
+        <div class="receipt-scale-wrap">
+          <div id="receiptCapture">
+            <div class="paper-wrap" id="paperWrap">
+              <img class="cap-img" src="assets/Top.webp" alt="">
+
+              <div class="middle-section" id="middleSection">
+                <div class="middle-bg" id="middleBg"></div>
+                <div class="middle-content">
+                  <div class="meta-block">
+                    <div class="kwitansi-no" id="viewNomor">No. 001/KS/X/2025</div>
+                    <div class="kwitansi-date" id="viewTanggal">30/10/2025</div>
+                  </div>
+
+                  <div class="table-header-bar">
+                    <span class="col-qty">QTY</span>
+                    <span class="col-desc">DESC</span>
+                    <span class="col-amt">AMT</span>
+                  </div>
+
+                  <div class="items-list" id="viewItems"></div>
+
+                  <div class="total-row" id="totalRow">
+                    <span class="col-qty"></span>
+                    <span class="col-desc">TOTAL</span>
+                    <span class="col-amt" id="viewTotal">Rp 0,-</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="bottom-section">
+                <img class="cap-img" src="assets/Bottom.webp" alt="">
+              </div>
+
+              <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.webp" alt="Lunas">
+
+              <img class="paper-texture" src="assets/Texture.webp" alt="">
+            </div>
+
+            <div class="footer-section">
+              <img src="assets/Footer.webp" alt="Nara Curated Compound">
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  const APP_PASSWORD = "@Nara2026!";
+
+  function tryLogin(){
+    const val = document.getElementById('passwordInput').value;
+    const err = document.getElementById('loginError');
+    if(val === APP_PASSWORD){
+      sessionStorage.setItem('nara_kwitansi_auth', '1');
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      initApp();
+    } else {
+      err.textContent = 'Password salah, silakan coba lagi.';
+    }
+  }
+  document.getElementById('passwordInput').addEventListener('keydown', e=>{
+    if(e.key === 'Enter') tryLogin();
+  });
+
+  function logout(){
+    sessionStorage.removeItem('nara_kwitansi_auth');
+    document.getElementById('app').classList.remove('visible');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('passwordInput').value = '';
+  }
+
+  // auto-login if already authenticated this session
+  window.addEventListener('DOMContentLoaded', ()=>{
+    if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').classList.add('visible');
+      initApp();
+    }
+  });
+
+  // ---------------- STATE ----------------
+  let items = [
+    { qty: 1, desc: "Sahaja Cart Event Package\n400 cups", amt: 4000000 }
+  ];
+  let rowIdCounter = 0;
+
+  function initApp(){
+    if(!document.getElementById('inputTanggal').value){
+      document.getElementById('inputTanggal').value = "2025-10-30";
+    }
+    renderItemsEditor();
+    renderReceipt();
+    document.getElementById('inputNomor').addEventListener('input', renderReceipt);
+    document.getElementById('inputTanggal').addEventListener('input', renderReceipt);
+  }
+
+  function formatRupiah(num){
+    if(isNaN(num)) num = 0;
+    return "Rp " + Number(num).toLocaleString('id-ID') + ",-";
+  }
+
+  function formatDate(isoStr){
+    if(!isoStr) return "";
+    const [y,m,d] = isoStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function addItemRow(){
+    items.push({ qty: 1, desc: "", amt: 0 });
+    renderItemsEditor();
+    renderReceipt();
+  }
+
+  function removeItemRow(idx){
+    items.splice(idx,1);
+    renderItemsEditor();
+    renderReceipt();
+  }
+
+  function renderItemsEditor(){
+    const container = document.getElementById('itemsEditor');
+    container.innerHTML = '';
+    items.forEach((item, idx)=>{
+      const row = document.createElement('div');
+      row.className = 'item-row-editor';
+      row.innerHTML = `
+        <input type="number" min="0" value="${item.qty}" onchange="updateItem(${idx},'qty',this.value)">
+        <textarea onchange="updateItem(${idx},'desc',this.value)" placeholder="Deskripsi item...">${item.desc}</textarea>
+        <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
+               placeholder="0"
+               onfocus="this.value = this.value.replace(/\\./g,'')"
+               oninput="formatAmtInput(this)"
+               onchange="updateItem(${idx},'amt', this.value.replace(/\\./g,''))">
+        <button class="remove-row-btn" onclick="removeItemRow(${idx})" title="Hapus baris">✕</button>
+      `;
+      container.appendChild(row);
+    });
+  }
+
+  function formatAmtInput(el){
+    let raw = el.value.replace(/\D/g,'');
+    el.value = raw ? Number(raw).toLocaleString('id-ID') : '';
+  }
+
+  function updateItem(idx, field, value){
+    if(field === 'qty') items[idx].qty = parseInt(value) || 0;
+    else if(field === 'amt') items[idx].amt = parseInt(value) || 0;
+    else items[idx][field] = value;
+    renderReceipt();
+  }
+
+  function renderReceipt(){
+    document.getElementById('viewNomor').textContent = 'No. ' + (document.getElementById('inputNomor').value || '-');
+    document.getElementById('viewTanggal').textContent = formatDate(document.getElementById('inputTanggal').value);
+
+    const viewItems = document.getElementById('viewItems');
+    viewItems.innerHTML = '';
+    let total = 0;
+    items.forEach(item=>{
+      total += (Number(item.amt) || 0);
+      const row = document.createElement('div');
+      row.className = 'item-row';
+      row.innerHTML = `
+        <span class="col-qty">${item.qty || 0}</span>
+        <span class="col-desc">${escapeHtml(item.desc || '')}</span>
+        <span class="col-amt">${formatRupiah(item.amt || 0)}</span>
+      `;
+      viewItems.appendChild(row);
+    });
+
+    document.getElementById('viewTotal').textContent = formatRupiah(total);
+    document.getElementById('totalPreviewText').textContent = formatRupiah(total);
+
+    document.getElementById('lunasStamp').style.display =
+      document.getElementById('inputLunas').checked ? 'block' : 'none';
+
+    requestAnimationFrame(()=>{
+      tileMiddleBackground();
+      positionStamp();
+    });
+  }
+
+  // Fill the middle (table) area with repeating Middle.webp tiles using real
+  // <img> elements instead of CSS background-image, since html2canvas (used
+  // for PDF export) frequently fails to render repeating CSS backgrounds.
+  const MIDDLE_ASPECT = 1729 / 4098; // height / width of Middle.webp
+  function tileMiddleBackground(){
+    const middleSection = document.getElementById('middleSection');
+    const middleContent = middleSection.querySelector('.middle-content');
+    const bg = document.getElementById('middleBg');
+    if(!middleSection || !middleContent || !bg) return;
+
+    const contentHeight = middleContent.offsetHeight;
+    const width = middleSection.offsetWidth || 1;
+    const tileHeight = width * MIDDLE_ASPECT;
+    const tileCount = Math.max(1, Math.ceil(contentHeight / tileHeight) + 1);
+
+    bg.style.height = contentHeight + 'px';
+
+    if(bg.childElementCount !== tileCount){
+      bg.innerHTML = '';
+      for(let i = 0; i < tileCount; i++){
+        const img = document.createElement('img');
+        img.src = 'assets/Middle.webp';
+        img.alt = '';
+        bg.appendChild(img);
+      }
+    }
+  }
+
+  // Anchor the LUNAS stamp to the TOTAL row so it stays correctly placed
+  // no matter how many item rows are added (instead of a fixed % offset).
+  function positionStamp(){
+    const wrap = document.getElementById('paperWrap');
+    const totalRow = document.getElementById('totalRow');
+    const stamp = document.getElementById('lunasStamp');
+    if(!wrap || !totalRow || !stamp) return;
+
+    const wrapRect = wrap.getBoundingClientRect();
+    const totalRect = totalRow.getBoundingClientRect();
+    if(wrapRect.width === 0) return;
+
+    const stampWidth = wrapRect.width * 0.32;
+    const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
+
+    stamp.style.width = stampWidth + 'px';
+    stamp.style.left = (-stampWidth * 0.22) + 'px';
+    stamp.style.top = (totalCenterY - stampWidth * 0.6) + 'px';
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', ()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(()=>{
+      tileMiddleBackground();
+      positionStamp();
+    }, 120);
+  });
+
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(()=>{
+      tileMiddleBackground();
+      positionStamp();
+    });
+  }
+
+  function escapeHtml(str){
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ---------------- PDF EXPORT ----------------
+  function downloadPDF(){
+    const btn = document.getElementById('downloadBtn');
+    btn.disabled = true;
+    btn.textContent = 'Menyiapkan PDF...';
+
+    const el = document.getElementById('receiptCapture');
+    const tanggal = document.getElementById('inputTanggal').value || '';
+    const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
+    const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
+    const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
+
+    const opt = {
+      margin: 0,
+      filename: filename,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
+    };
+
+    if(typeof html2pdf === 'undefined'){
+      btn.disabled = false;
+      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+      alert('Library PDF belum termuat. Pastikan perangkat terhubung internet (library dimuat dari CDN), lalu muat ulang halaman.');
+      return;
+    }
+
+    html2pdf().set(opt).from(el).save().then(()=>{
+      btn.disabled = false;
+      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+    }).catch((err)=>{
+      btn.disabled = false;
+      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+      console.error('PDF export error:', err);
+      alert('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
+            '\n\nJika masalah berlanjut, buka aplikasi ini melalui web server (bukan langsung membuka file index.html) dan pastikan koneksi internet aktif.');
+    });
+  }
+</script>
+</body>
+</html>
