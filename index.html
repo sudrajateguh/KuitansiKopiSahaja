@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kuitansi Sahaja</title>
+<title>Kuitansi Kopi Sahaja</title>
+<link rel="icon" type="image/webp" href="assets/Logo.webp">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   @font-face{
@@ -40,11 +41,55 @@
   *{ box-sizing: border-box; }
   html,body{ margin:0; padding:0; }
   body{
-    background: var(--body-bg);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.10), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(0,0,0,0.12), transparent 50%),
+      var(--body-bg);
+    background-attachment: fixed;
     font-family: 'SF Pro Display Light', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--ink-dark);
     min-height: 100vh;
+    animation: bodyFadeIn .5s ease both;
   }
+
+  /* ---------------- ANIMATIONS ---------------- */
+  @keyframes bodyFadeIn{ from{ opacity:0; } to{ opacity:1; } }
+  @keyframes fadeInUp{
+    from{ opacity:0; transform: translateY(18px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeInDown{
+    from{ opacity:0; transform: translateY(-14px); }
+    to{ opacity:1; transform: translateY(0); }
+  }
+  @keyframes fadeInScale{
+    from{ opacity:0; transform: scale(.94); }
+    to{ opacity:1; transform: scale(1); }
+  }
+  @keyframes rowIn{
+    from{ opacity:0; transform: translateX(-8px); }
+    to{ opacity:1; transform: translateX(0); }
+  }
+  @keyframes shake{
+    10%,90%{ transform: translateX(-1px); }
+    20%,80%{ transform: translateX(2px); }
+    30%,50%,70%{ transform: translateX(-4px); }
+    40%,60%{ transform: translateX(4px); }
+  }
+  @keyframes pulseTotal{
+    0%{ transform: scale(1); }
+    35%{ transform: scale(1.06); }
+    100%{ transform: scale(1); }
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+  @keyframes stampPop{
+    0%{ opacity:0; transform: scale(.5) rotate(-18deg); }
+    70%{ opacity:1; transform: scale(1.08) rotate(-8deg); }
+    100%{ opacity:1; transform: scale(1) rotate(-10deg); }
+  }
+
+  .anim-shake{ animation: shake .4s ease; }
+  .anim-pulse{ animation: pulseTotal .35s ease; }
 
   /* ---------------- LOGIN SCREEN ---------------- */
   #loginScreen{
@@ -62,11 +107,13 @@
     max-width: 360px;
     box-shadow: 0 20px 50px rgba(0,0,0,0.25);
     text-align:center;
+    animation: fadeInScale .5s cubic-bezier(.2,.8,.3,1) both;
   }
   .login-card img.brand{
     width: 140px;
     margin: 0 auto 18px;
     display:block;
+    animation: fadeInDown .6s ease both;
   }
   .login-card h1{
     font-family: 'SF Pro Display Heavy', sans-serif;
@@ -87,9 +134,11 @@
     font-size: 15px;
     outline:none;
     margin-bottom: 12px;
+    transition: border-color .18s ease, box-shadow .18s ease;
   }
   .login-card input[type="password"]:focus{
     border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(65,112,141,0.15);
   }
   .login-card button{
     width:100%;
@@ -101,9 +150,10 @@
     font-size: 15px;
     font-family: 'SF Pro Display Heavy', sans-serif;
     cursor:pointer;
-    transition: background .15s ease;
+    transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
   }
-  .login-card button:hover{ background: var(--accent-dark); }
+  .login-card button:hover{ background: var(--accent-dark); box-shadow: 0 6px 16px rgba(44,80,105,0.35); }
+  .login-card button:active{ transform: scale(.97); }
   #loginError{
     color: var(--danger);
     font-size: 13px;
@@ -122,6 +172,8 @@
     align-items:center;
     justify-content: space-between;
     color:#fff;
+    animation: fadeInDown .45s ease both;
+    backdrop-filter: blur(2px);
   }
   .topbar h2{
     font-family: 'SF Pro Display Heavy', sans-serif;
@@ -137,8 +189,10 @@
     border-radius: 8px;
     font-size: 12.5px;
     cursor:pointer;
+    transition: background .15s ease, transform .12s ease;
   }
   .logout-btn:hover{ background: rgba(255,255,255,0.28); }
+  .logout-btn:active{ transform: scale(.95); }
 
   .main-layout{
     display:flex;
@@ -158,6 +212,8 @@
     flex: 1 1 400px;
     max-width: 480px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    animation: fadeInUp .5s .05s cubic-bezier(.2,.8,.3,1) both;
+    transition: box-shadow .2s ease;
   }
   .editor-panel h3{
     font-family: 'SF Pro Display Heavy', sans-serif;
@@ -189,8 +245,12 @@
     color: var(--ink-dark);
     outline:none;
     resize: vertical;
+    transition: border-color .18s ease, box-shadow .18s ease;
   }
-  input:focus, textarea:focus{ border-color: var(--accent); }
+  input:focus, textarea:focus{
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(65,112,141,0.13);
+  }
 
   .items-table{ margin-top: 4px; }
   .item-row-editor{
@@ -199,6 +259,12 @@
     gap: 8px;
     margin-bottom: 10px;
     align-items:start;
+    animation: rowIn .3s ease both;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+  .item-row-editor.removing{
+    opacity: 0;
+    transform: translateX(10px);
   }
   .item-row-editor textarea{ min-height: 40px; }
   .remove-row-btn{
@@ -211,8 +277,10 @@
     font-size: 16px;
     cursor:pointer;
     line-height:1;
+    transition: background .15s ease, transform .12s ease;
   }
   .remove-row-btn:hover{ background: #fbe3de; }
+  .remove-row-btn:active{ transform: scale(.9); }
   .col-labels{
     display:grid;
     grid-template-columns: 56px 1fr 130px 34px;
@@ -235,8 +303,10 @@
     font-weight: 600;
     cursor:pointer;
     margin-top: 4px;
+    transition: background .15s ease, transform .12s ease;
   }
   .add-row-btn:hover{ background: #e2edf2; }
+  .add-row-btn:active{ transform: scale(.98); }
 
   .checkbox-row{
     display:flex;
@@ -244,7 +314,8 @@
     gap: 10px;
     padding: 10px 4px;
   }
-  .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--accent); }
+  .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--accent); transition: transform .12s ease; }
+  .checkbox-row input[type="checkbox"]:active{ transform: scale(.9); }
   .checkbox-row label{ margin:0; text-transform:none; font-size:14px; color: var(--ink-dark); font-weight:500; }
 
   .total-preview{
@@ -257,7 +328,9 @@
     margin: 6px 0 20px;
     font-weight: 700;
     color: var(--accent-dark);
+    transition: background .2s ease;
   }
+  .total-preview span#totalPreviewText{ display:inline-block; }
 
   .download-btn{
     width:100%;
@@ -273,27 +346,56 @@
     align-items:center;
     justify-content:center;
     gap: 8px;
+    transition: background .15s ease, transform .12s ease, box-shadow .15s ease;
   }
-  .download-btn:hover{ background: #234258; }
+  .download-btn:hover{ background: #234258; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
+  .download-btn:active:not(:disabled){ transform: scale(.98); }
   .download-btn:disabled{ opacity:.6; cursor:default; }
+
+  .spinner{
+    width: 15px;
+    height: 15px;
+    border: 2.5px solid rgba(255,255,255,0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    display:inline-block;
+    animation: spin .7s linear infinite;
+  }
 
   /* ---------------- PREVIEW / RECEIPT ---------------- */
   .preview-panel{
     flex: 1 1 420px;
     display:flex;
     justify-content:center;
+    animation: fadeInUp .5s .12s cubic-bezier(.2,.8,.3,1) both;
   }
   .receipt-scale-wrap{
     width:100%;
     max-width: 500px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 18px 46px rgba(0,0,0,0.3);
   }
 
   #receiptCapture{
-    background: transparent;
+    background: var(--body-bg);
+  }
+
+  /* Frame that holds the paper receipt with breathing room on all sides,
+     matching the reference preview mock-up. */
+  .receipt-frame{
+    background:
+      radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 50%),
+      var(--body-bg);
+    padding: 15% 15% 10%;
   }
   .paper-wrap{
     position: relative;
     width: 100%;
+    box-shadow: 0 22px 40px rgba(0,0,0,0.38);
+    animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
+    container-type: inline-size;
+    container-name: receipt;
   }
   .paper-texture{
     position:absolute;
@@ -342,14 +444,14 @@
     padding: 3.2% 0 2.6%;
   }
   .kwitansi-no{
-    font-size: 13px;
+    font-size: clamp(10px, 3.7cqw, 13px);
     color: var(--ink-muted);
     letter-spacing: .3px;
     margin-bottom: 4px;
     font-family: 'SF Pro Display Light', sans-serif;
   }
   .kwitansi-date{
-    font-size: 17px;
+    font-size: clamp(13px, 4.9cqw, 17px);
     color: var(--item-color);
     font-family: 'SF Pro Display Light', sans-serif;
   }
@@ -372,7 +474,7 @@
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
     font-weight: 800;
-    font-size: 14px;
+    font-size: clamp(10.5px, 4cqw, 14px);
     color: var(--header-label);
   }
 
@@ -384,14 +486,14 @@
   .item-row .col-qty,
   .item-row .col-desc{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 14.5px;
+    font-size: clamp(11px, 4.14cqw, 14.5px);
     color: var(--item-color);
     white-space: pre-line;
     line-height: 1.5;
   }
   .item-row .col-amt{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 14.5px;
+    font-size: clamp(11px, 4.14cqw, 14.5px);
     color: var(--item-color);
     white-space: nowrap;
   }
@@ -405,14 +507,15 @@
   .total-row .col-desc{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: 16px;
+    font-size: clamp(12px, 4.6cqw, 16px);
     color: var(--total-color);
   }
   .total-row .col-amt{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: 16px;
+    font-size: clamp(12px, 4.6cqw, 16px);
     color: var(--total-color);
+    white-space: nowrap;
   }
 
   .bottom-section{
@@ -425,6 +528,8 @@
     mix-blend-mode: normal;
     filter: drop-shadow(0 10px 16px rgba(0,0,0,0.35));
     pointer-events:none;
+    transform: rotate(-10deg);
+    animation: stampPop .45s cubic-bezier(.3,1.4,.5,1) both;
   }
 
   .footer-section{
@@ -437,6 +542,15 @@
     height:auto;
     max-width: 420px;
     margin: 0 auto;
+  }
+
+  /* Receipt content should read like a printed document: not selectable,
+     and it also guarantees the exported PDF (rasterized via html2canvas)
+     never contains an editable/selectable text layer. */
+  #receiptCapture, #receiptCapture *{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
   }
 
   @media (max-width: 860px){
@@ -510,44 +624,46 @@
       <div class="preview-panel">
         <div class="receipt-scale-wrap">
           <div id="receiptCapture">
-            <div class="paper-wrap" id="paperWrap">
-              <img class="cap-img" src="assets/Top.webp" alt="">
+            <div class="receipt-frame">
+              <div class="paper-wrap" id="paperWrap">
+                <img class="cap-img" src="assets/Top.webp" alt="">
 
-              <div class="middle-section" id="middleSection">
-                <div class="middle-bg" id="middleBg"></div>
-                <div class="middle-content">
-                  <div class="meta-block">
-                    <div class="kwitansi-no" id="viewNomor">No. 001/KS/X/2025</div>
-                    <div class="kwitansi-date" id="viewTanggal">30/10/2025</div>
-                  </div>
+                <div class="middle-section" id="middleSection">
+                  <div class="middle-bg" id="middleBg"></div>
+                  <div class="middle-content">
+                    <div class="meta-block">
+                      <div class="kwitansi-no" id="viewNomor">No. 001/KS/X/2025</div>
+                      <div class="kwitansi-date" id="viewTanggal">30/10/2025</div>
+                    </div>
 
-                  <div class="table-header-bar">
-                    <span class="col-qty">QTY</span>
-                    <span class="col-desc">DESC</span>
-                    <span class="col-amt">AMT</span>
-                  </div>
+                    <div class="table-header-bar">
+                      <span class="col-qty">QTY</span>
+                      <span class="col-desc">DESC</span>
+                      <span class="col-amt">AMT</span>
+                    </div>
 
-                  <div class="items-list" id="viewItems"></div>
+                    <div class="items-list" id="viewItems"></div>
 
-                  <div class="total-row" id="totalRow">
-                    <span class="col-qty"></span>
-                    <span class="col-desc">TOTAL</span>
-                    <span class="col-amt" id="viewTotal">Rp 0,-</span>
+                    <div class="total-row" id="totalRow">
+                      <span class="col-qty"></span>
+                      <span class="col-desc">TOTAL</span>
+                      <span class="col-amt" id="viewTotal">Rp 0,-</span>
+                    </div>
                   </div>
                 </div>
+
+                <div class="bottom-section">
+                  <img class="cap-img" src="assets/Bottom.webp" alt="">
+                </div>
+
+                <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.webp" alt="Lunas">
+
+                <img class="paper-texture" src="assets/Texture.webp" alt="">
               </div>
-
-              <div class="bottom-section">
-                <img class="cap-img" src="assets/Bottom.webp" alt="">
-              </div>
-
-              <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.webp" alt="Lunas">
-
-              <img class="paper-texture" src="assets/Texture.webp" alt="">
             </div>
 
             <div class="footer-section">
-              <img src="assets/Footer.webp" alt="Nara Curated Compound">
+              <img src="assets/Footer.webp" alt="Kopi Sahaja">
             </div>
           </div>
         </div>
@@ -562,6 +678,7 @@
   function tryLogin(){
     const val = document.getElementById('passwordInput').value;
     const err = document.getElementById('loginError');
+    const card = document.querySelector('.login-card');
     if(val === APP_PASSWORD){
       sessionStorage.setItem('nara_kwitansi_auth', '1');
       document.getElementById('loginScreen').style.display = 'none';
@@ -569,6 +686,9 @@
       initApp();
     } else {
       err.textContent = 'Password salah, silakan coba lagi.';
+      card.classList.remove('anim-shake');
+      void card.offsetWidth; // restart animation
+      card.classList.add('anim-shake');
     }
   }
   document.getElementById('passwordInput').addEventListener('keydown', e=>{
@@ -597,9 +717,17 @@
   ];
   let rowIdCounter = 0;
 
+  function todayISO(){
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2,'0');
+    const d = String(now.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
   function initApp(){
     if(!document.getElementById('inputTanggal').value){
-      document.getElementById('inputTanggal').value = "2025-10-30";
+      document.getElementById('inputTanggal').value = todayISO();
     }
     renderItemsEditor();
     renderReceipt();
@@ -625,9 +753,20 @@
   }
 
   function removeItemRow(idx){
-    items.splice(idx,1);
-    renderItemsEditor();
-    renderReceipt();
+    const rows = document.querySelectorAll('#itemsEditor .item-row-editor');
+    const rowEl = rows[idx];
+    if(rowEl){
+      rowEl.classList.add('removing');
+      setTimeout(()=>{
+        items.splice(idx,1);
+        renderItemsEditor();
+        renderReceipt();
+      }, 160);
+    } else {
+      items.splice(idx,1);
+      renderItemsEditor();
+      renderReceipt();
+    }
   }
 
   function renderItemsEditor(){
@@ -682,7 +821,15 @@
     });
 
     document.getElementById('viewTotal').textContent = formatRupiah(total);
-    document.getElementById('totalPreviewText').textContent = formatRupiah(total);
+
+    const totalPreviewEl = document.getElementById('totalPreviewText');
+    const totalPreviewBox = totalPreviewEl.closest('.total-preview');
+    if(totalPreviewEl.textContent !== formatRupiah(total) && totalPreviewBox){
+      totalPreviewBox.classList.remove('anim-pulse');
+      void totalPreviewBox.offsetWidth;
+      totalPreviewBox.classList.add('anim-pulse');
+    }
+    totalPreviewEl.textContent = formatRupiah(total);
 
     document.getElementById('lunasStamp').style.display =
       document.getElementById('inputLunas').checked ? 'block' : 'none';
@@ -766,8 +913,9 @@
   // ---------------- PDF EXPORT ----------------
   function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
+    const originalLabel = '⬇ Unduh Kwitansi (PDF)';
     btn.disabled = true;
-    btn.textContent = 'Menyiapkan PDF...';
+    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
 
     const el = document.getElementById('receiptCapture');
     const tanggal = document.getElementById('inputTanggal').value || '';
@@ -785,17 +933,17 @@
 
     if(typeof html2pdf === 'undefined'){
       btn.disabled = false;
-      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+      btn.textContent = originalLabel;
       alert('Library PDF belum termuat. Pastikan perangkat terhubung internet (library dimuat dari CDN), lalu muat ulang halaman.');
       return;
     }
 
     html2pdf().set(opt).from(el).save().then(()=>{
       btn.disabled = false;
-      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+      btn.textContent = originalLabel;
     }).catch((err)=>{
       btn.disabled = false;
-      btn.textContent = '⬇ Unduh Kwitansi (PDF)';
+      btn.textContent = originalLabel;
       console.error('PDF export error:', err);
       alert('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
             '\n\nJika masalah berlanjut, buka aplikasi ini melalui web server (bukan langsung membuka file index.html) dan pastikan koneksi internet aktif.');
