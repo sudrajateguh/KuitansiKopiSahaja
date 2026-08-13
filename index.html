@@ -41,11 +41,7 @@
   *{ box-sizing: border-box; }
   html,body{ margin:0; padding:0; }
   body{
-    background:
-      radial-gradient(circle at 15% 10%, rgba(255,255,255,0.10), transparent 45%),
-      radial-gradient(circle at 85% 90%, rgba(0,0,0,0.12), transparent 50%),
-      var(--body-bg);
-    background-attachment: fixed;
+    background: linear-gradient(155deg, #4a7893 0%, var(--body-bg) 55%, #35586c 100%);
     font-family: 'SF Pro Display Light', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--ink-dark);
     min-height: 100vh;
@@ -166,14 +162,13 @@
   #app.visible{ display:block; }
 
   .topbar{
-    background: rgba(0,0,0,0.15);
+    background: rgba(0,0,0,0.2);
     padding: 14px 22px;
     display:flex;
     align-items:center;
     justify-content: space-between;
     color:#fff;
     animation: fadeInDown .45s ease both;
-    backdrop-filter: blur(2px);
   }
   .topbar h2{
     font-family: 'SF Pro Display Heavy', sans-serif;
@@ -379,14 +374,13 @@
 
   #receiptCapture{
     background: var(--body-bg);
+    position: relative;
   }
 
   /* Frame that holds the paper receipt with breathing room on all sides,
      matching the reference preview mock-up. */
   .receipt-frame{
-    background:
-      radial-gradient(circle at 20% 15%, rgba(255,255,255,0.08), transparent 50%),
-      var(--body-bg);
+    background: var(--body-bg);
     padding: 15% 15% 10%;
   }
   .paper-wrap{
@@ -394,8 +388,6 @@
     width: 100%;
     box-shadow: 0 22px 40px rgba(0,0,0,0.38);
     animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
-    container-type: inline-size;
-    container-name: receipt;
   }
   .paper-texture{
     position:absolute;
@@ -404,10 +396,9 @@
     height:100%;
     object-fit: cover;
     mix-blend-mode: multiply;
-    opacity: 0.3;
-    filter: contrast(1.25) brightness(0.98);
+    opacity: 0.22;
     pointer-events:none;
-    z-index: 3;
+    z-index: 6;
   }
   img.cap-img{
     display:block;
@@ -445,14 +436,14 @@
     padding: 3.2% 0 2.6%;
   }
   .kwitansi-no{
-    font-size: clamp(8.5px, 3.15cqw, 11px);
+    font-size: 11px;
     color: var(--ink-muted);
     letter-spacing: .3px;
     margin-bottom: 4px;
     font-family: 'SF Pro Display Light', sans-serif;
   }
   .kwitansi-date{
-    font-size: clamp(11px, 4.2cqw, 14.5px);
+    font-size: 14.5px;
     color: var(--item-color);
     font-family: 'SF Pro Display Light', sans-serif;
   }
@@ -475,7 +466,7 @@
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
     font-weight: 800;
-    font-size: clamp(9px, 3.4cqw, 12px);
+    font-size: 12px;
     color: var(--header-label);
   }
 
@@ -487,14 +478,14 @@
   .item-row .col-qty,
   .item-row .col-desc{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: clamp(9.5px, 3.5cqw, 12.5px);
+    font-size: 12.5px;
     color: var(--item-color);
     white-space: pre-line;
     line-height: 1.5;
   }
   .item-row .col-amt{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: clamp(9.5px, 3.5cqw, 12.5px);
+    font-size: 12.5px;
     color: var(--item-color);
     white-space: nowrap;
   }
@@ -508,13 +499,13 @@
   .total-row .col-desc{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: clamp(10.5px, 3.9cqw, 13.5px);
+    font-size: 13.5px;
     color: var(--total-color);
   }
   .total-row .col-amt{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: clamp(10.5px, 3.9cqw, 13.5px);
+    font-size: 13.5px;
     color: var(--total-color);
     white-space: nowrap;
   }
@@ -558,6 +549,24 @@
     .main-layout{ flex-direction:column; padding: 16px; }
     .editor-panel{ max-width: 100%; }
     .preview-panel{ max-width:100%; }
+  }
+
+  /* On narrow phones the receipt paper itself renders smaller (frame
+     margins take a % of a smaller viewport), so nudge the fixed text
+     sizes down a bit to avoid crowding — plain media query, no
+     container queries, so this stays fully compatible with the
+     html2canvas-based PDF export. */
+  @media (max-width: 480px){
+    .kwitansi-no{ font-size: 9.5px; }
+    .kwitansi-date{ font-size: 12.5px; }
+    .table-header-bar .col-qty,
+    .table-header-bar .col-desc,
+    .table-header-bar .col-amt{ font-size: 10.5px; }
+    .item-row .col-qty,
+    .item-row .col-desc,
+    .item-row .col-amt{ font-size: 11px; }
+    .total-row .col-desc,
+    .total-row .col-amt{ font-size: 12px; }
   }
 </style>
 </head>
@@ -658,14 +667,14 @@
                 </div>
 
                 <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.webp" alt="Lunas">
-
-                <img class="paper-texture" src="assets/Texture.webp" alt="">
               </div>
             </div>
 
             <div class="footer-section">
               <img src="assets/Footer.webp" alt="Kopi Sahaja">
             </div>
+
+            <img class="paper-texture" src="assets/Texture.webp" alt="">
           </div>
         </div>
       </div>
@@ -915,12 +924,12 @@
     const totalRect = totalRow.getBoundingClientRect();
     if(wrapRect.width === 0) return;
 
-    const stampWidth = wrapRect.width * 0.32;
+    const stampWidth = wrapRect.width * 0.28;
     const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
     stamp.style.width = stampWidth + 'px';
-    stamp.style.left = (-stampWidth * 0.22) + 'px';
-    stamp.style.top = (totalCenterY - stampWidth * 0.6) + 'px';
+    stamp.style.left = (-stampWidth * 0.2) + 'px';
+    stamp.style.top = (totalCenterY - stampWidth * 0.42) + 'px';
   }
 
   let resizeTimer;
@@ -959,6 +968,29 @@
     }));
   }
 
+  // html2canvas clones the page into an off-screen container while it
+  // rasterizes. If it errors or hangs mid-render, that clone can be left
+  // behind and — on some browsers — ends up intercepting clicks on the
+  // whole page. This snapshots what's on <body> beforehand so we can
+  // forcibly remove anything unexpected afterwards no matter what happens.
+  function cleanupStrayOverlays(before){
+    Array.from(document.body.children).forEach(child => {
+      if(!before.has(child)) child.remove();
+    });
+    document.documentElement.style.overflow = '';
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = '';
+    document.body.style.position = '';
+  }
+
+  function withTimeout(promise, ms, label){
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error(label || 'Proses terlalu lama, dibatalkan.')), ms);
+    });
+    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+  }
+
   async function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
     const originalLabel = '⬇ Unduh Kwitansi (PDF)';
@@ -987,6 +1019,7 @@
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+    const bodyChildrenBefore = new Set(Array.from(document.body.children));
 
     try {
       const el = document.getElementById('receiptCapture');
@@ -1020,12 +1053,20 @@
         jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
       };
 
-      await html2pdf().set(opt).from(el).save();
+      await withTimeout(
+        html2pdf().set(opt).from(el).save(),
+        25000,
+        'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
+      );
       btn.disabled = false;
       btn.textContent = originalLabel;
     } catch(err){
       showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
         ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
+    } finally {
+      // Always run, whether it succeeded, failed, or timed out — guarantees
+      // the page never gets stuck unclickable after an export attempt.
+      cleanupStrayOverlays(bodyChildrenBefore);
     }
   }
 </script>
