@@ -772,11 +772,31 @@
     syncNomorWithTanggal();
     renderItemsEditor();
     renderReceipt();
+    checkAssetsLoaded();
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
     document.getElementById('inputTanggal').addEventListener('input', () => {
       syncNomorWithTanggal();
       renderReceipt();
     });
+  }
+
+  // Surfaces a clear, visible warning directly on the page if any image
+  // asset 404s — so a broken deploy (e.g. assets/ folder not fully
+  // uploaded) is obvious immediately, without needing to open DevTools.
+  function checkAssetsLoaded(){
+    setTimeout(() => {
+      const imgs = Array.from(document.querySelectorAll('#receiptCapture img, .login-card img'));
+      const broken = imgs.filter(img => img.complete && img.naturalWidth === 0);
+      if(broken.length === 0) return;
+
+      const names = broken.map(img => img.src.split('/').pop()).join(', ');
+      const banner = document.createElement('div');
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:#fff;' +
+        'padding:10px 16px;font-size:13px;text-align:center;font-family:sans-serif;';
+      banner.innerHTML = '⚠️ ' + broken.length + ' file gambar gagal dimuat (' + names + '). ' +
+        'Cek apakah folder <b>assets/</b> sudah ter-upload lengkap ke server, lalu refresh halaman.';
+      document.body.prepend(banner);
+    }, 1200);
   }
 
   function formatRupiah(num){
