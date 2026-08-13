@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuitansi Kopi Sahaja</title>
-<link rel="icon" type="image/webp" href="assets/Logo.webp">
+<link rel="icon" type="image/png" href="assets/Logo.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   @font-face{
@@ -575,7 +575,7 @@
   <!-- ================= LOGIN SCREEN ================= -->
   <div id="loginScreen">
     <div class="login-card">
-      <img class="brand" src="assets/Logo.webp" alt="Kopi Sahaja">
+      <img class="brand" src="assets/Logo.png" alt="Kopi Sahaja">
       <h1>Kuitansi Sahaja</h1>
       <p>Masukkan password untuk mengakses editor</p>
       <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
@@ -636,7 +636,7 @@
           <div id="receiptCapture">
             <div class="receipt-frame">
               <div class="paper-wrap" id="paperWrap">
-                <img class="cap-img" src="assets/Top.webp" alt="">
+                <img class="cap-img" src="assets/Top.png" alt="">
 
                 <div class="middle-section" id="middleSection">
                   <div class="middle-bg" id="middleBg"></div>
@@ -663,18 +663,18 @@
                 </div>
 
                 <div class="bottom-section">
-                  <img class="cap-img" src="assets/Bottom.webp" alt="">
+                  <img class="cap-img" src="assets/Bottom.png" alt="">
                 </div>
 
-                <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.webp" alt="Lunas">
+                <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.png" alt="Lunas">
               </div>
             </div>
 
             <div class="footer-section">
-              <img src="assets/Footer.webp" alt="Kopi Sahaja">
+              <img src="assets/Footer.png" alt="Kopi Sahaja">
             </div>
 
-            <img class="paper-texture" src="assets/Texture.webp" alt="">
+            <img class="paper-texture" src="assets/Texture.jpg" alt="">
           </div>
         </div>
       </div>
@@ -820,13 +820,13 @@
       const row = document.createElement('div');
       row.className = 'item-row-editor';
       row.innerHTML = `
-        <input type="number" min="0" value="${item.qty}" onchange="updateItem(${idx},'qty',this.value)">
-        <textarea onchange="updateItem(${idx},'desc',this.value)" placeholder="Deskripsi item...">${item.desc}</textarea>
+        <input type="number" min="0" value="${item.qty}" oninput="updateItem(${idx},'qty',this.value)">
+        <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Deskripsi item...">${item.desc}</textarea>
         <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
                placeholder="0"
                onfocus="this.value = this.value.replace(/\\./g,'')"
-               oninput="formatAmtInput(this)"
-               onchange="updateItem(${idx},'amt', this.value.replace(/\\./g,''))">
+               oninput="formatAmtInput(this); updateItem(${idx},'amt', this.value.replace(/\\./g,''))"
+               onblur="this.value = this.value ? Number(this.value.replace(/\\./g,'')).toLocaleString('id-ID') : ''">
         <button class="remove-row-btn" onclick="removeItemRow(${idx})" title="Hapus baris">✕</button>
       `;
       container.appendChild(row);
@@ -887,7 +887,7 @@
   // Fill the middle (table) area with repeating Middle.webp tiles using real
   // <img> elements instead of CSS background-image, since html2canvas (used
   // for PDF export) frequently fails to render repeating CSS backgrounds.
-  const MIDDLE_ASPECT = 1729 / 4098; // height / width of Middle.webp
+  const MIDDLE_ASPECT = 872 / 1600; // height / width of Middle.png
   function tileMiddleBackground(){
     const middleSection = document.getElementById('middleSection');
     const middleContent = middleSection.querySelector('.middle-content');
@@ -905,7 +905,7 @@
       bg.innerHTML = '';
       for(let i = 0; i < tileCount; i++){
         const img = document.createElement('img');
-        img.src = 'assets/Middle.webp';
+        img.src = 'assets/Middle.png';
         img.alt = '';
         bg.appendChild(img);
       }
@@ -1007,6 +1007,7 @@
     function showError(msg){
       btn.disabled = false;
       btn.textContent = originalLabel;
+      statusEl.style.color = 'var(--danger)';
       statusEl.textContent = msg;
       statusEl.style.display = 'block';
       console.error('PDF export error:', msg);
@@ -1053,11 +1054,36 @@
         jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
       };
 
-      await withTimeout(
-        html2pdf().set(opt).from(el).save(),
+      // Build the PDF ourselves and get a Blob back, instead of relying on
+      // html2pdf's built-in .save() — some browsers (notably Edge) can
+      // silently swallow that automatic download. Handling the Blob
+      // ourselves lets us try a direct download AND always leave a manual
+      // "open PDF" fallback link in place.
+      const pdfBlob = await withTimeout(
+        html2pdf().set(opt).from(el).toPdf().output('blob'),
         25000,
         'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
       );
+
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      // Always show a manual fallback too — if the automatic download above
+      // got blocked (Edge/SmartScreen, popup/download blockers, etc.) this
+      // link still lets the person get their PDF with one tap, and it also
+      // confirms the file really was generated successfully.
+      statusEl.style.color = 'var(--accent-dark)';
+      statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
+        '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
+        'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
+      statusEl.style.display = 'block';
+
       btn.disabled = false;
       btn.textContent = originalLabel;
     } catch(err){
