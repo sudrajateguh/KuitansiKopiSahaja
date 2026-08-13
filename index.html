@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuitansi Kopi Sahaja</title>
 <link rel="icon" type="image/png" href="assets/Logo.png">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
   @font-face{
     font-family: 'SF Pro Display Heavy';
@@ -346,6 +345,13 @@
   .download-btn:hover{ background: #234258; box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
   .download-btn:active:not(:disabled){ transform: scale(.98); }
   .download-btn:disabled{ opacity:.6; cursor:default; }
+  .pdf-hint{
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-muted);
+    text-align: center;
+  }
 
   .spinner{
     width: 15px;
@@ -568,12 +574,41 @@
     .total-row .col-desc,
     .total-row .col-amt{ font-size: 12px; }
   }
+
+  /* ---------------- PRINT / "SAVE AS PDF" ----------------
+     The download button triggers window.print(). Everything except the
+     receipt itself is hidden, and the receipt is enlarged to use the full
+     printable page width for a crisp result — this uses the browser's own
+     native print pipeline, so it renders identically (and reliably) across
+     every browser instead of depending on a third-party screenshot library. */
+  @media print{
+    @page{ margin: 10mm; }
+    html, body{ background:#fff !important; height:auto !important; }
+    body{ animation:none !important; }
+    .no-print{ display:none !important; }
+    #app{ display:block !important; }
+    .main-layout{ padding:0 !important; display:block !important; }
+    .preview-panel{
+      max-width:100% !important;
+      display:block !important;
+      animation:none !important;
+    }
+    .receipt-scale-wrap{
+      max-width:520px !important;
+      width:100% !important;
+      margin:0 auto !important;
+      box-shadow:none !important;
+      border-radius:0 !important;
+    }
+    #receiptCapture{ animation:none !important; }
+    .paper-wrap, .lunas-stamp{ animation:none !important; }
+  }
 </style>
 </head>
 <body>
 
   <!-- ================= LOGIN SCREEN ================= -->
-  <div id="loginScreen">
+  <div id="loginScreen" class="no-print">
     <div class="login-card">
       <img class="brand" src="assets/Logo.png" alt="Kopi Sahaja">
       <h1>Kuitansi Sahaja</h1>
@@ -586,7 +621,7 @@
 
   <!-- ================= MAIN APP ================= -->
   <div id="app">
-    <div class="topbar">
+    <div class="topbar no-print">
       <h2>Kuitansi Sahaja</h2>
       <button class="logout-btn" onclick="logout()">Keluar</button>
     </div>
@@ -594,7 +629,7 @@
     <div class="main-layout">
 
       <!-- -------- EDITOR PANEL -------- -->
-      <div class="editor-panel">
+      <div class="editor-panel no-print">
         <h3>Informasi Kwitansi</h3>
         <div class="field-row">
           <div class="field-group">
@@ -628,6 +663,7 @@
         </div>
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
+        <div class="pdf-hint">Dialog cetak akan terbuka — pilih tujuan <b>"Simpan sebagai PDF"</b>, lalu klik Simpan/Save.</div>
       </div>
 
       <!-- -------- PREVIEW PANEL -------- -->
@@ -944,12 +980,12 @@
     const totalRect = totalRow.getBoundingClientRect();
     if(wrapRect.width === 0) return;
 
-    const stampWidth = wrapRect.width * 0.28;
+    const stampWidth = wrapRect.width * 0.26;
     const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
     stamp.style.width = stampWidth + 'px';
-    stamp.style.left = (-stampWidth * 0.2) + 'px';
-    stamp.style.top = (totalCenterY - stampWidth * 0.42) + 'px';
+    stamp.style.left = (-stampWidth * 0.18) + 'px';
+    stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
   }
 
   let resizeTimer;
@@ -974,147 +1010,37 @@
     return div.innerHTML;
   }
 
-  // ---------------- PDF EXPORT ----------------
-  function waitForImagesToLoad(container){
-    const imgs = Array.from(container.querySelectorAll('img'));
-    return Promise.all(imgs.map(img => {
-      if(img.complete && img.naturalWidth > 0) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once:true });
-        img.addEventListener('error', resolve, { once:true });
-        // safety net in case an event never fires
-        setTimeout(resolve, 4000);
-      });
-    }));
+  // ---------------- PDF EXPORT (native browser print) ----------------
+  // Uses the browser's own print pipeline instead of a screenshot library —
+  // this renders with 100% fidelity to what's on screen (same images, same
+  // fonts, same CSS) and works identically across Chrome, Edge, Safari and
+  // Opera, with zero dependency on an external CDN.
+  function downloadPDF(){
+    const tanggal = document.getElementById('inputTanggal').value || '';
+    const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
+    const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
+    document.title = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}`;
+    window.print();
   }
 
-  // html2canvas clones the page into an off-screen container while it
-  // rasterizes. If it errors or hangs mid-render, that clone can be left
-  // behind and — on some browsers — ends up intercepting clicks on the
-  // whole page. This snapshots what's on <body> beforehand so we can
-  // forcibly remove anything unexpected afterwards no matter what happens.
-  function cleanupStrayOverlays(before){
-    Array.from(document.body.children).forEach(child => {
-      if(!before.has(child)) child.remove();
-    });
-    document.documentElement.style.overflow = '';
-    document.body.style.overflow = '';
-    document.body.style.pointerEvents = '';
-    document.body.style.position = '';
-  }
+  // The printed page renders the receipt at a different (usually wider)
+  // width than the on-screen preview, so the tile count and the LUNAS
+  // stamp's pixel position — both computed from on-screen measurements —
+  // need to be recalculated right before printing, not just on edits.
+  window.addEventListener('beforeprint', () => {
+    tileMiddleBackground();
+    positionStamp();
+  });
 
-  function withTimeout(promise, ms, label){
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(label || 'Proses terlalu lama, dibatalkan.')), ms);
-    });
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
-  }
-
-  async function downloadPDF(){
-    const btn = document.getElementById('downloadBtn');
-    const originalLabel = '⬇ Unduh Kwitansi (PDF)';
-    let statusEl = document.getElementById('pdfStatus');
-    if(!statusEl){
-      statusEl = document.createElement('div');
-      statusEl.id = 'pdfStatus';
-      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
-      btn.insertAdjacentElement('afterend', statusEl);
-    }
-    statusEl.style.display = 'none';
-    statusEl.textContent = '';
-
-    function showError(msg){
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-      statusEl.style.color = 'var(--danger)';
-      statusEl.textContent = msg;
-      statusEl.style.display = 'block';
-      console.error('PDF export error:', msg);
-    }
-
-    if(typeof html2pdf === 'undefined'){
-      showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
-    const bodyChildrenBefore = new Set(Array.from(document.body.children));
-
-    try {
-      const el = document.getElementById('receiptCapture');
-
-      // Make sure every image (including large texture/background assets)
-      // is fully decoded before we ask html2canvas to rasterize the DOM —
-      // this avoids blank/partial renders and long hangs on slower devices.
-      await waitForImagesToLoad(el);
-      if(document.fonts && document.fonts.ready){
-        try { await document.fonts.ready; } catch(e){ /* ignore */ }
-      }
-
-      const tanggal = document.getElementById('inputTanggal').value || '';
-      const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
-      const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-      const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
-
-      const opt = {
-        margin: 0,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          imageTimeout: 15000,
-          windowWidth: el.scrollWidth,
-          windowHeight: el.scrollHeight
-        },
-        jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
-      };
-
-      // Build the PDF ourselves and get a Blob back, instead of relying on
-      // html2pdf's built-in .save() — some browsers (notably Edge) can
-      // silently swallow that automatic download. Handling the Blob
-      // ourselves lets us try a direct download AND always leave a manual
-      // "open PDF" fallback link in place.
-      const pdfBlob = await withTimeout(
-        html2pdf().set(opt).from(el).toPdf().output('blob'),
-        25000,
-        'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
-      );
-
-      const blobUrl = URL.createObjectURL(pdfBlob);
-
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      // Always show a manual fallback too — if the automatic download above
-      // got blocked (Edge/SmartScreen, popup/download blockers, etc.) this
-      // link still lets the person get their PDF with one tap, and it also
-      // confirms the file really was generated successfully.
-      statusEl.style.color = 'var(--accent-dark)';
-      statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
-        '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
-        'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
-      statusEl.style.display = 'block';
-
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-    } catch(err){
-      showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
-        ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
-    } finally {
-      // Always run, whether it succeeded, failed, or timed out — guarantees
-      // the page never gets stuck unclickable after an export attempt.
-      cleanupStrayOverlays(bodyChildrenBefore);
-    }
-  }
+  window.addEventListener('afterprint', () => {
+    document.title = 'Kuitansi Kopi Sahaja';
+    // Layout returns to screen width afterwards — recompute once more so
+    // the on-screen preview isn't left showing print-sized positions.
+    tileMiddleBackground();
+    positionStamp();
+  });
 </script>
+</body>
+</html>
 </body>
 </html>
