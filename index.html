@@ -404,7 +404,8 @@
     height:100%;
     object-fit: cover;
     mix-blend-mode: multiply;
-    opacity: 0.9;
+    opacity: 0.3;
+    filter: contrast(1.25) brightness(0.98);
     pointer-events:none;
     z-index: 3;
   }
@@ -444,14 +445,14 @@
     padding: 3.2% 0 2.6%;
   }
   .kwitansi-no{
-    font-size: clamp(10px, 3.7cqw, 13px);
+    font-size: clamp(8.5px, 3.15cqw, 11px);
     color: var(--ink-muted);
     letter-spacing: .3px;
     margin-bottom: 4px;
     font-family: 'SF Pro Display Light', sans-serif;
   }
   .kwitansi-date{
-    font-size: clamp(13px, 4.9cqw, 17px);
+    font-size: clamp(11px, 4.2cqw, 14.5px);
     color: var(--item-color);
     font-family: 'SF Pro Display Light', sans-serif;
   }
@@ -474,7 +475,7 @@
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
     font-weight: 800;
-    font-size: clamp(10.5px, 4cqw, 14px);
+    font-size: clamp(9px, 3.4cqw, 12px);
     color: var(--header-label);
   }
 
@@ -486,14 +487,14 @@
   .item-row .col-qty,
   .item-row .col-desc{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: clamp(11px, 4.14cqw, 14.5px);
+    font-size: clamp(9.5px, 3.5cqw, 12.5px);
     color: var(--item-color);
     white-space: pre-line;
     line-height: 1.5;
   }
   .item-row .col-amt{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: clamp(11px, 4.14cqw, 14.5px);
+    font-size: clamp(9.5px, 3.5cqw, 12.5px);
     color: var(--item-color);
     white-space: nowrap;
   }
@@ -507,13 +508,13 @@
   .total-row .col-desc{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: clamp(12px, 4.6cqw, 16px);
+    font-size: clamp(10.5px, 3.9cqw, 13.5px);
     color: var(--total-color);
   }
   .total-row .col-amt{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: clamp(12px, 4.6cqw, 16px);
+    font-size: clamp(10.5px, 3.9cqw, 13.5px);
     color: var(--total-color);
     white-space: nowrap;
   }
@@ -725,14 +726,48 @@
     return `${y}-${m}-${d}`;
   }
 
+  const ROMAN_MONTHS = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+  const ROMAN_MONTH_SET = new Set(ROMAN_MONTHS);
+
+  // Keeps the bulan (roman numeral) & tahun segments of "No. Kwitansi" in sync
+  // with the selected tanggal, e.g. "001/KS/X/2025" -> bulan/tahun auto-updated
+  // while the running number / prefix parts the user typed are preserved.
+  function syncNomorWithTanggal(){
+    const tglVal = document.getElementById('inputTanggal').value;
+    if(!tglVal) return;
+    const [y, m] = tglVal.split('-');
+    const monthIdx = parseInt(m, 10);
+    if(!monthIdx || monthIdx < 1 || monthIdx > 12) return;
+    const romanMonth = ROMAN_MONTHS[monthIdx - 1];
+
+    const nomorInput = document.getElementById('inputNomor');
+    const parts = nomorInput.value.split('/').map(p => p.trim());
+
+    if(parts.length >= 2){
+      const lastIdx = parts.length - 1;
+      const secondLastIdx = parts.length - 2;
+      const lastLooksLikeYear = /^\d{4}$/.test(parts[lastIdx]);
+      const secondLastLooksLikeMonth = ROMAN_MONTH_SET.has(parts[secondLastIdx].toUpperCase()) || parts[secondLastIdx] === '';
+      if(lastLooksLikeYear || secondLastLooksLikeMonth){
+        parts[secondLastIdx] = romanMonth;
+        parts[lastIdx] = y;
+        nomorInput.value = parts.join('/');
+      }
+    }
+  }
+
   function initApp(){
     if(!document.getElementById('inputTanggal').value){
       document.getElementById('inputTanggal').value = todayISO();
     }
+    syncNomorWithTanggal();
     renderItemsEditor();
     renderReceipt();
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
-    document.getElementById('inputTanggal').addEventListener('input', renderReceipt);
+    document.getElementById('inputTanggal').addEventListener('input', () => {
+      syncNomorWithTanggal();
+      renderReceipt();
+    });
   }
 
   function formatRupiah(num){
@@ -911,43 +946,87 @@
   }
 
   // ---------------- PDF EXPORT ----------------
-  function downloadPDF(){
+  function waitForImagesToLoad(container){
+    const imgs = Array.from(container.querySelectorAll('img'));
+    return Promise.all(imgs.map(img => {
+      if(img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise(resolve => {
+        img.addEventListener('load', resolve, { once:true });
+        img.addEventListener('error', resolve, { once:true });
+        // safety net in case an event never fires
+        setTimeout(resolve, 4000);
+      });
+    }));
+  }
+
+  async function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
     const originalLabel = '⬇ Unduh Kwitansi (PDF)';
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+    let statusEl = document.getElementById('pdfStatus');
+    if(!statusEl){
+      statusEl = document.createElement('div');
+      statusEl.id = 'pdfStatus';
+      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
+      btn.insertAdjacentElement('afterend', statusEl);
+    }
+    statusEl.style.display = 'none';
+    statusEl.textContent = '';
 
-    const el = document.getElementById('receiptCapture');
-    const tanggal = document.getElementById('inputTanggal').value || '';
-    const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
-    const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-    const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
-
-    const opt = {
-      margin: 0,
-      filename: filename,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
-    };
-
-    if(typeof html2pdf === 'undefined'){
+    function showError(msg){
       btn.disabled = false;
       btn.textContent = originalLabel;
-      alert('Library PDF belum termuat. Pastikan perangkat terhubung internet (library dimuat dari CDN), lalu muat ulang halaman.');
+      statusEl.textContent = msg;
+      statusEl.style.display = 'block';
+      console.error('PDF export error:', msg);
+    }
+
+    if(typeof html2pdf === 'undefined'){
+      showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
       return;
     }
 
-    html2pdf().set(opt).from(el).save().then(()=>{
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+
+    try {
+      const el = document.getElementById('receiptCapture');
+
+      // Make sure every image (including large texture/background assets)
+      // is fully decoded before we ask html2canvas to rasterize the DOM —
+      // this avoids blank/partial renders and long hangs on slower devices.
+      await waitForImagesToLoad(el);
+      if(document.fonts && document.fonts.ready){
+        try { await document.fonts.ready; } catch(e){ /* ignore */ }
+      }
+
+      const tanggal = document.getElementById('inputTanggal').value || '';
+      const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
+      const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
+      const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
+
+      const opt = {
+        margin: 0,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#ffffff',
+          imageTimeout: 15000,
+          windowWidth: el.scrollWidth,
+          windowHeight: el.scrollHeight
+        },
+        jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
+      };
+
+      await html2pdf().set(opt).from(el).save();
       btn.disabled = false;
       btn.textContent = originalLabel;
-    }).catch((err)=>{
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-      console.error('PDF export error:', err);
-      alert('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
-            '\n\nJika masalah berlanjut, buka aplikasi ini melalui web server (bukan langsung membuka file index.html) dan pastikan koneksi internet aktif.');
-    });
+    } catch(err){
+      showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
+        ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
+    }
   }
 </script>
 </body>
