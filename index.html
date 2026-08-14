@@ -353,21 +353,6 @@
     color: var(--ink-muted);
     text-align: center;
   }
-  .print-fallback-btn{
-    width:100%;
-    padding: 11px;
-    border-radius: 10px;
-    border: 1.5px solid var(--accent);
-    background: #fff;
-    color: var(--accent-dark);
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor:pointer;
-    margin-top: 14px;
-    transition: background .15s ease, transform .12s ease;
-  }
-  .print-fallback-btn:hover{ background: #eef4f7; }
-  .print-fallback-btn:active{ transform: scale(.98); }
 
   .spinner{
     width: 15px;
@@ -679,8 +664,6 @@
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
         <div class="pdf-hint">File PDF akan otomatis terunduh ke perangkat kamu.</div>
-        <button class="print-fallback-btn" onclick="printFallback()">🖨️ Cetak Manual (kalau unduh gagal)</button>
-        <div class="pdf-hint">Membuka dialog cetak bawaan browser — pilih tujuan "Simpan sebagai PDF".</div>
       </div>
 
       <!-- -------- PREVIEW PANEL -------- -->
@@ -1063,119 +1046,103 @@
     return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
   }
 
-  // Proven-reliable fallback: uses the browser's own native print pipeline
-  // (Ctrl+P equivalent) instead of html2canvas. Recomputes the tile count
-  // and LUNAS stamp position first, since the printed page renders the
-  // receipt at a different width than the on-screen preview.
-  function printFallback(){
-    tileMiddleBackground();
-    positionStamp();
-    const tanggal = document.getElementById('inputTanggal').value || '';
-    const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
-    const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-    document.title = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}`;
-    window.print();
-  }
-  window.addEventListener('beforeprint', () => {
-    tileMiddleBackground();
-    positionStamp();
-  });
-  window.addEventListener('afterprint', () => {
-    document.title = 'Kuitansi Kopi Sahaja';
-    tileMiddleBackground();
-    positionStamp();
-  });
-
   async function downloadPDF(){
-    const btn = document.getElementById('downloadBtn');
-    const originalLabel = '⬇ Unduh Kwitansi (PDF)';
-    let statusEl = document.getElementById('pdfStatus');
-    if(!statusEl){
-      statusEl = document.createElement('div');
-      statusEl.id = 'pdfStatus';
-      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
-      btn.insertAdjacentElement('afterend', statusEl);
-    }
-    statusEl.style.display = 'none';
-    statusEl.textContent = '';
+      const btn = document.getElementById('downloadBtn');
+      const originalLabel = '⬇ Unduh Kwitansi (PDF)';
+      let statusEl = document.getElementById('pdfStatus');
+      if(!statusEl){
+        statusEl = document.createElement('div');
+        statusEl.id = 'pdfStatus';
+        statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
+        btn.insertAdjacentElement('afterend', statusEl);
+      }
+      statusEl.style.display = 'none';
+      statusEl.textContent = '';
 
-    function showError(msg){
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-      statusEl.style.color = 'var(--danger)';
-      statusEl.textContent = msg;
-      statusEl.style.display = 'block';
-      console.error('PDF export error:', msg);
-    }
-
-    if(typeof html2pdf === 'undefined'){
-      showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
-      return;
-    }
-
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
-    const bodyChildrenBefore = new Set(Array.from(document.body.children));
-
-    try {
-      const el = document.querySelector('.receipt-scale-wrap');
-
-      await waitForImagesToLoad(el);
-      if(document.fonts && document.fonts.ready){
-        try { await document.fonts.ready; } catch(e){ /* ignore */ }
+      function showError(msg){
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+        statusEl.style.color = 'var(--danger)';
+        statusEl.textContent = msg;
+        statusEl.style.display = 'block';
+        console.error('PDF export error:', msg);
       }
 
-      const tanggal = document.getElementById('inputTanggal').value || '';
-      const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
-      const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-      const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
+      if(typeof html2pdf === 'undefined'){
+        showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
+        return;
+      }
 
-      const opt = {
-        margin: 0,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.95 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: '#ffffff',
-          imageTimeout: 15000,
-          windowWidth: el.scrollWidth,
-          windowHeight: el.scrollHeight
-        },
-        jsPDF: { unit: 'px', format: [el.offsetWidth, el.offsetHeight], orientation: 'portrait' }
-      };
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+      const bodyChildrenBefore = new Set(Array.from(document.body.children));
 
-      const pdfBlob = await withTimeout(
-        html2pdf().set(opt).from(el).toPdf().output('blob'),
-        25000,
-        'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
-      );
+      try {
+        const el = document.getElementById('receiptCapture');
 
-      const blobUrl = URL.createObjectURL(pdfBlob);
+        await waitForImagesToLoad(el);
+        if(document.fonts && document.fonts.ready){
+          try { await document.fonts.ready; } catch(e){ /* ignore */ }
+        }
 
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+        const tanggal = document.getElementById('inputTanggal').value || '';
+        const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
+        const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
+        const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
 
-      statusEl.style.color = 'var(--accent-dark)';
-      statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
-        '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
-        'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
-      statusEl.style.display = 'block';
+        // ---------- BAGIAN YANG DIPERBAIKI ----------
+        const opt = {
+          margin: 0,
+          filename: filename,
+          image: { type: 'jpeg', quality: 0.95 },
+          html2canvas: {
+            scale: 2,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#41708d', // Menyamakan dengan warna background kuitansi
+            scrollY: 0, // Kunci perbaikan 1: Me-reset titik koordinat agar tidak terpotong saat halaman di-scroll
+            scrollX: 0,
+            imageTimeout: 15000
+          },
+          jsPDF: {
+            unit: 'px',
+            format: [el.scrollWidth, el.scrollHeight], // Kunci perbaikan 2: Pakai scrollHeight agar tinggi penuh terbaca
+            orientation: 'portrait'
+          }
+        };
+        // --------------------------------------------
 
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-    } catch(err){
-      showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
-        ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
-    } finally {
-      cleanupStrayOverlays(bodyChildrenBefore);
+        const pdfBlob = await withTimeout(
+          html2pdf().set(opt).from(el).toPdf().output('blob'),
+          25000,
+          'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
+        );
+
+        const blobUrl = URL.createObjectURL(pdfBlob);
+
+        const a = document.createElement('a');
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        statusEl.style.color = 'var(--accent-dark)';
+        statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
+          '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
+          'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
+        statusEl.style.display = 'block';
+
+        btn.disabled = false;
+        btn.textContent = originalLabel;
+      } catch(err){
+        showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
+          ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
+      } finally {
+        cleanupStrayOverlays(bodyChildrenBefore);
+      }
     }
-  }
+
 </script>
 </body>
 </html>
