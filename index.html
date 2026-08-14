@@ -1075,6 +1075,15 @@
 
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+
+      // PERBAIKAN: Mematikan animasi dan efek tekstur sementara agar terbaca oleh html2canvas
+      const exportStyle = document.createElement('style');
+      exportStyle.innerHTML = `
+        #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; }
+        .paper-texture { display: none !important; }
+      `;
+      document.head.appendChild(exportStyle);
+
       const bodyChildrenBefore = new Set(Array.from(document.body.children));
 
       try {
@@ -1090,7 +1099,6 @@
         const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
         const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
 
-        // ---------- BAGIAN YANG DIPERBAIKI ----------
         const opt = {
           margin: 0,
           filename: filename,
@@ -1099,18 +1107,23 @@
             scale: 2,
             useCORS: true,
             allowTaint: true,
-            backgroundColor: '#41708d', // Menyamakan dengan warna background kuitansi
-            scrollY: 0, // Kunci perbaikan 1: Me-reset titik koordinat agar tidak terpotong saat halaman di-scroll
+            backgroundColor: '#41708d',
+            scrollY: 0,
             scrollX: 0,
-            imageTimeout: 15000
+            imageTimeout: 15000,
+            onclone: function(clonedDoc) {
+              // Memastikan animasi mati di dalam dokumen hasil kloning
+              const style = clonedDoc.createElement('style');
+              style.innerHTML = '* { animation: none !important; transition: none !important; } .paper-texture { display: none !important; }';
+              clonedDoc.head.appendChild(style);
+            }
           },
           jsPDF: {
             unit: 'px',
-            format: [el.scrollWidth, el.scrollHeight], // Kunci perbaikan 2: Pakai scrollHeight agar tinggi penuh terbaca
+            format: [el.scrollWidth, el.scrollHeight],
             orientation: 'portrait'
           }
         };
-        // --------------------------------------------
 
         const pdfBlob = await withTimeout(
           html2pdf().set(opt).from(el).toPdf().output('blob'),
@@ -1140,9 +1153,12 @@
           ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
       } finally {
         cleanupStrayOverlays(bodyChildrenBefore);
+        // PERBAIKAN: Mengembalikan elemen style agar halaman kembali normal setelah PDF selesai dibuat
+        if (exportStyle.parentNode) {
+          exportStyle.parentNode.removeChild(exportStyle);
+        }
       }
     }
-
 </script>
 </body>
 </html>
