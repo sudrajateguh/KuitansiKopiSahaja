@@ -514,6 +514,7 @@
         display:flex;
         align-items:center;
         padding: 2% 0 3%;
+        justify-content: space-between;
       }
       .total-row .col-qty{ width:14%; }
       .total-row .col-desc{
@@ -521,17 +522,17 @@
         font-weight: 800;
         font-size: 13.5px;
         color: var(--total-color);
-        width: 54%; /* Mengunci lebar bagian kiri total agar tidak terdorong */
+        flex: 1;
       }
       .total-row .col-amt{
-          font-family: 'SF Pro Display Heavy', sans-serif;
-          font-weight: 800;
-          font-size: 13.5px;
-          color: var(--total-color);
-          margin-left: auto; /* Mendorong angka total agar menempel pas di sisi kanan */
-          white-space: nowrap;
-          text-align: right;
-        }
+        font-family: 'SF Pro Display Heavy', sans-serif;
+        font-weight: 800;
+        font-size: 13.5px;
+        color: var(--total-color);
+        width: 32%; /* Menyamakan persis dengan lebar .col-amt pada header & item */
+        white-space: nowrap;
+        text-align: right; /* Memastikan posisinya pas rata kanan di dalam jalurnya */
+      }
 
   .bottom-section{
       position: relative;
@@ -1001,8 +1002,8 @@
       const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
       stamp.style.width = stampWidth + 'px';
-      // PERBAIKAN: Angka diubah dari -0.15 menjadi -0.28 agar lebih ke kiri
-      stamp.style.left = (-stampWidth * 0.28) + 'px';
+      // Diubah dari -0.28 menjadi -0.36 agar stempel bergeser lebih jauh ke kiri
+      stamp.style.left = (-stampWidth * 0.36) + 'px';
       stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
     }
 
