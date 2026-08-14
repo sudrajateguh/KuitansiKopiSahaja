@@ -63,7 +63,7 @@
     overflow-x: hidden;
   }
 
-  /* BACKGROUND CANVAS PARTICLES */
+  /* BACKGROUND CANVAS PARTICLES (Coffee Steam Theme) */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -169,7 +169,6 @@
     animation: fadeInUpWord 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  /* Animasi satu kalimat penuh untuk subtitle */
   .login-card p{
     font-size: 13.5px;
     color: var(--ink-muted);
@@ -179,7 +178,6 @@
     animation: fadeInUpWord 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
   }
 
-  /* Form Password: Lebih rapat & sedikit agak samar */
   .login-card input[type="password"]{
     width:100%;
     padding: 13px 18px;
@@ -339,9 +337,11 @@
   }
 
   .items-table{ margin-top: 4px; }
+
+  /* DESKTOP GRID ITEM EDITOR */
   .item-row-editor{
     display:grid;
-    grid-template-columns: 56px 1fr 130px 34px;
+    grid-template-columns: 52px 1fr 130px 34px;
     gap: 8px;
     margin-bottom: 10px;
     align-items:start;
@@ -373,9 +373,10 @@
   }
   .remove-row-btn:hover{ background: #fbe3de; }
   .remove-row-btn:active{ transform: scale(.9); }
+
   .col-labels{
     display:grid;
-    grid-template-columns: 56px 1fr 130px 34px;
+    grid-template-columns: 52px 1fr 130px 34px;
     gap: 8px;
     font-size: 11px;
     text-transform: uppercase;
@@ -384,6 +385,7 @@
     font-weight: 700;
     margin-bottom: 6px;
   }
+
   .add-row-btn{
     width:100%;
     padding: 10px;
@@ -681,12 +683,41 @@
     user-select: none;
   }
 
-  /* Responsivitas Mobile: Form Isian Stack Vertikal agar tidak kekecilan */
+  /* RESPONSIVITAS MOBILE & FIX KOLOM DESKRIPSI AGAR LUAS */
   @media (max-width: 768px){
     .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
     .editor-panel{ max-width: 100%; width: 100%; }
     .preview-panel{ max-width:100%; width: 100%; }
     .field-row { flex-direction: column; gap: 0px; }
+
+    /* Di HP, item editor diubah menjadi 2 baris agar kolom Deskripsi leluasa 100% lebar */
+    .col-labels { display: none; }
+    .item-row-editor {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      margin-bottom: 12px;
+    }
+    .item-row-editor input[type="number"] {
+      width: 70px !important;
+      flex: none;
+    }
+    .item-row-editor input[type="text"] {
+      flex: 1;
+      min-width: 130px;
+    }
+    .item-row-editor .desc-inputs {
+      width: 100% !important;
+      order: 3;
+    }
+    .item-row-editor .remove-row-btn {
+      margin-left: auto;
+      height: 38px;
+    }
   }
 
   @media (max-width: 480px){
@@ -729,7 +760,7 @@
 </head>
 <body>
 
-  <!-- BACKGROUND PARTICLES -->
+  <!-- BACKGROUND PARTICLES (Coffee Steam & Crema Theme) -->
   <canvas id="particlesCanvas"></canvas>
 
   <!-- ================= LOGIN SCREEN ================= -->
@@ -740,7 +771,6 @@
         <span style="animation-delay: 0.25s">Kuitansi</span>
         <span style="animation-delay: 0.38s">Sahaja</span>
       </h1>
-      <!-- Subtitle animasi satu kalimat utuh -->
       <p>Masukkan password untuk mengakses editor</p>
       <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
       <button onclick="tryLogin()">Masuk</button>
@@ -878,7 +908,7 @@
   </div>
 
 <script>
-  // ---------------- PARTICLE SYSTEM ----------------
+  // ---------------- PARTICLE SYSTEM (COFFEE STEAM & CREMA THEME) ----------------
   let animationFrameId;
   function initParticles() {
     const canvas = document.getElementById('particlesCanvas');
@@ -894,20 +924,26 @@
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.8;
-        this.vy = (Math.random() - 0.5) * 0.8;
-        this.radius = Math.random() * 1.5 + 0.5;
+        // Gerakan sedikit melayang ke atas menyerupai uap kopi hangat
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = -Math.random() * 0.8 - 0.2;
+        this.radius = Math.random() * 1.8 + 0.6;
       }
       update() {
         this.x += this.vx;
         this.y += this.vy;
+        // Jika melewati batas atas, muncul kembali dari bawah
+        if (this.y < 0) {
+          this.y = height + 10;
+          this.x = Math.random() * width;
+        }
         if (this.x < 0 || this.x > width) this.vx = -this.vx;
-        if (this.y < 0 || this.y > height) this.vy = -this.vy;
       }
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+        // Nuansa warna busa kopi / crema hangat (krem keemasan lembut)
+        ctx.fillStyle = 'rgba(255, 243, 224, 0.55)';
         ctx.fill();
       }
     }
@@ -915,7 +951,7 @@
     function init() {
       resize();
       particles = [];
-      const particleCount = window.innerWidth < 768 ? 25 : 60;
+      const particleCount = window.innerWidth < 768 ? 25 : 65;
       for (let i = 0; i < particleCount; i++) particles.push(new Particle());
       window.addEventListener('resize', resize);
       animate();
@@ -930,9 +966,9 @@
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
+          if (dist < 110) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 - dist/1000})`;
+            ctx.strokeStyle = `rgba(255, 243, 224, ${0.15 - dist/800})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
