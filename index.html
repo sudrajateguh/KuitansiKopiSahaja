@@ -5,7 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuitansi Kopi Sahaja</title>
 <link rel="icon" type="image/png" href="assets/Logo.png">
+
+<!-- CDN html2pdf -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<!-- CDN Flatpickr (UI Tanggalan Estetik) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
+
 <style>
   @font-face{
     font-family: 'SF Pro Display Heavy';
@@ -46,6 +54,18 @@
     color: var(--ink-dark);
     min-height: 100vh;
     animation: bodyFadeIn .5s ease both;
+  }
+
+  /* KUSTOMISASI FLATPICKR AGAR SESUAI TEMA */
+  .flatpickr-calendar {
+    font-family: 'SF Pro Display Light', -apple-system, sans-serif !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    border: none !important;
+  }
+  .flatpickr-day.selected {
+    background: var(--accent) !important;
+    border-color: var(--accent) !important;
   }
 
   /* ---------------- ANIMATIONS ---------------- */
@@ -194,10 +214,10 @@
     flex-wrap: wrap;
     gap: 28px;
     padding: 28px;
-    max-width: 1080px; /* Dikecilkan agar preview menempel dengan form */
+    max-width: 1080px;
     margin: 0 auto;
     align-items:flex-start;
-    justify-content: center; /* Membuat form dan preview berpusat bersamaan */
+    justify-content: center;
   }
 
   /* ---------------- EDITOR PANEL ---------------- */
@@ -246,6 +266,12 @@
   input:focus, textarea:focus{
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(65,112,141,0.13);
+  }
+
+  /* Pointer agar user tahu form tanggal bisa diklik */
+  #inputPelunasan {
+    cursor: pointer;
+    background-color: #fafbfc;
   }
 
   .items-table{ margin-top: 4px; }
@@ -398,7 +424,7 @@
   .paper-wrap{
     position: relative;
     width: 100%;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5); /* Shadow utuh */
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5);
     animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
   }
   .paper-texture{
@@ -445,7 +471,6 @@
     padding: 0 9%;
   }
 
-  /* DESAIN INFORMASI BARU KIRI-KANAN (NAMA, DETAIL, NO, PELUNASAN) */
   .meta-block{
     display: flex;
     justify-content: space-between;
@@ -484,7 +509,6 @@
   .col-desc{ flex:1; }
   .col-amt{ width: 32%; text-align:right; }
 
-  /* HEADER TEXT ALIGNMENT */
   .table-header-bar .col-desc {
     text-align: center;
     padding-right: 25px;
@@ -499,7 +523,7 @@
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
     font-weight: 800;
-    font-size: 10.5px; /* Dikecilkan sesuai permintaan */
+    font-size: 10.5px;
     color: var(--header-label);
   }
 
@@ -511,18 +535,17 @@
 
   .item-row .col-qty {
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px; /* Dikecilkan */
+    font-size: 11px;
     color: var(--item-color);
   }
 
   .item-row .col-desc {
-    /* Style untuk wrapper agar muat deskripsi & sub-deskripsi */
     padding-right: 15px;
   }
 
   .item-row .col-desc-title {
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px; /* Dikecilkan */
+    font-size: 11px;
     color: var(--item-color);
     white-space: pre-line;
     line-height: 1.4;
@@ -531,9 +554,9 @@
   .item-row .col-desc-sub {
     margin-top: 5px;
     padding-left: 8px;
-    border-left: 1.5px solid var(--accent); /* Garis Biru Fleksibel */
+    border-left: 1.5px solid var(--accent);
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 9.5px; /* Dikecilkan agar lebih proporsional */
+    font-size: 9.5px;
     color: var(--ink-muted);
     white-space: pre-line;
     line-height: 1.4;
@@ -541,7 +564,7 @@
 
   .item-row .col-amt{
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px; /* Dikecilkan */
+    font-size: 11px;
     color: var(--item-color);
     white-space: nowrap;
     text-align: right;
@@ -557,14 +580,14 @@
   .total-row .col-desc{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: 12px; /* Dikecilkan */
+    font-size: 12px;
     color: var(--total-color);
     flex: 1;
   }
   .total-row .col-amt{
     font-family: 'SF Pro Display Heavy', sans-serif;
     font-weight: 800;
-    font-size: 12px; /* Dikecilkan */
+    font-size: 12px;
     color: var(--total-color);
     width: 32%;
     white-space: nowrap;
@@ -604,9 +627,7 @@
     user-select: none;
   }
 
-  /* MEDIA QUERY UNTUK MOBILE */
   @media (max-width: 860px){
-    /* align-items: center memastikan panel preview berada rata tengah di mode HP */
     .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
     .editor-panel{ max-width: 100%; width: 100%; }
     .preview-panel{ max-width:100%; width: 100%; }
@@ -683,7 +704,7 @@
           </div>
           <div class="field-group">
             <label>No. Kuitansi</label>
-            <input type="text" id="inputNomor" value="001/KS/VIII/2026">
+            <input type="text" id="inputNomor" value="001/KS/VIII/26">
           </div>
         </div>
 
@@ -694,12 +715,10 @@
           </div>
           <div class="field-group">
             <label>Tanggal Pelunasan</label>
-            <input type="text" id="inputPelunasan" value="13 Agustus 2026">
+            <!-- Menggunakan Input Teks biasa yang akan ditimpa menjadi kalender UI oleh Flatpickr -->
+            <input type="text" id="inputPelunasan" placeholder="Pilih Tanggal...">
           </div>
         </div>
-
-        <!-- Input tanggal disembunyikan agar auto-generate nomor (sinkronisasi sistem bulan) tetap berjalan -->
-        <input type="date" id="inputTanggal" style="display:none;">
 
         <h3>Daftar Item</h3>
         <div class="items-table">
@@ -737,7 +756,6 @@
                   <div class="middle-bg" id="middleBg"></div>
                   <div class="middle-content">
 
-                    <!-- INFO KIRI KANAN BARU -->
                     <div class="meta-block">
                       <div class="meta-col-left">
                         <div class="meta-item">
@@ -752,11 +770,11 @@
                       <div class="meta-col-right">
                         <div class="meta-item">
                           <span class="meta-label">No. Kuitansi:</span>
-                          <span class="meta-value" id="viewNomor">001/KS/VIII/2026</span>
+                          <span class="meta-value" id="viewNomor">001/KS/VIII/26</span>
                         </div>
                         <div class="meta-item">
                           <span class="meta-label">Pelunasan:</span>
-                          <span class="meta-value" id="viewPelunasan">13 Agustus 2026</span>
+                          <span class="meta-value" id="viewPelunasan">-</span>
                         </div>
                       </div>
                     </div>
@@ -835,31 +853,22 @@
     }
   });
 
-  // ---------------- STATE ----------------
-  // Struktur item diperbarui dengan tambahan property subDesc
   let items = [
     { qty: 1, desc: "Sahaja Cart Event Package", subDesc: "Kopsu Aren (52 Cups)\nCokelat (40 Cups)\nIce Black (10 Cups)", amt: 1000000 }
   ];
   let rowIdCounter = 0;
-
-  function todayISO(){
-    const now = new Date();
-    const y = now.getFullYear();
-    const m = String(now.getMonth() + 1).padStart(2,'0');
-    const d = String(now.getDate()).padStart(2,'0');
-    return `${y}-${m}-${d}`;
-  }
+  let flatpickrInstance = null;
 
   const ROMAN_MONTHS = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
   const ROMAN_MONTH_SET = new Set(ROMAN_MONTHS);
 
-  function syncNomorWithTanggal(){
-    const tglVal = document.getElementById('inputTanggal').value;
-    if(!tglVal) return;
-    const [y, m] = tglVal.split('-');
-    const monthIdx = parseInt(m, 10);
-    if(!monthIdx || monthIdx < 1 || monthIdx > 12) return;
-    const romanMonth = ROMAN_MONTHS[monthIdx - 1];
+  // Fungsi mengubah nomor seri (Romawi bulan & 2 digit tahun)
+  function syncNomorWithDate(dateObj){
+    if(!dateObj) return;
+    const m = dateObj.getMonth();
+    const y = dateObj.getFullYear();
+    const romanMonth = ROMAN_MONTHS[m];
+    const shortYear = y.toString().slice(-2); // Mengambil 2 digit terakhir tahun
 
     const nomorInput = document.getElementById('inputNomor');
     const parts = nomorInput.value.split('/').map(p => p.trim());
@@ -867,30 +876,45 @@
     if(parts.length >= 2){
       const lastIdx = parts.length - 1;
       const secondLastIdx = parts.length - 2;
-      const lastLooksLikeYear = /^\d{4}$/.test(parts[lastIdx]);
+
+      // Deteksi jika format belakangnya menyerupai tahun (2 hingga 4 digit) atau bulan Romawi
+      const lastLooksLikeYear = /^\d{2,4}$/.test(parts[lastIdx]);
       const secondLastLooksLikeMonth = ROMAN_MONTH_SET.has(parts[secondLastIdx].toUpperCase()) || parts[secondLastIdx] === '';
+
       if(lastLooksLikeYear || secondLastLooksLikeMonth){
         parts[secondLastIdx] = romanMonth;
-        parts[lastIdx] = y;
+        parts[lastIdx] = shortYear;
         nomorInput.value = parts.join('/');
       }
     }
   }
 
   function initApp(){
-    if(!document.getElementById('inputTanggal').value){
-      document.getElementById('inputTanggal').value = todayISO();
+    // Setup Kalender Flatpickr yang Estetik
+    flatpickrInstance = flatpickr("#inputPelunasan", {
+      locale: "id", // Bahasa Indonesia
+      dateFormat: "j F Y", // Contoh: 16 Agustus 2026
+      defaultDate: "today",
+      disableMobile: true, // Paksa tampilan UI kustom tetap muncul meski dibuka di HP
+      onChange: function(selectedDates) {
+        if(selectedDates.length > 0) {
+           syncNomorWithDate(selectedDates[0]);
+           renderReceipt();
+        }
+      }
+    });
+
+    if (flatpickrInstance.selectedDates.length > 0) {
+       syncNomorWithDate(flatpickrInstance.selectedDates[0]);
     }
-    syncNomorWithTanggal();
+
     renderItemsEditor();
     renderReceipt();
     checkAssetsLoaded();
 
-    // Binding Event Listeners form terbaru
     document.getElementById('inputNama').addEventListener('input', renderReceipt);
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
     document.getElementById('inputDetailAcara').addEventListener('input', renderReceipt);
-    document.getElementById('inputPelunasan').addEventListener('input', renderReceipt);
   }
 
   function checkAssetsLoaded(){
@@ -973,11 +997,13 @@
   }
 
   function renderReceipt(){
-    // Mengupdate konten Kiri-Kanan Atas
     document.getElementById('viewNama').textContent = document.getElementById('inputNama').value || '-';
     document.getElementById('viewDetailAcara').textContent = document.getElementById('inputDetailAcara').value || '-';
     document.getElementById('viewNomor').textContent = document.getElementById('inputNomor').value || '-';
-    document.getElementById('viewPelunasan').textContent = document.getElementById('inputPelunasan').value || '-';
+
+    // Memasukkan hasil kalender estetik ke dalam teks preview kuitansi
+    const pelunasanRaw = document.getElementById('inputPelunasan').value;
+    document.getElementById('viewPelunasan').textContent = pelunasanRaw || '-';
 
     const viewItems = document.getElementById('viewItems');
     viewItems.innerHTML = '';
@@ -987,7 +1013,6 @@
       const row = document.createElement('div');
       row.className = 'item-row';
 
-      // Logika agar garis & sub-desc muncul hanya jika ada isinya
       let subDescHTML = '';
       if(item.subDesc && item.subDesc.trim() !== ''){
         subDescHTML = `<div class="col-desc-sub">${escapeHtml(item.subDesc)}</div>`;
@@ -1089,7 +1114,7 @@
     return div.innerHTML;
   }
 
-  // ---------------- PDF EXPORT (direct download) ----------------
+  // ---------------- PDF EXPORT ----------------
   function waitForImagesToLoad(container){
     const imgs = Array.from(container.querySelectorAll('img'));
     return Promise.all(imgs.map(img => {
@@ -1167,7 +1192,6 @@
         try { await document.fonts.ready; } catch(e){ /* ignore */ }
       }
 
-      // Mengambil data nama & tanggal sistem agar file dinamai otomatis sesuai klien
       const clientName = document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'') || 'Unknown';
       const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
       const filename = `Kuitansi_Sahaja_${clientName}_${nomor}.pdf`;
