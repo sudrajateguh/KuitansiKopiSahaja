@@ -58,7 +58,7 @@
     overflow-x: hidden;
   }
 
-  /* BACKGROUND CANVAS PARTICLES */
+  /* BACKGROUND CANVAS PARTICLES - Vibe Antigravity */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -67,6 +67,7 @@
     height: 100vh;
     z-index: -1;
     pointer-events: none;
+    /* Akan dimatikan via JS saat masuk ke dalam aplikasi */
   }
 
   .flatpickr-calendar {
@@ -130,15 +131,15 @@
     z-index: 10;
   }
   .login-card{
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255,255,255,0.5);
     border-radius: 30px;
     padding: 46px 40px;
     width: 100%;
     max-width: 370px;
-    box-shadow: 0 30px 60px rgba(0,0,0,0.12);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
     text-align:center;
     animation: fadeInScale .7s cubic-bezier(.2,.8,.3,1) both;
   }
@@ -180,7 +181,7 @@
   .login-card button{
     width:100%;
     padding: 14px;
-    border-radius: 100px; /* Bentuk pill yang elegan */
+    border-radius: 100px;
     border:none;
     background: var(--accent);
     color:#fff;
@@ -436,6 +437,7 @@
     max-width: 500px;
     border-radius: 14px;
     overflow: hidden;
+    /* Efek shadow di app web tetap ada */
     box-shadow: 0 25px 60px rgba(0,0,0,0.25);
   }
 
@@ -451,7 +453,8 @@
   .paper-wrap{
     position: relative;
     width: 100%;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    /* Shadow ini tetap tampil di web, tapi tidak di-render di PDF */
+    filter: drop-shadow(0 25px 30px rgba(0,0,0,0.4));
     animation: fadeInScale .6s .3s cubic-bezier(.2,.8,.3,1) both;
   }
   .paper-texture{
@@ -515,13 +518,12 @@
     font-family: 'SF Pro Display Light', sans-serif;
   }
 
-  /* PERBAIKAN: Menggunakan font sistem standar bold agar tidak over tebal */
+  /* PERBAIKAN: Font dikembalikan ke SF Pro Display Heavy agar tebal seperti Bold */
   .meta-value {
     display: block;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: 'SF Pro Display Heavy', sans-serif;
     font-size: 10.5px;
     color: var(--ink-dark);
-    font-weight: 700;
     white-space: pre-line;
     line-height: 1.3;
   }
@@ -546,7 +548,6 @@
   .table-header-bar .col-amt{
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
-    font-weight: 800;
     font-size: 10.5px;
     color: var(--header-label);
   }
@@ -588,6 +589,7 @@
     text-align: right;
   }
 
+  /* PERBAIKAN: Logika Dinamis Total Row Rata Kanan */
   .total-row{
     display:flex;
     align-items:center;
@@ -597,20 +599,17 @@
   .total-row .col-qty{ width:14%; }
   .total-row .col-desc{
     font-family: 'SF Pro Display Heavy', sans-serif;
-    font-weight: 800;
     font-size: 12px;
     color: var(--total-color);
-    flex: 1; /* Memberikan dorongan fleksibel ke kolom AMT */
+    flex: 1; /* Memberikan ruang sisa fleksibel ke judul TOTAL */
   }
 
-  /* PERBAIKAN: Logika Rata Kanan Dinamis Total Harga */
   .total-row .col-amt{
     font-family: 'SF Pro Display Heavy', sans-serif;
-    font-weight: 800;
     font-size: 12px;
     color: var(--total-color);
-    /* Dihilangkan width: 32% agar tidak meluber batas saat angka kepanjangan */
-    flex-shrink: 0;
+    min-width: 32%; /* Minimal 32% agar sejajar dengan baris angka di atasnya */
+    width: auto; /* Jika angka kepanjangan, akan meluas ke kiri mendesak judul TOTAL */
     white-space: nowrap;
     text-align: right;
     margin-left: auto;
@@ -695,7 +694,7 @@
 </head>
 <body>
 
-  <!-- BACKGROUND PARTICLES (Antigravity Vibe) -->
+  <!-- BACKGROUND PARTICLES (Antigravity Vibe, Hanya Aktif di Login) -->
   <canvas id="particlesCanvas"></canvas>
 
   <!-- ================= LOGIN SCREEN ================= -->
@@ -841,6 +840,7 @@
 
 <script>
   // ---------------- PARTICLE SYSTEM (BACKGROUND LOGO) ----------------
+  let animationFrameId;
   function initParticles() {
     const canvas = document.getElementById('particlesCanvas');
     const ctx = canvas.getContext('2d');
@@ -855,8 +855,8 @@
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 1.2;
-        this.vy = (Math.random() - 0.5) * 1.2;
+        this.vx = (Math.random() - 0.5) * 0.8; // Diperlambat agar lebih elegan bak antigravitasi
+        this.vy = (Math.random() - 0.5) * 0.8;
         this.radius = Math.random() * 1.5 + 0.5;
       }
       update() {
@@ -868,7 +868,7 @@
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
         ctx.fill();
       }
     }
@@ -876,7 +876,7 @@
     function init() {
       resize();
       particles = [];
-      const particleCount = window.innerWidth < 768 ? 30 : 70; // Lebih sedikit partikel di HP
+      const particleCount = window.innerWidth < 768 ? 25 : 60;
       for (let i = 0; i < particleCount; i++) particles.push(new Particle());
       window.addEventListener('resize', resize);
       animate();
@@ -891,22 +891,20 @@
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 110) {
+          if (dist < 120) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 255, 255, ${0.15 - dist/700})`;
-            ctx.lineWidth = 0.6;
+            ctx.strokeStyle = `rgba(255, 255, 255, ${0.12 - dist/1000})`;
+            ctx.lineWidth = 0.5;
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
             ctx.stroke();
           }
         }
       }
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
     init();
   }
-
-  // Memulai animasi background seketika saat halaman dimuat
   window.addEventListener('DOMContentLoaded', initParticles);
 
 
@@ -920,6 +918,11 @@
     if(val === APP_PASSWORD){
       sessionStorage.setItem('nara_kwitansi_auth', '1');
       document.getElementById('loginScreen').style.display = 'none';
+
+      // PERBAIKAN: Mematikan animasi partikel agar tidak membebani memori/baterai setelah login
+      cancelAnimationFrame(animationFrameId);
+      document.getElementById('particlesCanvas').style.display = 'none';
+
       document.getElementById('app').classList.add('visible');
       initApp();
     } else {
@@ -936,6 +939,11 @@
   function logout(){
     sessionStorage.removeItem('nara_kwitansi_auth');
     document.getElementById('app').classList.remove('visible');
+
+    // Menghidupkan kembali animasi saat logout
+    document.getElementById('particlesCanvas').style.display = 'block';
+    initParticles();
+
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('passwordInput').value = '';
   }
@@ -943,6 +951,10 @@
   window.addEventListener('DOMContentLoaded', ()=>{
     if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
       document.getElementById('loginScreen').style.display = 'none';
+      // Mencegah animasi berjalan jika user auto-login dari sesi sebelumnya
+      cancelAnimationFrame(animationFrameId);
+      document.getElementById('particlesCanvas').style.display = 'none';
+
       document.getElementById('app').classList.add('visible');
       initApp();
     }
@@ -1302,15 +1314,14 @@
           onclone: function(clonedDoc) {
             const style = clonedDoc.createElement('style');
 
-            // PERBAIKAN: Menambahkan background putih paten pada .paper-wrap saat export
-            // agar library html2canvas memiliki objek solid untuk memproyeksikan box-shadow
+            // PERBAIKAN: Menghapus logika box-shadow di sini agar gerigi kertas tetap natural
             style.innerHTML = `
               * { animation: none !important; transition: none !important; }
               .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
 
               .paper-wrap {
-                background-color: #ffffff !important;
-                box-shadow: 0 20px 50px rgba(0,0,0,0.4) !important;
+                box-shadow: none !important;
+                filter: none !important;
               }
             `;
             clonedDoc.head.appendChild(style);
