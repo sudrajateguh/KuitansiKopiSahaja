@@ -115,9 +115,9 @@
   }
   @keyframes spin{ to{ transform: rotate(360deg); } }
   @keyframes stampPop{
-    0%{ opacity:0; transform: scale(.5) rotate(-18deg); }
-    70%{ opacity:1; transform: scale(1.08) rotate(-8deg); }
-    100%{ opacity:1; transform: scale(1) rotate(-10deg); }
+    0%{ opacity:0; transform: translateY(-50%) scale(.5) rotate(-18deg); }
+    70%{ opacity:1; transform: translateY(-50%) scale(1.08) rotate(-8deg); }
+    100%{ opacity:1; transform: translateY(-50%) scale(1) rotate(-10deg); }
   }
 
   .anim-shake{ animation: shake .4s ease; }
@@ -456,7 +456,7 @@
     border-radius: 14px;
     box-shadow: 0 25px 60px rgba(0,0,0,0.25);
     background: var(--body-bg);
-    overflow: hidden; /* Sembunyikan bagian luar yang over scale */
+    overflow: hidden;
     transition: height 0.15s ease;
   }
 
@@ -615,6 +615,7 @@
     align-items:center;
     padding: 2% 0 3%;
     justify-content: space-between;
+    position: relative; /* Wadah absolute stempel */
   }
   .total-row .col-qty{ width:14%; }
   .total-row .col-desc{
@@ -639,13 +640,17 @@
     width:100%;
     margin-top: -1px;
   }
+
+  /* STEMPEL MURNI CSS: Posisi & Ukuran pasti! Tidak akan lari-lari */
   .lunas-stamp{
     position:absolute;
+    width: 110px; /* Ukuran pas dan estetis */
+    left: -32px; /* Ditarik keluar agar menempel elegan di pinggir kertas */
+    top: 50%;
     z-index: 5;
     mix-blend-mode: normal;
-    filter: drop-shadow(0 10px 16px rgba(0,0,0,0.35));
+    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
     pointer-events:none;
-    transform: rotate(-10deg);
     animation: stampPop .45s cubic-bezier(.3,1.4,.5,1) both;
   }
 
@@ -707,10 +712,8 @@
 </head>
 <body>
 
-  <!-- BACKGROUND PARTICLES (Coffee Steam & Crema Theme) -->
   <canvas id="particlesCanvas"></canvas>
 
-  <!-- ================= LOGIN SCREEN ================= -->
   <div id="loginScreen" class="no-print">
     <div class="login-card">
       <img class="brand" src="assets/Logo.png" alt="Kopi Sahaja">
@@ -725,7 +728,6 @@
     </div>
   </div>
 
-  <!-- ================= MAIN APP ================= -->
   <div id="app">
     <div class="topbar no-print">
       <h2>Kuitansi Kopi Sahaja</h2>
@@ -733,7 +735,6 @@
     </div>
 
     <div class="main-layout">
-
       <!-- -------- EDITOR PANEL -------- -->
       <div class="editor-panel no-print">
         <h3>Informasi Kwitansi</h3>
@@ -826,26 +827,26 @@
 
                     <div class="items-list" id="viewItems"></div>
 
+                    <!-- Stempel dimasukkan secara struktural di dalam baris Total -->
                     <div class="total-row" id="totalRow">
                       <span class="col-qty"></span>
                       <span class="col-desc">TOTAL</span>
                       <span class="col-amt" id="viewTotal">Rp 0,-</span>
+                      <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.png" alt="Lunas">
                     </div>
+
                   </div>
                 </div>
 
                 <div class="bottom-section">
                   <img class="cap-img" src="assets/Bottom.png" alt="">
                 </div>
-
-                <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.png" alt="Lunas">
               </div>
             </div>
 
             <div class="footer-section">
               <img src="assets/Footer.png" alt="Kopi Sahaja">
             </div>
-
             <img class="paper-texture" src="assets/Texture.jpg" alt="">
           </div>
         </div>
@@ -1178,13 +1179,13 @@
     }
     totalPreviewEl.textContent = formatRupiah(total);
 
+    // Toggle tampilan stempel LUNAS
     document.getElementById('lunasStamp').style.display =
       document.getElementById('inputLunas').checked ? 'block' : 'none';
 
     requestAnimationFrame(()=>{
       tileMiddleBackground();
-      positionStamp();
-      scaleReceiptToFitScreen(); // Panggil fungsi scale setelah isi ter-render
+      scaleReceiptToFitScreen();
     });
   }
 
@@ -1213,34 +1214,9 @@
     }
   }
 
-  function positionStamp(){
-    const wrap = document.getElementById('paperWrap');
-    const totalRow = document.getElementById('totalRow');
-    const stamp = document.getElementById('lunasStamp');
-    if(!wrap || !totalRow || !stamp) return;
-
-    // Lebar absolut elemen paper
-    const baseWidth = 500;
-    const stampWidth = baseWidth * 0.35;
-
-    // Posisi relatif di dalam elemen yang belum di-scale
-    const totalRectTop = totalRow.offsetTop;
-    const totalHeight = totalRow.offsetHeight;
-
-    const paperPadTop = baseWidth * 0.15; // padding 15% dari lebar (karena padding di css pake %)
-
-    // Kalkulasi posisi stamp
-    const totalCenterY = paperPadTop + totalRectTop + (totalHeight / 2);
-
-    stamp.style.width = stampWidth + 'px';
-    stamp.style.left = (-stampWidth * 0.36) + 'px';
-    stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
-  }
-
   if(document.fonts && document.fonts.ready){
     document.fonts.ready.then(()=>{
       tileMiddleBackground();
-      positionStamp();
       scaleReceiptToFitScreen();
     });
   }
@@ -1251,7 +1227,7 @@
     return div.innerHTML;
   }
 
-  // ---------------- PDF EXPORT KONSISTEN & PRESISI ----------------
+  // ---------------- PDF EXPORT ----------------
   function waitForImagesToLoad(container){
     const imgs = Array.from(container.querySelectorAll('img'));
     return Promise.all(imgs.map(img => {
@@ -1302,53 +1278,53 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
 
+    const el = document.getElementById('receiptCapture');
+    const wrap = document.getElementById('scaleWrap');
+
+    // Simpan status scale saat ini
+    const originalTransform = wrap.style.transform;
+    const originalHeight = wrap.style.height;
+    const origScroll = window.scrollY;
+
     try {
-      const el = document.getElementById('receiptCapture');
+      // 1. Matikan efek scale SEMENTARA agar html2canvas membaca ukuran mentah secara utuh (anti-blank di mobile)
+      wrap.style.transform = 'none';
+      wrap.style.width = '500px';
+      wrap.style.height = 'auto';
+
+      // Gulir ke atas agar seluruh elemen kuitansi terlihat oleh mesin perender (bug html2canvas off-screen)
+      window.scrollTo(0, 0);
+
+      // Beri waktu 150ms agar peramban merender ulang tata letak (reflow) ukuran penuhnya
+      await new Promise(r => setTimeout(r, 150));
       await waitForImagesToLoad(el);
 
-      // Kita menghitung tinggi fisik absolut (500px unscaled layout)
+      // Hitung tinggi bersih elemen PDF sesungguhnya
       const exactDynamicHeight = el.offsetHeight;
 
       const clientName = document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'') || 'Unknown';
       const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
       const filename = `Kuitansi_Sahaja_${clientName}_${nomor}.pdf`;
 
-      // Konversi pixel 500px menjadi unit Point (pt) yang digunakan PDF agar tidak ada bug zoom/crop html2pdf
-      // 1 piksel (layar 96dpi) = 0.75 points
-      const pdfWidthPt = 500 * 0.75;
-      const pdfHeightPt = (exactDynamicHeight + 5) * 0.75; // ditambah margin aman bawah
-
+      // Pengaturan ukuran format mutlak agar hasil unduhan desktop pas tanpa border sisa
       const opt = {
         margin: 0,
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
-          scale: 2, // Kualitas render tetap tajam x2
+          scale: 2,
           useCORS: true,
-          onclone: function(clonedDoc) {
-            // Pada elemen kloning yang akan dirender PDF, paksa reset CSS transform agar tertangkap 100% ukurannya
-            const clonedEl = clonedDoc.getElementById('receiptCapture');
-            clonedEl.style.transform = 'none';
-            clonedEl.style.width = '500px';
-            clonedEl.style.margin = '0';
-
-            // Beri ruang bagi wrapper agar canvas dirender penuh
-            clonedDoc.body.style.width = '800px';
-
-            const style = clonedDoc.createElement('style');
-            style.innerHTML = `
-              * { animation: none !important; transition: none !important; box-sizing: border-box !important; }
-              #receiptCapture { transform: none !important; width: 500px !important; margin: 0 !important; }
-              .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
-              .paper-wrap { box-shadow: 0 25px 50px rgba(0,0,0,0.4) !important; }
-            `;
-            clonedDoc.head.appendChild(style);
-          }
+          windowWidth: 500, // Simulasi lebar viewport desktop
+          width: 500,
+          height: exactDynamicHeight,
+          scrollY: 0,
+          scrollX: 0
         },
         jsPDF: {
-          unit: 'pt', // Menggunakan Point (pt) sebagai unit standar aman
-          format: [pdfWidthPt, pdfHeightPt],
-          orientation: 'portrait'
+          unit: 'px',
+          format: [500, exactDynamicHeight],
+          orientation: 'portrait',
+          hotfixes: ['px_scaling']
         }
       };
 
@@ -1375,6 +1351,13 @@
       btn.textContent = originalLabel;
     } catch(err){
       showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.'));
+    } finally {
+      // 2. Kembalikan ukuran tampilan ke versi responsif untuk device pengguna
+      wrap.style.transform = originalTransform;
+      wrap.style.width = '100%';
+      wrap.style.height = originalHeight;
+      window.scrollTo(0, origScroll);
+      scaleReceiptToFitScreen();
     }
   }
 </script>
