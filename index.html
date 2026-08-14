@@ -468,12 +468,16 @@
   }
   .col-qty{ width: 14%; }
   .col-desc{ flex:1; }
-  .col-amt{ width: 32%; text-align:right; }
+  .col-amt{ width: 32%; text-align: right; }
 
-  /* Membuat khusus teks header "AMT" menjadi rata tengah */
-    .table-header-bar .col-amt {
-      text-align: center;
-    }
+  /* Membuat khusus teks header "DESC" dan "AMT" menjadi rata tengah */
+  .table-header-bar .col-desc {
+    text-align: center;
+    padding-right: 25px; /* Sedikit geser ke kiri agar pas di tengah mata */
+  }
+  .table-header-bar .col-amt {
+    text-align: center;
+  }
 
   .table-header-bar .col-qty,
   .table-header-bar .col-desc,
@@ -506,26 +510,28 @@
       text-align: right;
     }
 
-  .total-row{
-    display:flex;
-    align-items:center;
-    padding: 2% 0 3%;
-  }
-  .total-row .col-qty{ width:14%; }
-  .total-row .col-desc{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-weight: 800;
-    font-size: 13.5px;
-    color: var(--total-color);
-  }
-  .total-row .col-amt{
-      font-family: 'SF Pro Display Heavy', sans-serif;
-      font-weight: 800;
-      font-size: 13.5px;
-      color: var(--total-color);
-      white-space: nowrap;
-      text-align: right;
-    }
+    .total-row{
+        display:flex;
+        align-items:center;
+        padding: 2% 0 3%;
+      }
+      .total-row .col-qty{ width:14%; }
+      .total-row .col-desc{
+        font-family: 'SF Pro Display Heavy', sans-serif;
+        font-weight: 800;
+        font-size: 13.5px;
+        color: var(--total-color);
+        width: 54%; /* Mengunci lebar bagian kiri total agar tidak terdorong */
+      }
+      .total-row .col-amt{
+        font-family: 'SF Pro Display Heavy', sans-serif;
+        font-weight: 800;
+        font-size: 13.5px;
+        color: var(--total-color);
+        width: 32%; /* Menyamakan lebar dengan kolom AMT di atasnya */
+        white-space: nowrap;
+        text-align: right; /* Pastikan tetap rata kanan dan tidak over ke kanan */
+      }
 
   .bottom-section{
       position: relative;
