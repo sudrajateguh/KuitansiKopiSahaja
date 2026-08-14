@@ -1081,6 +1081,7 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
 
+      // Menyalakan tekstur & mematikan animasi saat export
       const exportStyle = document.createElement('style');
       exportStyle.innerHTML = `
         #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; }
@@ -1114,8 +1115,7 @@
             backgroundColor: '#41708d',
             scrollY: 0,
             scrollX: 0,
-            windowWidth: el.scrollWidth,        // <-- PERBAIKAN: Memaksa lebar virtual
-            windowHeight: el.scrollHeight,      // <-- PERBAIKAN: Memaksa tinggi virtual agar tidak terpotong setinggi layar
+            // Parameter windowWidth dan windowHeight TELAH DIHAPUS agar tidak menggeser elemen ke kiri
             imageTimeout: 15000,
             onclone: function(clonedDoc) {
               const style = clonedDoc.createElement('style');
@@ -1125,7 +1125,8 @@
           },
           jsPDF: {
             unit: 'px',
-            format: [el.scrollWidth, el.scrollHeight + 10],
+            // Ukuran kertas ditentukan di sini, ditambah buffer 10px untuk mencegah bocor ke halaman 2
+            format: [el.offsetWidth, el.offsetHeight + 10],
             orientation: 'portrait'
           }
         };
