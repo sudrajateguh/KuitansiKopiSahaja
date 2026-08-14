@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kuitansi Kopi Sahaja</title>
-<link rel="icon" type="image/jpeg" href="assets/KopiSahajaKotakBiru.jpeg">
+<link rel="icon" type="image/png" href="assets/KopiSahajaKotakBiru.png">
 
 <!-- CDN html2pdf -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -125,7 +125,7 @@
   .anim-shake{ animation: shake .4s ease; }
   .anim-pulse{ animation: pulseTotal .35s ease; }
 
-  /* ---------------- LOGIN SCREEN ---------------- */
+  /* ---------------- LOGIN SCREEN (FLOATING BUTTON CUT) ---------------- */
   #loginScreen{
     min-height: 100vh;
     display:flex;
@@ -140,8 +140,8 @@
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.8);
-    border-radius: 40px;
-    padding: 38px 36px 12px 36px;
+    border-radius: 36px;
+    padding: 38px 36px 6px 36px;
     width: 100%;
     max-width: 380px;
     box-shadow: 0 35px 80px rgba(0, 0, 0, 0.18);
@@ -222,7 +222,7 @@
     transform: translateY(35px);
     animation: fadeInUpWord 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
     transition: all .25s ease;
-    margin-bottom: -22px;
+    margin-bottom: -26px;
     position: relative;
     z-index: 2;
     box-shadow: 0 6px 20px rgba(65, 112, 141, 0.4);
@@ -237,7 +237,7 @@
   #loginError{
     color: #ffe3e3;
     font-size: 13px;
-    margin-top: 30px;
+    margin-top: 34px;
     margin-bottom: -4px;
     min-height: 16px;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
@@ -488,7 +488,8 @@
   #receiptCapture{
     background: var(--body-bg);
     position: relative;
-    width: 500px;
+    width: 100%;
+    max-width: 500px;
     margin: 0 auto;
   }
 
@@ -699,7 +700,6 @@
     .preview-panel{ max-width:100%; width: 100%; }
     .field-row { flex-direction: column; gap: 0px; }
 
-    /* Di HP, item editor diubah menjadi 2 baris agar kolom Deskripsi leluasa 100% lebar */
     .col-labels { display: none; }
     .item-row-editor {
       display: flex;
@@ -762,7 +762,7 @@
       box-shadow:none !important;
       border-radius:0 !important;
     }
-    #receiptCapture{ animation:none !important; width: 500px !important; }
+    #receiptCapture{ animation:none !important; width: 100% !important; max-width: 500px !important; }
     .paper-wrap, .lunas-stamp{ animation:none !important; }
   }
 </style>
@@ -1358,7 +1358,7 @@
 
     const exportStyle = document.createElement('style');
     exportStyle.innerHTML = `
-      #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; width: 500px !important; }
+      #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; width: 500px !important; max-width: none !important; box-sizing: border-box !important; }
       .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
     `;
     document.head.appendChild(exportStyle);
@@ -1403,8 +1403,8 @@
           onclone: function(clonedDoc) {
             const style = clonedDoc.createElement('style');
             style.innerHTML = `
-              * { animation: none !important; transition: none !important; }
-              #receiptCapture { width: 500px !important; margin: 0 auto !important; }
+              * { animation: none !important; transition: none !important; box-sizing: border-box !important; }
+              #receiptCapture { width: 500px !important; max-width: none !important; margin: 0 auto !important; }
               .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
               .paper-wrap { box-shadow: 0 25px 50px rgba(0,0,0,0.4) !important; }
             `;
