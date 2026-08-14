@@ -1117,26 +1117,26 @@
             imageTimeout: 15000,
             onclone: function(clonedDoc) {
               const style = clonedDoc.createElement('style');
-              // PERBAIKAN: Trik menambahkan kotak berbayang di belakang kuitansi khusus untuk export
               style.innerHTML = `
                 * { animation: none !important; transition: none !important; }
                 .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
-
-                .paper-wrap {
-                  box-shadow: none !important;
-                  z-index: 1 !important;
-                }
-                .paper-wrap::before {
-                  content: '';
-                  position: absolute;
-                  top: 15px; bottom: 15px; left: 5px; right: 5px;
-                  background: #ffffff;
-                  box-shadow: 0 25px 50px rgba(0,0,0,0.5) !important;
-                  z-index: -1;
-                  border-radius: 4px;
-                }
               `;
               clonedDoc.head.appendChild(style);
+
+              // PERBAIKAN: Menyisipkan elemen bayangan fisik secara langsung ke dalam DOM klon
+              const clonedPaper = clonedDoc.getElementById('paperWrap');
+              if(clonedPaper){
+                const shadowLayer = clonedDoc.createElement('div');
+                shadowLayer.style.cssText = `
+                  position: absolute;
+                  inset: 0;
+                  background: #ffffff;
+                  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
+                  z-index: -1;
+                  border-radius: 4px;
+                `;
+                clonedPaper.appendChild(shadowLayer);
+              }
             }
           },
           jsPDF: {
