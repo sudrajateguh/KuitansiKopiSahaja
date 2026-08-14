@@ -468,7 +468,12 @@
   }
   .col-qty{ width: 14%; }
   .col-desc{ flex:1; }
-  .col-amt{ width: 32%; text-align: center; }
+  .col-amt{ width: 32%; text-align:right; }
+
+  /* Membuat khusus teks header "AMT" menjadi rata tengah */
+    .table-header-bar .col-amt {
+      text-align: center;
+    }
 
   .table-header-bar .col-qty,
   .table-header-bar .col-desc,
@@ -494,11 +499,12 @@
     line-height: 1.5;
   }
   .item-row .col-amt{
-    font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 12.5px;
-    color: var(--item-color);
-    white-space: nowrap;
-  }
+      font-family: 'SF Pro Display Light', sans-serif;
+      font-size: 12.5px;
+      color: var(--item-color);
+      white-space: nowrap;
+      text-align: right;
+    }
 
   .total-row{
     display:flex;
@@ -513,12 +519,13 @@
     color: var(--total-color);
   }
   .total-row .col-amt{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-weight: 800;
-    font-size: 13.5px;
-    color: var(--total-color);
-    white-space: nowrap;
-  }
+      font-family: 'SF Pro Display Heavy', sans-serif;
+      font-weight: 800;
+      font-size: 13.5px;
+      color: var(--total-color);
+      white-space: nowrap;
+      text-align: right;
+    }
 
   .bottom-section{
       position: relative;
