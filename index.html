@@ -980,13 +980,14 @@
     const totalRect = totalRow.getBoundingClientRect();
     if(wrapRect.width === 0) return;
 
-    const stampWidth = wrapRect.width * 0.26;
+    // PERBAIKAN: Membesarkan stempel menjadi 35% (0.35) dari lebar kertas
+    const stampWidth = wrapRect.width * 0.35;
     const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
     stamp.style.width = stampWidth + 'px';
-    stamp.style.left = (-stampWidth * 0.18) + 'px';
-    stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
-  }
+    stamp.style.left = (-stampWidth * 0.15) + 'px'; // Sesuaikan posisi kiri agar pas
+      stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
+    }
 
   let resizeTimer;
   window.addEventListener('resize', ()=>{
@@ -1076,11 +1077,11 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
 
-      // PERBAIKAN: Mematikan animasi dan efek tekstur sementara agar terbaca oleh html2canvas
+      // PERBAIKAN: Menyalakan tekstur tapi menonaktifkan mix-blend-mode khusus saat export PDF
       const exportStyle = document.createElement('style');
       exportStyle.innerHTML = `
         #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; }
-        .paper-texture { display: none !important; }
+        .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
       `;
       document.head.appendChild(exportStyle);
 
@@ -1112,15 +1113,14 @@
             scrollX: 0,
             imageTimeout: 15000,
             onclone: function(clonedDoc) {
-              // Memastikan animasi mati di dalam dokumen hasil kloning
               const style = clonedDoc.createElement('style');
-              style.innerHTML = '* { animation: none !important; transition: none !important; } .paper-texture { display: none !important; }';
+              style.innerHTML = '* { animation: none !important; transition: none !important; } .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }';
               clonedDoc.head.appendChild(style);
             }
           },
           jsPDF: {
             unit: 'px',
-            format: [el.scrollWidth, el.scrollHeight],
+            format: [el.scrollWidth, el.scrollHeight + 10], // PERBAIKAN: Tambah buffer 10px agar tidak bocor ke halaman 2
             orientation: 'portrait'
           }
         };
@@ -1153,7 +1153,6 @@
           ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
       } finally {
         cleanupStrayOverlays(bodyChildrenBefore);
-        // PERBAIKAN: Mengembalikan elemen style agar halaman kembali normal setelah PDF selesai dibuat
         if (exportStyle.parentNode) {
           exportStyle.parentNode.removeChild(exportStyle);
         }
