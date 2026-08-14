@@ -391,11 +391,12 @@
     padding: 15% 15% 10%;
   }
   .paper-wrap{
-    position: relative;
-    width: 100%;
-    box-shadow: 0 22px 40px rgba(0,0,0,0.38);
-    animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
-  }
+      position: relative;
+      width: 100%;
+      /* Shadow dipergelap dan diperbesar agar html2canvas bisa menangkapnya */
+      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+      animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
+    }
   .paper-texture{
     position:absolute;
     inset:0;
@@ -414,10 +415,12 @@
   }
 
   .middle-section{
-    position: relative;
-    width:100%;
-    z-index: 1;
-  }
+      position: relative;
+      width:100%;
+      z-index: 1;
+      margin-top: -1px; /* Menarik bagian tengah ke atas untuk menutup celah */
+      margin-bottom: -1px; /* Menarik bagian bawah ke atas untuk menutup celah */
+    }
   .middle-bg{
     position:absolute;
     inset:0;
@@ -518,9 +521,10 @@
   }
 
   .bottom-section{
-    position: relative;
-    width:100%;
-  }
+      position: relative;
+      width:100%;
+      margin-top: -1px; /* Memastikan celah bawah rapat */
+    }
   .lunas-stamp{
     position:absolute;
     z-index: 5;
@@ -971,21 +975,21 @@
   // Anchor the LUNAS stamp to the TOTAL row so it stays correctly placed
   // no matter how many item rows are added (instead of a fixed % offset).
   function positionStamp(){
-    const wrap = document.getElementById('paperWrap');
-    const totalRow = document.getElementById('totalRow');
-    const stamp = document.getElementById('lunasStamp');
-    if(!wrap || !totalRow || !stamp) return;
+      const wrap = document.getElementById('paperWrap');
+      const totalRow = document.getElementById('totalRow');
+      const stamp = document.getElementById('lunasStamp');
+      if(!wrap || !totalRow || !stamp) return;
 
-    const wrapRect = wrap.getBoundingClientRect();
-    const totalRect = totalRow.getBoundingClientRect();
-    if(wrapRect.width === 0) return;
+      const wrapRect = wrap.getBoundingClientRect();
+      const totalRect = totalRow.getBoundingClientRect();
+      if(wrapRect.width === 0) return;
 
-    // PERBAIKAN: Membesarkan stempel menjadi 35% (0.35) dari lebar kertas
-    const stampWidth = wrapRect.width * 0.35;
-    const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
+      const stampWidth = wrapRect.width * 0.35;
+      const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
-    stamp.style.width = stampWidth + 'px';
-    stamp.style.left = (-stampWidth * 0.15) + 'px'; // Sesuaikan posisi kiri agar pas
+      stamp.style.width = stampWidth + 'px';
+      // PERBAIKAN: Angka diubah dari -0.15 menjadi -0.28 agar lebih ke kiri
+      stamp.style.left = (-stampWidth * 0.28) + 'px';
       stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
     }
 
