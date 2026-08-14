@@ -194,9 +194,10 @@
     flex-wrap: wrap;
     gap: 28px;
     padding: 28px;
-    max-width: 1400px;
+    max-width: 1080px; /* Dikecilkan agar preview menempel dengan form */
     margin: 0 auto;
     align-items:flex-start;
+    justify-content: center; /* Membuat form dan preview berpusat bersamaan */
   }
 
   /* ---------------- EDITOR PANEL ---------------- */
@@ -257,11 +258,17 @@
     animation: rowIn .3s ease both;
     transition: opacity .18s ease, transform .18s ease;
   }
+  .desc-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .desc-inputs textarea { min-height: 40px; }
+
   .item-row-editor.removing{
     opacity: 0;
     transform: translateX(10px);
   }
-  .item-row-editor textarea{ min-height: 40px; }
   .remove-row-btn{
     width: 34px;
     height: 40px;
@@ -384,19 +391,16 @@
     position: relative;
   }
 
-  /* Frame that holds the paper receipt with breathing room on all sides,
-     matching the reference preview mock-up. */
   .receipt-frame{
     background: var(--body-bg);
     padding: 15% 15% 10%;
   }
   .paper-wrap{
-      position: relative;
-      width: 100%;
-      /* Shadow dipergelap dan diperbesar agar html2canvas bisa menangkapnya */
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
-    }
+    position: relative;
+    width: 100%;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.5); /* Shadow utuh */
+    animation: fadeInScale .5s .2s cubic-bezier(.2,.8,.3,1) both;
+  }
   .paper-texture{
     position:absolute;
     inset:0;
@@ -415,12 +419,12 @@
   }
 
   .middle-section{
-      position: relative;
-      width:100%;
-      z-index: 1;
-      margin-top: -1px; /* Menarik bagian tengah ke atas untuk menutup celah */
-      margin-bottom: -1px; /* Menarik bagian bawah ke atas untuk menutup celah */
-    }
+    position: relative;
+    width:100%;
+    z-index: 1;
+    margin-top: -1px;
+    margin-bottom: -1px;
+  }
   .middle-bg{
     position:absolute;
     inset:0;
@@ -441,21 +445,31 @@
     padding: 0 9%;
   }
 
+  /* DESAIN INFORMASI BARU KIRI-KANAN (NAMA, DETAIL, NO, PELUNASAN) */
   .meta-block{
-    text-align:center;
+    display: flex;
+    justify-content: space-between;
     padding: 3.2% 0 2.6%;
   }
-  .kwitansi-no{
-    font-size: 11px;
-    color: var(--ink-muted);
-    letter-spacing: .3px;
-    margin-bottom: 4px;
+  .meta-col-left { text-align: left; }
+  .meta-col-right { text-align: right; }
+  .meta-item { margin-bottom: 7px; }
+
+  .meta-label {
+    display: block;
+    font-size: 8.5px;
+    color: var(--ink-dark);
+    margin-bottom: 2px;
     font-family: 'SF Pro Display Light', sans-serif;
   }
-  .kwitansi-date{
-    font-size: 14.5px;
-    color: var(--item-color);
-    font-family: 'SF Pro Display Light', sans-serif;
+  .meta-value {
+    display: block;
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-size: 10.5px;
+    color: var(--ink-dark);
+    font-weight: 800;
+    white-space: pre-line;
+    line-height: 1.3;
   }
 
   .table-header-bar{
@@ -468,12 +482,12 @@
   }
   .col-qty{ width: 14%; }
   .col-desc{ flex:1; }
-  .col-amt{ width: 32%; text-align: right; }
+  .col-amt{ width: 32%; text-align:right; }
 
-  /* Membuat khusus teks header "DESC" dan "AMT" menjadi rata tengah */
+  /* HEADER TEXT ALIGNMENT */
   .table-header-bar .col-desc {
     text-align: center;
-    padding-right: 25px; /* Sedikit geser ke kiri agar pas di tengah mata */
+    padding-right: 25px;
   }
   .table-header-bar .col-amt {
     text-align: center;
@@ -485,7 +499,7 @@
     font-family: 'SF Pro Display Heavy Italic', sans-serif;
     font-style: italic;
     font-weight: 800;
-    font-size: 12px;
+    font-size: 10.5px; /* Dikecilkan sesuai permintaan */
     color: var(--header-label);
   }
 
@@ -494,51 +508,74 @@
     display:flex;
     padding-bottom: 2.4%;
   }
-  .item-row .col-qty,
-  .item-row .col-desc{
+
+  .item-row .col-qty {
     font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 12.5px;
+    font-size: 11px; /* Dikecilkan */
+    color: var(--item-color);
+  }
+
+  .item-row .col-desc {
+    /* Style untuk wrapper agar muat deskripsi & sub-deskripsi */
+    padding-right: 15px;
+  }
+
+  .item-row .col-desc-title {
+    font-family: 'SF Pro Display Light', sans-serif;
+    font-size: 11px; /* Dikecilkan */
     color: var(--item-color);
     white-space: pre-line;
-    line-height: 1.5;
+    line-height: 1.4;
   }
-  .item-row .col-amt{
-      font-family: 'SF Pro Display Light', sans-serif;
-      font-size: 12.5px;
-      color: var(--item-color);
-      white-space: nowrap;
-      text-align: right;
-    }
 
-    .total-row{
-        display:flex;
-        align-items:center;
-        padding: 2% 0 3%;
-        justify-content: space-between;
-      }
-      .total-row .col-qty{ width:14%; }
-      .total-row .col-desc{
-        font-family: 'SF Pro Display Heavy', sans-serif;
-        font-weight: 800;
-        font-size: 13.5px;
-        color: var(--total-color);
-        flex: 1;
-      }
-      .total-row .col-amt{
-        font-family: 'SF Pro Display Heavy', sans-serif;
-        font-weight: 800;
-        font-size: 13.5px;
-        color: var(--total-color);
-        width: 32%; /* Menyamakan persis dengan lebar .col-amt pada header & item */
-        white-space: nowrap;
-        text-align: right; /* Memastikan posisinya pas rata kanan di dalam jalurnya */
-      }
+  .item-row .col-desc-sub {
+    margin-top: 5px;
+    padding-left: 8px;
+    border-left: 1.5px solid var(--accent); /* Garis Biru Fleksibel */
+    font-family: 'SF Pro Display Light', sans-serif;
+    font-size: 9.5px; /* Dikecilkan agar lebih proporsional */
+    color: var(--ink-muted);
+    white-space: pre-line;
+    line-height: 1.4;
+  }
+
+  .item-row .col-amt{
+    font-family: 'SF Pro Display Light', sans-serif;
+    font-size: 11px; /* Dikecilkan */
+    color: var(--item-color);
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  .total-row{
+    display:flex;
+    align-items:center;
+    padding: 2% 0 3%;
+    justify-content: space-between;
+  }
+  .total-row .col-qty{ width:14%; }
+  .total-row .col-desc{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-weight: 800;
+    font-size: 12px; /* Dikecilkan */
+    color: var(--total-color);
+    flex: 1;
+  }
+  .total-row .col-amt{
+    font-family: 'SF Pro Display Heavy', sans-serif;
+    font-weight: 800;
+    font-size: 12px; /* Dikecilkan */
+    color: var(--total-color);
+    width: 32%;
+    white-space: nowrap;
+    text-align: right;
+  }
 
   .bottom-section{
-      position: relative;
-      width:100%;
-      margin-top: -1px; /* Memastikan celah bawah rapat */
-    }
+    position: relative;
+    width:100%;
+    margin-top: -1px;
+  }
   .lunas-stamp{
     position:absolute;
     z-index: 5;
@@ -561,44 +598,34 @@
     margin: 0 auto;
   }
 
-  /* Receipt content should read like a printed document: not selectable,
-     and it also guarantees the exported PDF (rasterized via html2canvas)
-     never contains an editable/selectable text layer. */
   #receiptCapture, #receiptCapture *{
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
   }
 
+  /* MEDIA QUERY UNTUK MOBILE */
   @media (max-width: 860px){
-    .main-layout{ flex-direction:column; padding: 16px; }
-    .editor-panel{ max-width: 100%; }
-    .preview-panel{ max-width:100%; }
+    /* align-items: center memastikan panel preview berada rata tengah di mode HP */
+    .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
+    .editor-panel{ max-width: 100%; width: 100%; }
+    .preview-panel{ max-width:100%; width: 100%; }
   }
 
-  /* On narrow phones the receipt paper itself renders smaller (frame
-     margins take a % of a smaller viewport), so nudge the fixed text
-     sizes down a bit to avoid crowding — plain media query, no
-     container queries, so this stays fully compatible with the
-     html2canvas-based PDF export. */
   @media (max-width: 480px){
-    .kwitansi-no{ font-size: 9.5px; }
-    .kwitansi-date{ font-size: 12.5px; }
+    .meta-label{ font-size: 7.5px; }
+    .meta-value{ font-size: 9.5px; }
     .table-header-bar .col-qty,
     .table-header-bar .col-desc,
-    .table-header-bar .col-amt{ font-size: 10.5px; }
+    .table-header-bar .col-amt{ font-size: 9.5px; }
     .item-row .col-qty,
-    .item-row .col-desc,
-    .item-row .col-amt{ font-size: 11px; }
+    .item-row .col-desc-title,
+    .item-row .col-amt{ font-size: 10px; }
+    .item-row .col-desc-sub{ font-size: 8.5px; }
     .total-row .col-desc,
-    .total-row .col-amt{ font-size: 12px; }
+    .total-row .col-amt{ font-size: 11px; }
   }
 
-  /* ---------------- MANUAL PRINT FALLBACK (Ctrl+P) ----------------
-     The download button uses html2canvas (below) for a direct one-click
-     PDF download. These rules just make sure that if someone manually
-     prints the page (Ctrl/Cmd+P) instead, only the receipt itself shows,
-     enlarged to use the full printable page width. */
   @media print{
     @page{ margin: 10mm; }
     html, body{ background:#fff !important; height:auto !important; }
@@ -651,19 +678,33 @@
         <h3>Informasi Kwitansi</h3>
         <div class="field-row">
           <div class="field-group">
-            <label>No. Kwitansi</label>
-            <input type="text" id="inputNomor" value="001/KS/X/2025">
+            <label>Nama</label>
+            <input type="text" id="inputNama" value="Ardian">
           </div>
           <div class="field-group">
-            <label>Tanggal</label>
-            <input type="date" id="inputTanggal">
+            <label>No. Kuitansi</label>
+            <input type="text" id="inputNomor" value="001/KS/VIII/2026">
           </div>
         </div>
+
+        <div class="field-row">
+          <div class="field-group">
+            <label>Detail Acara</label>
+            <textarea id="inputDetailAcara" rows="2">Komperta Tegal Kamulyan&#10;16 Agustus 2026; ±19.30</textarea>
+          </div>
+          <div class="field-group">
+            <label>Tanggal Pelunasan</label>
+            <input type="text" id="inputPelunasan" value="13 Agustus 2026">
+          </div>
+        </div>
+
+        <!-- Input tanggal disembunyikan agar auto-generate nomor (sinkronisasi sistem bulan) tetap berjalan -->
+        <input type="date" id="inputTanggal" style="display:none;">
 
         <h3>Daftar Item</h3>
         <div class="items-table">
           <div class="col-labels">
-            <span>Qty</span><span>Deskripsi</span><span>Jumlah (Rp)</span><span></span>
+            <span>Qty</span><span>Deskripsi & Sub</span><span>Jumlah (Rp)</span><span></span>
           </div>
           <div id="itemsEditor"></div>
         </div>
@@ -695,9 +736,29 @@
                 <div class="middle-section" id="middleSection">
                   <div class="middle-bg" id="middleBg"></div>
                   <div class="middle-content">
+
+                    <!-- INFO KIRI KANAN BARU -->
                     <div class="meta-block">
-                      <div class="kwitansi-no" id="viewNomor">No. 001/KS/X/2025</div>
-                      <div class="kwitansi-date" id="viewTanggal">30/10/2025</div>
+                      <div class="meta-col-left">
+                        <div class="meta-item">
+                          <span class="meta-label">Nama:</span>
+                          <span class="meta-value" id="viewNama">Ardian</span>
+                        </div>
+                        <div class="meta-item">
+                          <span class="meta-label">Detail Acara:</span>
+                          <span class="meta-value" id="viewDetailAcara">Komperta Tegal Kamulyan<br>16 Agustus 2026; ±19.30</span>
+                        </div>
+                      </div>
+                      <div class="meta-col-right">
+                        <div class="meta-item">
+                          <span class="meta-label">No. Kuitansi:</span>
+                          <span class="meta-value" id="viewNomor">001/KS/VIII/2026</span>
+                        </div>
+                        <div class="meta-item">
+                          <span class="meta-label">Pelunasan:</span>
+                          <span class="meta-value" id="viewPelunasan">13 Agustus 2026</span>
+                        </div>
+                      </div>
                     </div>
 
                     <div class="table-header-bar">
@@ -751,7 +812,7 @@
     } else {
       err.textContent = 'Password salah, silakan coba lagi.';
       card.classList.remove('anim-shake');
-      void card.offsetWidth; // restart animation
+      void card.offsetWidth;
       card.classList.add('anim-shake');
     }
   }
@@ -766,7 +827,6 @@
     document.getElementById('passwordInput').value = '';
   }
 
-  // auto-login if already authenticated this session
   window.addEventListener('DOMContentLoaded', ()=>{
     if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
       document.getElementById('loginScreen').style.display = 'none';
@@ -776,8 +836,9 @@
   });
 
   // ---------------- STATE ----------------
+  // Struktur item diperbarui dengan tambahan property subDesc
   let items = [
-    { qty: 1, desc: "Sahaja Cart Event Package\n400 cups", amt: 4000000 }
+    { qty: 1, desc: "Sahaja Cart Event Package", subDesc: "Kopsu Aren (52 Cups)\nCokelat (40 Cups)\nIce Black (10 Cups)", amt: 1000000 }
   ];
   let rowIdCounter = 0;
 
@@ -792,9 +853,6 @@
   const ROMAN_MONTHS = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
   const ROMAN_MONTH_SET = new Set(ROMAN_MONTHS);
 
-  // Keeps the bulan (roman numeral) & tahun segments of "No. Kwitansi" in sync
-  // with the selected tanggal, e.g. "001/KS/X/2025" -> bulan/tahun auto-updated
-  // while the running number / prefix parts the user typed are preserved.
   function syncNomorWithTanggal(){
     const tglVal = document.getElementById('inputTanggal').value;
     if(!tglVal) return;
@@ -827,16 +885,14 @@
     renderItemsEditor();
     renderReceipt();
     checkAssetsLoaded();
+
+    // Binding Event Listeners form terbaru
+    document.getElementById('inputNama').addEventListener('input', renderReceipt);
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
-    document.getElementById('inputTanggal').addEventListener('input', () => {
-      syncNomorWithTanggal();
-      renderReceipt();
-    });
+    document.getElementById('inputDetailAcara').addEventListener('input', renderReceipt);
+    document.getElementById('inputPelunasan').addEventListener('input', renderReceipt);
   }
 
-  // Surfaces a clear, visible warning directly on the page if any image
-  // asset 404s — so a broken deploy (e.g. assets/ folder not fully
-  // uploaded) is obvious immediately, without needing to open DevTools.
   function checkAssetsLoaded(){
     setTimeout(() => {
       const imgs = Array.from(document.querySelectorAll('#receiptCapture img, .login-card img'));
@@ -858,14 +914,8 @@
     return "Rp " + Number(num).toLocaleString('id-ID') + ",-";
   }
 
-  function formatDate(isoStr){
-    if(!isoStr) return "";
-    const [y,m,d] = isoStr.split('-');
-    return `${d}/${m}/${y}`;
-  }
-
   function addItemRow(){
-    items.push({ qty: 1, desc: "", amt: 0 });
+    items.push({ qty: 1, desc: "", subDesc: "", amt: 0 });
     renderItemsEditor();
     renderReceipt();
   }
@@ -895,7 +945,10 @@
       row.className = 'item-row-editor';
       row.innerHTML = `
         <input type="number" min="0" value="${item.qty}" oninput="updateItem(${idx},'qty',this.value)">
-        <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Deskripsi item...">${item.desc}</textarea>
+        <div class="desc-inputs">
+          <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Judul Package...">${item.desc}</textarea>
+          <textarea oninput="updateItem(${idx},'subDesc',this.value)" placeholder="Detail List Item...">${item.subDesc || ''}</textarea>
+        </div>
         <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
                placeholder="0"
                onfocus="this.value = this.value.replace(/\\./g,'')"
@@ -920,8 +973,11 @@
   }
 
   function renderReceipt(){
-    document.getElementById('viewNomor').textContent = 'No. ' + (document.getElementById('inputNomor').value || '-');
-    document.getElementById('viewTanggal').textContent = formatDate(document.getElementById('inputTanggal').value);
+    // Mengupdate konten Kiri-Kanan Atas
+    document.getElementById('viewNama').textContent = document.getElementById('inputNama').value || '-';
+    document.getElementById('viewDetailAcara').textContent = document.getElementById('inputDetailAcara').value || '-';
+    document.getElementById('viewNomor').textContent = document.getElementById('inputNomor').value || '-';
+    document.getElementById('viewPelunasan').textContent = document.getElementById('inputPelunasan').value || '-';
 
     const viewItems = document.getElementById('viewItems');
     viewItems.innerHTML = '';
@@ -930,9 +986,19 @@
       total += (Number(item.amt) || 0);
       const row = document.createElement('div');
       row.className = 'item-row';
+
+      // Logika agar garis & sub-desc muncul hanya jika ada isinya
+      let subDescHTML = '';
+      if(item.subDesc && item.subDesc.trim() !== ''){
+        subDescHTML = `<div class="col-desc-sub">${escapeHtml(item.subDesc)}</div>`;
+      }
+
       row.innerHTML = `
         <span class="col-qty">${item.qty || 0}</span>
-        <span class="col-desc">${escapeHtml(item.desc || '')}</span>
+        <div class="col-desc">
+          <div class="col-desc-title">${escapeHtml(item.desc || '')}</div>
+          ${subDescHTML}
+        </div>
         <span class="col-amt">${formatRupiah(item.amt || 0)}</span>
       `;
       viewItems.appendChild(row);
@@ -958,10 +1024,7 @@
     });
   }
 
-  // Fill the middle (table) area with repeating Middle.webp tiles using real
-  // <img> elements instead of CSS background-image, since html2canvas (used
-  // for PDF export) frequently fails to render repeating CSS backgrounds.
-  const MIDDLE_ASPECT = 872 / 1600; // height / width of Middle.png
+  const MIDDLE_ASPECT = 872 / 1600;
   function tileMiddleBackground(){
     const middleSection = document.getElementById('middleSection');
     const middleContent = middleSection.querySelector('.middle-content');
@@ -986,26 +1049,23 @@
     }
   }
 
-  // Anchor the LUNAS stamp to the TOTAL row so it stays correctly placed
-  // no matter how many item rows are added (instead of a fixed % offset).
   function positionStamp(){
-      const wrap = document.getElementById('paperWrap');
-      const totalRow = document.getElementById('totalRow');
-      const stamp = document.getElementById('lunasStamp');
-      if(!wrap || !totalRow || !stamp) return;
+    const wrap = document.getElementById('paperWrap');
+    const totalRow = document.getElementById('totalRow');
+    const stamp = document.getElementById('lunasStamp');
+    if(!wrap || !totalRow || !stamp) return;
 
-      const wrapRect = wrap.getBoundingClientRect();
-      const totalRect = totalRow.getBoundingClientRect();
-      if(wrapRect.width === 0) return;
+    const wrapRect = wrap.getBoundingClientRect();
+    const totalRect = totalRow.getBoundingClientRect();
+    if(wrapRect.width === 0) return;
 
-      const stampWidth = wrapRect.width * 0.35;
-      const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
+    const stampWidth = wrapRect.width * 0.35;
+    const totalCenterY = (totalRect.top - wrapRect.top) + (totalRect.height / 2);
 
-      stamp.style.width = stampWidth + 'px';
-      // Diubah dari -0.28 menjadi -0.36 agar stempel bergeser lebih jauh ke kiri
-      stamp.style.left = (-stampWidth * 0.36) + 'px';
-      stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
-    }
+    stamp.style.width = stampWidth + 'px';
+    stamp.style.left = (-stampWidth * 0.36) + 'px';
+    stamp.style.top = (totalCenterY - stampWidth * 0.32) + 'px';
+  }
 
   let resizeTimer;
   window.addEventListener('resize', ()=>{
@@ -1042,11 +1102,6 @@
     }));
   }
 
-  // html2canvas clones the page into an off-screen container while it
-  // rasterizes. If it errors or hangs mid-render, that clone can be left
-  // behind and — on some browsers — ends up intercepting clicks on the
-  // whole page. This snapshots what's on <body> beforehand so we can
-  // forcibly remove anything unexpected afterwards no matter what happens.
   function cleanupStrayOverlays(before){
     Array.from(document.body.children).forEach(child => {
       if(!before.has(child)) child.remove();
@@ -1066,133 +1121,132 @@
   }
 
   async function downloadPDF(){
-      const btn = document.getElementById('downloadBtn');
-      const originalLabel = '⬇ Unduh Kwitansi (PDF)';
-      let statusEl = document.getElementById('pdfStatus');
-      if(!statusEl){
-        statusEl = document.createElement('div');
-        statusEl.id = 'pdfStatus';
-        statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
-        btn.insertAdjacentElement('afterend', statusEl);
+    const btn = document.getElementById('downloadBtn');
+    const originalLabel = '⬇ Unduh Kwitansi (PDF)';
+    let statusEl = document.getElementById('pdfStatus');
+    if(!statusEl){
+      statusEl = document.createElement('div');
+      statusEl.id = 'pdfStatus';
+      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
+      btn.insertAdjacentElement('afterend', statusEl);
+    }
+    statusEl.style.display = 'none';
+    statusEl.textContent = '';
+
+    function showError(msg){
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = msg;
+      statusEl.style.display = 'block';
+      console.error('PDF export error:', msg);
+    }
+
+    if(typeof html2pdf === 'undefined'){
+      showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+
+    const exportStyle = document.createElement('style');
+    exportStyle.innerHTML = `
+      #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; }
+      .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
+    `;
+    document.head.appendChild(exportStyle);
+
+    const bodyChildrenBefore = new Set(Array.from(document.body.children));
+
+    try {
+      const el = document.getElementById('receiptCapture');
+
+      await waitForImagesToLoad(el);
+      if(document.fonts && document.fonts.ready){
+        try { await document.fonts.ready; } catch(e){ /* ignore */ }
       }
-      statusEl.style.display = 'none';
-      statusEl.textContent = '';
 
-      function showError(msg){
-        btn.disabled = false;
-        btn.textContent = originalLabel;
-        statusEl.style.color = 'var(--danger)';
-        statusEl.textContent = msg;
-        statusEl.style.display = 'block';
-        console.error('PDF export error:', msg);
-      }
+      // Mengambil data nama & tanggal sistem agar file dinamai otomatis sesuai klien
+      const clientName = document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'') || 'Unknown';
+      const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
+      const filename = `Kuitansi_Sahaja_${clientName}_${nomor}.pdf`;
 
-      if(typeof html2pdf === 'undefined'){
-        showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
-        return;
-      }
+      const opt = {
+        margin: 0,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.95 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: '#41708d',
+          scrollY: 0,
+          scrollX: 0,
+          imageTimeout: 15000,
+          onclone: function(clonedDoc) {
+            const style = clonedDoc.createElement('style');
+            style.innerHTML = `
+              * { animation: none !important; transition: none !important; }
+              .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
 
-      btn.disabled = true;
-      btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
-
-      const exportStyle = document.createElement('style');
-      exportStyle.innerHTML = `
-        #receiptCapture *, #receiptCapture { animation: none !important; transition: none !important; }
-        .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
-      `;
-      document.head.appendChild(exportStyle);
-
-      const bodyChildrenBefore = new Set(Array.from(document.body.children));
-
-      try {
-        const el = document.getElementById('receiptCapture');
-
-        await waitForImagesToLoad(el);
-        if(document.fonts && document.fonts.ready){
-          try { await document.fonts.ready; } catch(e){ /* ignore */ }
-        }
-
-        const tanggal = document.getElementById('inputTanggal').value || '';
-        const tanggalFmt = tanggal ? tanggal.split('-').reverse().join('') : 'tanpatanggal';
-        const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-        const filename = `Kuitansi_Sahaja-${tanggalFmt}-${nomor}.pdf`;
-
-        const opt = {
-          margin: 0,
-          filename: filename,
-          image: { type: 'jpeg', quality: 0.95 },
-          html2canvas: {
-            scale: 2,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#41708d',
-            scrollY: 0,
-            scrollX: 0,
-            imageTimeout: 15000,
-            onclone: function(clonedDoc) {
-              const style = clonedDoc.createElement('style');
-              style.innerHTML = `
-                * { animation: none !important; transition: none !important; }
-                .paper-texture { display: block !important; mix-blend-mode: normal !important; opacity: 0.15 !important; }
-              `;
-              clonedDoc.head.appendChild(style);
-
-              // PERBAIKAN: Menyisipkan elemen bayangan fisik secara langsung ke dalam DOM klon
-              const clonedPaper = clonedDoc.getElementById('paperWrap');
-              if(clonedPaper){
-                const shadowLayer = clonedDoc.createElement('div');
-                shadowLayer.style.cssText = `
-                  position: absolute;
-                  inset: 0;
-                  background: #ffffff;
-                  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.55);
-                  z-index: -1;
-                  border-radius: 4px;
-                `;
-                clonedPaper.appendChild(shadowLayer);
+              .paper-wrap {
+                box-shadow: none !important;
+                z-index: 1 !important;
               }
-            }
-          },
-          jsPDF: {
-            unit: 'px',
-            format: [el.offsetWidth, el.offsetHeight + 10],
-            orientation: 'portrait'
+              .paper-wrap::before {
+                content: '';
+                position: absolute;
+                top: 15px; bottom: 15px; left: 5px; right: 5px;
+                background: #ffffff;
+                box-shadow: 0 30px 60px rgba(0,0,0,0.55) !important;
+                z-index: -1;
+                border-radius: 4px;
+              }
+            `;
+            clonedDoc.head.appendChild(style);
           }
-        };
-
-        const pdfBlob = await withTimeout(
-          html2pdf().set(opt).from(el).toPdf().output('blob'),
-          25000,
-          'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
-        );
-
-        const blobUrl = URL.createObjectURL(pdfBlob);
-
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-
-        statusEl.style.color = 'var(--accent-dark)';
-        statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
-          '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
-          'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
-        statusEl.style.display = 'block';
-
-        btn.disabled = false;
-        btn.textContent = originalLabel;
-      } catch(err){
-        showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
-          ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
-      } finally {
-        cleanupStrayOverlays(bodyChildrenBefore);
-        if (exportStyle.parentNode) {
-          exportStyle.parentNode.removeChild(exportStyle);
+        },
+        jsPDF: {
+          unit: 'px',
+          format: [el.offsetWidth, el.offsetHeight + 10],
+          orientation: 'portrait'
         }
+      };
+
+      const pdfBlob = await withTimeout(
+        html2pdf().set(opt).from(el).toPdf().output('blob'),
+        25000,
+        'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
+      );
+
+      const blobUrl = URL.createObjectURL(pdfBlob);
+
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      statusEl.style.color = 'var(--accent-dark)';
+      statusEl.innerHTML = 'PDF siap. Jika unduhan tidak otomatis dimulai, <a href="' + blobUrl +
+        '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a> ' +
+        'atau <a href="' + blobUrl + '" target="_blank" rel="noopener" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">buka di tab baru</a>.';
+      statusEl.style.display = 'block';
+
+      btn.disabled = false;
+      btn.textContent = originalLabel;
+    } catch(err){
+      showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.') +
+        ' Jika masalah berlanjut: coba browser lain (Chrome disarankan), pastikan koneksi internet aktif, dan buka halaman ini lewat alamat web (bukan file lokal).');
+    } finally {
+      cleanupStrayOverlays(bodyChildrenBefore);
+      if (exportStyle.parentNode) {
+        exportStyle.parentNode.removeChild(exportStyle);
       }
     }
+  }
 </script>
 </body>
 </html>
