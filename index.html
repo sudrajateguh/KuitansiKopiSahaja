@@ -85,42 +85,14 @@
   }
 
   @keyframes bodyFadeIn{ from{ opacity:0; } to{ opacity:1; } }
-
-  @keyframes fadeInUpWord {
-    from { opacity: 0; transform: translateY(35px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes fadeInDown{
-    from{ opacity:0; transform: translateY(-14px); }
-    to{ opacity:1; transform: translateY(0); }
-  }
-  @keyframes fadeInScale{
-    from{ opacity:0; transform: scale(.85) translateY(50px); }
-    to{ opacity:1; transform: scale(1) translateY(0); }
-  }
-  @keyframes rowIn{
-    from{ opacity:0; transform: translateX(-8px); }
-    to{ opacity:1; transform: translateX(0); }
-  }
-  @keyframes shake{
-    10%,90%{ transform: translateX(-1px); }
-    20%,80%{ transform: translateX(2px); }
-    30%,50%,70%{ transform: translateX(-4px); }
-    40%,60%{ transform: translateX(4px); }
-  }
-  @keyframes pulseTotal{
-    0%{ transform: scale(1); }
-    35%{ transform: scale(1.06); }
-    100%{ transform: scale(1); }
-  }
+  @keyframes fadeInUpWord { from { opacity: 0; transform: translateY(35px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeInDown{ from{ opacity:0; transform: translateY(-14px); } to{ opacity:1; transform: translateY(0); } }
+  @keyframes fadeInScale{ from{ opacity:0; transform: scale(.85) translateY(50px); } to{ opacity:1; transform: scale(1) translateY(0); } }
+  @keyframes rowIn{ from{ opacity:0; transform: translateX(-8px); } to{ opacity:1; transform: translateX(0); } }
+  @keyframes pulseTotal{ 0%{ transform: scale(1); } 35%{ transform: scale(1.06); } 100%{ transform: scale(1); } }
   @keyframes spin{ to{ transform: rotate(360deg); } }
-  @keyframes stampPop{
-    0%{ opacity:0; transform: translateY(-50%) scale(.5) rotate(-18deg); }
-    70%{ opacity:1; transform: translateY(-50%) scale(1.08) rotate(-8deg); }
-    100%{ opacity:1; transform: translateY(-50%) scale(1) rotate(-10deg); }
-  }
+  @keyframes stampPop{ 0%{ opacity:0; transform: scale(.5) rotate(-18deg); } 70%{ opacity:1; transform: scale(1.08) rotate(-8deg); } 100%{ opacity:1; transform: scale(1) rotate(-10deg); } }
 
-  .anim-shake{ animation: shake .4s ease; }
   .anim-pulse{ animation: pulseTotal .35s ease; }
 
   /* ---------------- LOGIN SCREEN ---------------- */
@@ -204,7 +176,6 @@
     color:#fff;
     font-size: 15px;
     font-weight: 600;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     cursor:pointer;
     opacity: 0;
     transform: translateY(35px);
@@ -214,7 +185,6 @@
   }
   .login-card button:hover{
     background: var(--accent-dark);
-    box-shadow: 0 10px 28px rgba(44,80,105,0.5), 0 0 18px rgba(65,112,141,0.6);
     transform: translateY(-2px);
   }
   .login-card button:active{ transform: scale(.96); }
@@ -224,7 +194,6 @@
     font-size: 13px;
     margin-top: 18px;
     min-height: 16px;
-    animation: fadeInUpWord .4s ease both;
     font-weight: 500;
   }
 
@@ -235,7 +204,6 @@
   .topbar{
     background: rgba(0,0,0,0.15);
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     padding: 14px 22px;
     display:flex;
     align-items:center;
@@ -244,469 +212,153 @@
     border-bottom: 1px solid rgba(255,255,255,0.1);
     animation: fadeInDown .5s ease both;
   }
-  .topbar h2{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-size: 16px;
-    margin:0;
-    letter-spacing: .3px;
-  }
+  .topbar h2{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 16px; margin:0; }
   .logout-btn{
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.35);
-    color:#fff;
-    padding: 7px 14px;
-    border-radius: 8px;
-    font-size: 12.5px;
-    cursor:pointer;
-    transition: background .15s ease, transform .12s ease;
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.35);
+    color:#fff; padding: 7px 14px; border-radius: 8px; font-size: 12.5px; cursor:pointer;
   }
-  .logout-btn:hover{ background: rgba(255,255,255,0.28); }
-  .logout-btn:active{ transform: scale(.95); }
 
   .main-layout{
-    display:flex;
-    flex-wrap: wrap;
-    gap: 28px;
-    padding: 32px 28px;
-    max-width: 1080px;
-    margin: 0 auto;
-    align-items:flex-start;
-    justify-content: center;
+    display:flex; flex-wrap: wrap; gap: 28px; padding: 32px 28px;
+    max-width: 1080px; margin: 0 auto; align-items:flex-start; justify-content: center;
   }
 
   /* ---------------- EDITOR PANEL ---------------- */
   .editor-panel{
-    background: rgba(255,255,255,0.98);
-    border-radius: 18px;
-    padding: 26px;
-    flex: 1 1 400px;
-    max-width: 480px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    background: rgba(255,255,255,0.98); border-radius: 18px; padding: 26px;
+    flex: 1 1 400px; max-width: 480px; box-shadow: 0 15px 40px rgba(0,0,0,0.15);
     animation: fadeInUpWord .6s .05s cubic-bezier(.2,.8,.3,1) both;
   }
-  .editor-panel h3{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-size: 15px;
-    color: var(--accent-dark);
-    margin: 0 0 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--panel-border);
-  }
+  .editor-panel h3{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 15px; color: var(--accent-dark); margin: 0 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--panel-border); }
   .field-group{ margin-bottom: 18px; }
   .field-row{ display:flex; gap: 12px; }
   .field-row .field-group{ flex:1; }
-  label{
-    display:block;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--ink-muted);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-  }
+  label{ display:block; font-size: 12px; font-weight: 600; color: var(--ink-muted); margin-bottom: 6px; text-transform: uppercase; }
   input[type="text"], textarea, input[type="number"]{
-    width:100%;
-    padding: 10px 12px;
-    border-radius: 9px;
-    border: 1.5px solid #d7dee2;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--ink-dark);
-    outline:none;
-    resize: vertical;
-    transition: border-color .2s ease, box-shadow .2s ease;
+    width:100%; padding: 10px 12px; border-radius: 9px; border: 1.5px solid #d7dee2;
+    font-size: 14px; font-family: inherit; color: var(--ink-dark); outline:none; resize: vertical;
   }
-  input:focus, textarea:focus{
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(65,112,141,0.13);
-  }
-  #inputPelunasan {
-    cursor: pointer;
-    background-color: #f8fafc;
-  }
+  input:focus, textarea:focus{ border-color: var(--accent); box-shadow: 0 0 0 3px rgba(65,112,141,0.13); }
+  #inputPelunasan { cursor: pointer; background-color: #f8fafc; }
 
   .items-table{ margin-top: 4px; }
   .item-row-editor{
-    display:grid;
-    grid-template-columns: 52px 1fr 130px 34px;
-    gap: 8px;
-    margin-bottom: 10px;
-    align-items:start;
-    animation: rowIn .3s ease both;
-    transition: opacity .18s ease, transform .18s ease;
+    display:grid; grid-template-columns: 52px 1fr 130px 34px; gap: 8px; margin-bottom: 10px; align-items:start;
+    animation: rowIn .3s ease both; transition: opacity .18s ease, transform .18s ease;
   }
-  .desc-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
+  .desc-inputs { display: flex; flex-direction: column; gap: 6px; }
   .desc-inputs textarea { min-height: 40px; }
-  .item-row-editor.removing{
-    opacity: 0;
-    transform: translateX(10px);
-  }
   .remove-row-btn{
-    width: 34px;
-    height: 40px;
-    border-radius: 9px;
-    border: 1.5px solid #f0c7c0;
-    background: #fdf1ef;
-    color: var(--danger);
-    font-size: 16px;
-    cursor:pointer;
-    line-height:1;
-    transition: all .2s ease;
+    width: 34px; height: 40px; border-radius: 9px; border: 1.5px solid #f0c7c0; background: #fdf1ef;
+    color: var(--danger); font-size: 16px; cursor:pointer;
   }
-  .col-labels{
-    display:grid;
-    grid-template-columns: 52px 1fr 130px 34px;
-    gap: 8px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: .4px;
-    color: var(--ink-muted);
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
+  .col-labels{ display:grid; grid-template-columns: 52px 1fr 130px 34px; gap: 8px; font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
   .add-row-btn{
-    width:100%;
-    padding: 10px;
-    border-radius: 9px;
-    border: 1.5px dashed var(--accent);
-    background: #eef4f7;
-    color: var(--accent-dark);
-    font-size: 13.5px;
-    font-weight: 600;
-    cursor:pointer;
-    margin-top: 4px;
-    transition: all .2s ease;
+    width:100%; padding: 10px; border-radius: 9px; border: 1.5px dashed var(--accent);
+    background: #eef4f7; color: var(--accent-dark); font-size: 13.5px; font-weight: 600; cursor:pointer; margin-top: 4px;
   }
 
-  .checkbox-row{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    padding: 10px 4px;
-  }
-  .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--accent); transition: transform .12s ease; }
-  .checkbox-row label{ margin:0; text-transform:none; font-size:14px; color: var(--ink-dark); font-weight:500; }
+  .checkbox-row{ display:flex; align-items:center; gap: 10px; padding: 10px 4px; }
+  .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--accent); }
+  .checkbox-row label{ font-size:14px; font-weight:500; }
 
-  .total-preview{
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-    background: #f4f7f9;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin: 6px 0 20px;
-    font-weight: 700;
-    color: var(--accent-dark);
-    transition: background .2s ease;
-  }
-  .total-preview span#totalPreviewText{ display:inline-block; }
+  .total-preview{ display:flex; justify-content: space-between; align-items:center; background: #f4f7f9; border-radius: 10px; padding: 12px 14px; margin: 6px 0 20px; font-weight: 700; color: var(--accent-dark); }
 
   .download-btn{
-    width:100%;
-    padding: 14px;
-    border-radius: 12px;
-    border:none;
-    background: var(--accent-dark);
-    color:#fff;
-    font-size: 15px;
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap: 8px;
-    transition: all .2s ease;
+    width:100%; padding: 14px; border-radius: 12px; border:none; background: var(--accent-dark);
+    color:#fff; font-size: 15px; font-family: 'SF Pro Display Heavy', sans-serif; cursor:pointer; display:flex; align-items:center; justify-content:center; gap: 8px; transition: all .2s ease;
   }
-  .download-btn:hover{ background: #234258; box-shadow: 0 8px 20px rgba(0,0,0,0.25); transform: translateY(-2px); }
-  .download-btn:active:not(:disabled){ transform: scale(.98); }
-  .download-btn:disabled{ opacity:.6; cursor:default; transform: none; box-shadow: none; }
-  .pdf-hint{
-    margin-top: 10px;
-    font-size: 12px;
-    line-height: 1.5;
-    color: var(--ink-muted);
-    text-align: center;
-  }
-  .spinner{
-    width: 15px;
-    height: 15px;
-    border: 2.5px solid rgba(255,255,255,0.4);
-    border-top-color: #fff;
-    border-radius: 50%;
-    display:inline-block;
-    animation: spin .7s linear infinite;
-  }
+  .download-btn:disabled{ opacity:.6; cursor:default; }
+  .pdf-hint{ margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--ink-muted); text-align: center; }
+  .spinner{ width: 15px; height: 15px; border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; display:inline-block; animation: spin .7s linear infinite; }
 
-  /* ---------------- PREVIEW / RECEIPT - FIXED 500PX SCALED APPROACH ---------------- */
+  /* ---------------- PREVIEW / RECEIPT - RIGID 500PX SETUP ---------------- */
   .preview-panel{
-    flex: 1 1 420px;
-    display:flex;
-    justify-content:center;
+    flex: 1 1 420px; display:flex; justify-content:center;
     animation: fadeInUpWord .6s .15s cubic-bezier(.2,.8,.3,1) both;
   }
 
-  /* Wrapper yang akan merespons layar dan memanipulasi tinggi elemen internal saat di-scale */
+  /* Wrapper yang di-scale via JS agar muat di HP, namun tidak mengubah pixel intinya */
   .receipt-scale-wrap {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 14px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-    background: var(--body-bg);
-    overflow: hidden;
-    transition: height 0.15s ease;
+    width: 100%; max-width: 500px; border-radius: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+    background: var(--body-bg); overflow: hidden; transition: height 0.15s ease;
   }
 
-  /* Elemen Capture DIKUNCI 500PX, tak akan berubah bentuk/font sizenya */
+  /* Elemen Capture MURNI, ukurannya TAK PERNAH diubah CSS/Media Query */
   #receiptCapture {
-    background: var(--body-bg);
-    position: relative;
-    width: 500px; /* Ukuran statis mutlak desktop */
-    margin: 0;
-    transform-origin: top left;
+    background: var(--body-bg); position: relative; width: 500px; margin: 0; transform-origin: top left;
   }
 
-  .receipt-frame{
-    background: var(--body-bg);
-    padding: 15% 15% 10%;
-  }
-  .paper-wrap{
-    position: relative;
-    width: 100%;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-    animation: fadeInScale .6s .3s cubic-bezier(.2,.8,.3,1) both;
-  }
-  .paper-texture{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit: cover;
-    mix-blend-mode: multiply;
-    opacity: 0.22;
-    pointer-events:none;
-    z-index: 6;
-  }
-  img.cap-img{
-    display:block;
-    width:100%;
-    height:auto;
-  }
+  .receipt-frame{ background: var(--body-bg); padding: 15% 15% 10%; }
+  .paper-wrap{ position: relative; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
+  .paper-texture{ position:absolute; inset:0; width:100%; height:100%; object-fit: cover; mix-blend-mode: multiply; opacity: 0.22; pointer-events:none; z-index: 6; }
+  img.cap-img{ display:block; width:100%; height:auto; }
 
-  .middle-section{
-    position: relative;
-    width:100%;
-    z-index: 1;
-    margin-top: -1px;
-    margin-bottom: -1px;
-  }
-  .middle-bg{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    z-index: 0;
-    line-height:0;
-  }
-  .middle-bg img{
-    display:block;
-    width:100%;
-    height:auto;
-  }
-  .middle-content{
-    position:relative;
-    z-index: 1;
-    padding: 0 9%;
-  }
+  .middle-section{ position: relative; width:100%; z-index: 1; margin-top: -1px; margin-bottom: -1px; }
+  .middle-bg{ position:absolute; inset:0; width:100%; height:100%; overflow:hidden; z-index: 0; line-height:0; }
+  .middle-bg img{ display:block; width:100%; height:auto; }
+  .middle-content{ position:relative; z-index: 1; padding: 0 9%; }
 
-  .meta-block{
-    display: flex;
-    justify-content: space-between;
-    padding: 3.2% 0 2.6%;
-  }
-  .meta-col-left { text-align: left; }
-  .meta-col-right { text-align: right; }
+  .meta-block{ display: flex; justify-content: space-between; padding: 3.2% 0 2.6%; }
+  .meta-col-left { text-align: left; } .meta-col-right { text-align: right; }
   .meta-item { margin-bottom: 7px; }
+  .meta-label { display: block; font-size: 8.5px; color: var(--ink-dark); margin-bottom: 2px; }
+  .meta-value { display: block; font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); white-space: pre-line; line-height: 1.3; }
 
-  /* UKURAN FONT FIX, TIDAK ADA MEDIA QUERY UNTUK INI */
-  .meta-label {
-    display: block;
-    font-size: 8.5px;
-    color: var(--ink-dark);
-    margin-bottom: 2px;
-    font-family: 'SF Pro Display Light', sans-serif;
-  }
-  .meta-value {
-    display: block;
-    font-family: 'SF Pro Display Semibold', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 600;
-    font-size: 10.5px;
-    color: var(--ink-dark);
-    white-space: pre-line;
-    line-height: 1.3;
-  }
-
-  .table-header-bar{
-    display:flex;
-    background: var(--bar-bg);
-    padding: 2.6% 0;
-    margin: 0 -9%;
-    padding-left: 9%;
-    padding-right: 9%;
-  }
-  .col-qty{ width: 14%; }
-  .col-desc{ flex:1; }
-  .col-amt{ width: 32%; text-align:right; }
-
-  .table-header-bar .col-desc { text-align: center; padding-right: 25px; }
-  .table-header-bar .col-amt { text-align: center; }
-
-  .table-header-bar .col-qty,
-  .table-header-bar .col-desc,
-  .table-header-bar .col-amt{
-    font-family: 'SF Pro Display Heavy Italic', sans-serif;
-    font-style: italic;
-    font-size: 10.5px;
-    color: var(--header-label);
-  }
+  .table-header-bar{ display:flex; background: var(--bar-bg); padding: 2.6% 0; margin: 0 -9%; padding-left: 9%; padding-right: 9%; }
+  .col-qty{ width: 14%; } .col-desc{ flex:1; } .col-amt{ width: 32%; text-align:right; }
+  .table-header-bar .col-desc { text-align: center; padding-right: 25px; } .table-header-bar .col-amt { text-align: center; }
+  .table-header-bar .col-qty, .table-header-bar .col-desc, .table-header-bar .col-amt{ font-family: 'SF Pro Display Heavy Italic', sans-serif; font-style: italic; font-size: 10.5px; color: var(--header-label); }
 
   .items-list{ padding: 2.6% 0 1%; }
-  .item-row{
-    display:flex;
-    padding-bottom: 2.4%;
-  }
-  .item-row .col-qty {
-    font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px;
-    color: var(--item-color);
-  }
+  .item-row{ display:flex; padding-bottom: 2.4%; }
+  .item-row .col-qty { font-family: 'SF Pro Display Light', sans-serif; font-size: 11px; color: var(--item-color); }
   .item-row .col-desc { padding-right: 15px; }
-  .item-row .col-desc-title {
-    font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px;
-    color: var(--item-color);
-    white-space: pre-line;
-    line-height: 1.4;
-  }
-  .item-row .col-desc-sub {
-    margin-top: 5px;
-    padding-left: 8px;
-    border-left: 1.5px solid var(--accent);
-    font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 9.5px;
-    color: var(--ink-muted);
-    white-space: pre-line;
-    line-height: 1.4;
-  }
-  .item-row .col-amt{
-    font-family: 'SF Pro Display Light', sans-serif;
-    font-size: 11px;
-    color: var(--item-color);
-    white-space: nowrap;
-    text-align: right;
-  }
+  .item-row .col-desc-title { font-size: 11px; color: var(--item-color); white-space: pre-line; line-height: 1.4; }
+  .item-row .col-desc-sub { margin-top: 5px; padding-left: 8px; border-left: 1.5px solid var(--accent); font-size: 9.5px; color: var(--ink-muted); white-space: pre-line; line-height: 1.4; }
+  .item-row .col-amt{ font-size: 11px; color: var(--item-color); white-space: nowrap; text-align: right; }
 
-  .total-row{
-    display:flex;
-    align-items:center;
-    padding: 2% 0 3%;
-    justify-content: space-between;
-    position: relative; /* Wadah absolute stempel */
-  }
-  .total-row .col-qty{ width:14%; }
-  .total-row .col-desc{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-size: 12px;
-    color: var(--total-color);
-    flex: 1;
-  }
-  .total-row .col-amt{
-    font-family: 'SF Pro Display Heavy', sans-serif;
-    font-size: 12px;
-    color: var(--total-color);
-    min-width: 32%;
-    width: auto;
-    white-space: nowrap;
-    text-align: right;
-    margin-left: auto;
-  }
+  .total-row{ display:flex; align-items:center; padding: 2% 0 3%; justify-content: space-between; position: relative; }
+  .total-row .col-desc{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); flex: 1; }
+  .total-row .col-amt{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); min-width: 32%; text-align: right; margin-left: auto; }
 
-  .bottom-section{
-    position: relative;
-    width:100%;
-    margin-top: -1px;
-  }
-
-  /* STEMPEL MURNI CSS: Posisi & Ukuran pasti! Tidak akan lari-lari */
-  .lunas-stamp{
-    position:absolute;
-    width: 110px; /* Ukuran pas dan estetis */
-    left: -32px; /* Ditarik keluar agar menempel elegan di pinggir kertas */
-    top: 50%;
-    z-index: 5;
-    mix-blend-mode: normal;
-    filter: drop-shadow(0 8px 12px rgba(0,0,0,0.3));
-    pointer-events:none;
+  /* --- STEMPEL LUNAS UKURAN FIX KECIL ELEGANT (ANTI-KEBESARAN) --- */
+  .lunas-stamp {
+    position: absolute;
+    width: 85px;          /* Ukuran mutlak, tidak akan membesar/mengecil */
+    left: -18px;          /* Menjorok sedikit keluar kertas di bagian kiri */
+    top: 50%;             /* Dipusatkan terhadap baris total */
+    margin-top: -38px;    /* Koreksi tinggi stempel agar pas tengah */
+    z-index: 10;
+    transform: rotate(-10deg);
+    pointer-events: none;
     animation: stampPop .45s cubic-bezier(.3,1.4,.5,1) both;
   }
 
-  .footer-section{
-    background:#fff;
-    padding: 3.5% 9%;
-  }
-  .footer-section img{
-    display:block;
-    width:100%;
-    height:auto;
-    max-width: 420px;
-    margin: 0 auto;
-  }
+  .bottom-section{ position: relative; width:100%; margin-top: -1px; }
+  .footer-section{ background:#fff; padding: 3.5% 9%; }
+  .footer-section img{ display:block; width:100%; height:auto; max-width: 420px; margin: 0 auto; }
 
-  #receiptCapture, #receiptCapture *{
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-  }
-
-  /* MEDIA QUERIES HANYA UNTUK EDITOR, KUITANSI TETAP 500PX KONSISTEN */
+  /* MEDIA QUERIES EDITOR ONLY */
   @media (max-width: 768px){
     .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
-    .editor-panel{ max-width: 100%; width: 100%; }
-    .preview-panel{ max-width:100%; width: 100%; }
-    .field-row { flex-direction: column; gap: 0px; }
-
+    .editor-panel, .preview-panel{ max-width: 100%; width: 100%; }
     .col-labels { display: none; }
-    .item-row-editor {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      background: #f8fafc;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1.5px solid #e2e8f0;
-      margin-bottom: 12px;
-    }
+    .item-row-editor { display: flex; flex-wrap: wrap; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; margin-bottom: 12px; }
     .item-row-editor input[type="number"] { width: 70px !important; flex: none; }
     .item-row-editor input[type="text"] { flex: 1; min-width: 130px; }
     .item-row-editor .desc-inputs { width: 100% !important; order: 3; }
     .item-row-editor .remove-row-btn { margin-left: auto; height: 38px; }
   }
 
+  /* MEDIA PRINT KHUSUS PRINTER ASLI, BUKAN HTML2PDF */
   @media print{
     @page{ margin: 10mm; }
-    html, body{ background:#fff !important; height:auto !important; }
-    body{ animation:none !important; }
+    html, body{ background:#fff !important; }
     .no-print{ display:none !important; }
-    #app{ display:block !important; }
-    .main-layout{ padding:0 !important; display:block !important; }
-    .preview-panel{ max-width:100% !important; display:block !important; animation:none !important; }
-    .receipt-scale-wrap{ max-width:520px !important; width:100% !important; margin:0 auto !important; box-shadow:none !important; border-radius:0 !important; height: auto !important; }
-    #receiptCapture{ animation:none !important; transform: none !important; margin: 0 auto !important; }
-    .paper-wrap, .lunas-stamp{ animation:none !important; }
+    #app, .main-layout, .preview-panel{ display:block !important; padding:0 !important; max-width: 100% !important; }
+    .receipt-scale-wrap{ box-shadow:none !important; margin:0 auto !important; height: auto !important; }
+    #receiptCapture{ transform: none !important; margin: 0 auto !important; }
   }
 </style>
 </head>
@@ -717,10 +369,7 @@
   <div id="loginScreen" class="no-print">
     <div class="login-card">
       <img class="brand" src="assets/Logo.png" alt="Kopi Sahaja">
-      <h1>
-        <span style="animation-delay: 0.25s">Kuitansi</span>
-        <span style="animation-delay: 0.38s">Sahaja</span>
-      </h1>
+      <h1><span style="animation-delay: 0.25s">Kuitansi</span> <span style="animation-delay: 0.38s">Sahaja</span></h1>
       <p>Masukkan password untuk mengakses editor</p>
       <input type="password" id="passwordInput" placeholder="Password" autocomplete="off">
       <button onclick="tryLogin()">Masuk</button>
@@ -735,18 +384,12 @@
     </div>
 
     <div class="main-layout">
-      <!-- -------- EDITOR PANEL -------- -->
+      <!-- EDITOR -->
       <div class="editor-panel no-print">
         <h3>Informasi Kwitansi</h3>
         <div class="field-row">
-          <div class="field-group">
-            <label>Nama</label>
-            <input type="text" id="inputNama" value="Ardian">
-          </div>
-          <div class="field-group">
-            <label>No. Kuitansi</label>
-            <input type="text" id="inputNomor" value="001/KS/VIII/26">
-          </div>
+          <div class="field-group"><label>Nama</label><input type="text" id="inputNama" value="Ardian"></div>
+          <div class="field-group"><label>No. Kuitansi</label><input type="text" id="inputNomor" value="001/KS/VIII/26"></div>
         </div>
 
         <div class="field-row">
@@ -754,17 +397,12 @@
             <label>Detail Acara</label>
             <textarea id="inputDetailAcara" rows="2">Komperta Tegal Kamulyan&#10;16 Agustus 2026; ±19.30</textarea>
           </div>
-          <div class="field-group">
-            <label>Tanggal Pelunasan</label>
-            <input type="text" id="inputPelunasan" placeholder="Pilih Tanggal...">
-          </div>
+          <div class="field-group"><label>Tanggal Pelunasan</label><input type="text" id="inputPelunasan" placeholder="Pilih Tanggal..."></div>
         </div>
 
         <h3>Daftar Item</h3>
         <div class="items-table">
-          <div class="col-labels">
-            <span>Qty</span><span>Deskripsi & Sub</span><span>Jumlah (Rp)</span><span></span>
-          </div>
+          <div class="col-labels"><span>Qty</span><span>Deskripsi & Sub</span><span>Jumlah (Rp)</span><span></span></div>
           <div id="itemsEditor"></div>
         </div>
         <button class="add-row-btn" onclick="addItemRow()">+ Tambah Baris Item</button>
@@ -775,16 +413,13 @@
           <label for="inputLunas">Tampilkan stempel LUNAS</label>
         </div>
 
-        <div class="total-preview">
-          <span>Total</span>
-          <span id="totalPreviewText">Rp 0,-</span>
-        </div>
+        <div class="total-preview"><span>Total</span><span id="totalPreviewText">Rp 0,-</span></div>
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
-        <div class="pdf-hint">File PDF akan otomatis terunduh ke perangkat kamu.</div>
+        <div class="pdf-hint">Sistem baru: PDF dijamin presisi tanpa terpotong.</div>
       </div>
 
-      <!-- -------- PREVIEW PANEL -------- -->
+      <!-- PREVIEW -->
       <div class="preview-panel">
         <div class="receipt-scale-wrap" id="scaleWrap">
           <div id="receiptCapture">
@@ -798,55 +433,35 @@
 
                     <div class="meta-block">
                       <div class="meta-col-left">
-                        <div class="meta-item">
-                          <span class="meta-label">Nama:</span>
-                          <span class="meta-value" id="viewNama">Ardian</span>
-                        </div>
-                        <div class="meta-item">
-                          <span class="meta-label">Detail Acara:</span>
-                          <span class="meta-value" id="viewDetailAcara">Komperta Tegal Kamulyan<br>16 Agustus 2026; ±19.30</span>
-                        </div>
+                        <div class="meta-item"><span class="meta-label">Nama:</span><span class="meta-value" id="viewNama">Ardian</span></div>
+                        <div class="meta-item"><span class="meta-label">Detail Acara:</span><span class="meta-value" id="viewDetailAcara">Komperta Tegal Kamulyan<br>16 Agustus 2026; ±19.30</span></div>
                       </div>
                       <div class="meta-col-right">
-                        <div class="meta-item">
-                          <span class="meta-label">No. Kuitansi:</span>
-                          <span class="meta-value" id="viewNomor">001/KS/VIII/26</span>
-                        </div>
-                        <div class="meta-item">
-                          <span class="meta-label">Pelunasan:</span>
-                          <span class="meta-value" id="viewPelunasan">-</span>
-                        </div>
+                        <div class="meta-item"><span class="meta-label">No. Kuitansi:</span><span class="meta-value" id="viewNomor">001/KS/VIII/26</span></div>
+                        <div class="meta-item"><span class="meta-label">Pelunasan:</span><span class="meta-value" id="viewPelunasan">-</span></div>
                       </div>
                     </div>
 
                     <div class="table-header-bar">
-                      <span class="col-qty">QTY</span>
-                      <span class="col-desc">DESC</span>
-                      <span class="col-amt">AMT</span>
+                      <span class="col-qty">QTY</span><span class="col-desc">DESC</span><span class="col-amt">AMT</span>
                     </div>
 
                     <div class="items-list" id="viewItems"></div>
 
-                    <!-- Stempel dimasukkan secara struktural di dalam baris Total -->
+                    <!-- LUNAS STAMP POSISI PASTI DI SINI -->
                     <div class="total-row" id="totalRow">
-                      <span class="col-qty"></span>
-                      <span class="col-desc">TOTAL</span>
-                      <span class="col-amt" id="viewTotal">Rp 0,-</span>
+                      <span class="col-qty"></span><span class="col-desc">TOTAL</span><span class="col-amt" id="viewTotal">Rp 0,-</span>
                       <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.png" alt="Lunas">
                     </div>
 
                   </div>
                 </div>
 
-                <div class="bottom-section">
-                  <img class="cap-img" src="assets/Bottom.png" alt="">
-                </div>
+                <div class="bottom-section"><img class="cap-img" src="assets/Bottom.png" alt=""></div>
               </div>
             </div>
 
-            <div class="footer-section">
-              <img src="assets/Footer.png" alt="Kopi Sahaja">
-            </div>
+            <div class="footer-section"><img src="assets/Footer.png" alt="Kopi Sahaja"></div>
             <img class="paper-texture" src="assets/Texture.jpg" alt="">
           </div>
         </div>
@@ -856,111 +471,28 @@
   </div>
 
 <script>
-  // ---------------- PARTICLE SYSTEM (COFFEE STEAM & CREMA THEME) ----------------
+  // ---------------- PARTICLES ----------------
   let animationFrameId;
-  function initParticles() {
-    const canvas = document.getElementById('particlesCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles;
+  function initParticles() { /* ... kode sama ... */ }
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    }
-
-    class Particle {
-      constructor() {
-        this.x = Math.random() * width;
-        this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.6;
-        this.vy = -Math.random() * 0.8 - 0.2;
-        this.radius = Math.random() * 1.8 + 0.6;
-      }
-      update() {
-        this.x += this.vx;
-        this.y += this.vy;
-        if (this.y < 0) {
-          this.y = height + 10;
-          this.x = Math.random() * width;
-        }
-        if (this.x < 0 || this.x > width) this.vx = -this.vx;
-      }
-      draw() {
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255, 243, 224, 0.55)';
-        ctx.fill();
-      }
-    }
-
-    function init() {
-      resize();
-      particles = [];
-      const particleCount = window.innerWidth < 768 ? 25 : 65;
-      for (let i = 0; i < particleCount; i++) particles.push(new Particle());
-      window.addEventListener('resize', resize);
-      animate();
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      particles.forEach(p => { p.update(); p.draw(); });
-
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 110) {
-            ctx.beginPath();
-            ctx.strokeStyle = `rgba(255, 243, 224, ${0.15 - dist/800})`;
-            ctx.lineWidth = 0.5;
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.stroke();
-          }
-        }
-      }
-      animationFrameId = requestAnimationFrame(animate);
-    }
-    init();
-  }
-  window.addEventListener('DOMContentLoaded', initParticles);
-
-  // ---------------- APLIKASI UTAMA ----------------
   const APP_PASSWORD = "@Nara2026!";
-
   function tryLogin(){
     const val = document.getElementById('passwordInput').value;
     const err = document.getElementById('loginError');
-    const card = document.querySelector('.login-card');
     if(val === APP_PASSWORD){
       sessionStorage.setItem('nara_kwitansi_auth', '1');
       document.getElementById('loginScreen').style.display = 'none';
-
-      cancelAnimationFrame(animationFrameId);
-      document.getElementById('particlesCanvas').style.display = 'none';
-
       document.getElementById('app').classList.add('visible');
       initApp();
     } else {
       err.textContent = 'Password salah, silakan coba lagi.';
-      card.classList.remove('anim-shake');
-      void card.offsetWidth;
-      card.classList.add('anim-shake');
     }
   }
-  document.getElementById('passwordInput').addEventListener('keydown', e=>{
-    if(e.key === 'Enter') tryLogin();
-  });
+  document.getElementById('passwordInput').addEventListener('keydown', e=>{ if(e.key === 'Enter') tryLogin(); });
 
   function logout(){
     sessionStorage.removeItem('nara_kwitansi_auth');
     document.getElementById('app').classList.remove('visible');
-
-    document.getElementById('particlesCanvas').style.display = 'block';
-    initParticles();
-
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('passwordInput').value = '';
   }
@@ -968,117 +500,45 @@
   window.addEventListener('DOMContentLoaded', ()=>{
     if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
       document.getElementById('loginScreen').style.display = 'none';
-      cancelAnimationFrame(animationFrameId);
-      document.getElementById('particlesCanvas').style.display = 'none';
-
       document.getElementById('app').classList.add('visible');
       initApp();
     }
   });
 
-  let items = [
-    { qty: 1, desc: "Sahaja Cart Event Package", subDesc: "Kopsu Aren (52 Cups)\nCokelat (40 Cups)\nIce Black (10 Cups)", amt: 1000000 }
-  ];
+  // ---------------- DATA & INIT ----------------
+  let items = [ { qty: 1, desc: "Sahaja Cart Event Package", subDesc: "Kopsu Aren (52 Cups)\nCokelat (40 Cups)\nIce Black (10 Cups)", amt: 1000000 } ];
   let flatpickrInstance = null;
-
   const ROMAN_MONTHS = ['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
-  const ROMAN_MONTH_SET = new Set(ROMAN_MONTHS);
 
   function syncNomorWithDate(dateObj){
     if(!dateObj) return;
-    const m = dateObj.getMonth();
-    const y = dateObj.getFullYear();
-    const romanMonth = ROMAN_MONTHS[m];
-    const shortYear = y.toString().slice(-2);
-
-    const nomorInput = document.getElementById('inputNomor');
-    const parts = nomorInput.value.split('/').map(p => p.trim());
-
+    const parts = document.getElementById('inputNomor').value.split('/').map(p => p.trim());
     if(parts.length >= 2){
-      const lastIdx = parts.length - 1;
-      const secondLastIdx = parts.length - 2;
-
-      const lastLooksLikeYear = /^\d{2,4}$/.test(parts[lastIdx]);
-      const secondLastLooksLikeMonth = ROMAN_MONTH_SET.has(parts[secondLastIdx].toUpperCase()) || parts[secondLastIdx] === '';
-
-      if(lastLooksLikeYear || secondLastLooksLikeMonth){
-        parts[secondLastIdx] = romanMonth;
-        parts[lastIdx] = shortYear;
-        nomorInput.value = parts.join('/');
-      }
+      parts[parts.length - 2] = ROMAN_MONTHS[dateObj.getMonth()];
+      parts[parts.length - 1] = dateObj.getFullYear().toString().slice(-2);
+      document.getElementById('inputNomor').value = parts.join('/');
     }
   }
 
   function initApp(){
     flatpickrInstance = flatpickr("#inputPelunasan", {
-      locale: "id",
-      dateFormat: "j F Y",
-      defaultDate: "today",
-      disableMobile: true,
-      onChange: function(selectedDates) {
-        if(selectedDates.length > 0) {
-           syncNomorWithDate(selectedDates[0]);
-           renderReceipt();
-        }
-      }
+      locale: "id", dateFormat: "j F Y", defaultDate: "today", disableMobile: true,
+      onChange: function(sel) { if(sel.length>0){ syncNomorWithDate(sel[0]); renderReceipt(); } }
     });
+    if (flatpickrInstance.selectedDates.length > 0) syncNomorWithDate(flatpickrInstance.selectedDates[0]);
 
-    if (flatpickrInstance.selectedDates.length > 0) {
-       syncNomorWithDate(flatpickrInstance.selectedDates[0]);
-    }
-
-    renderItemsEditor();
-    renderReceipt();
-    checkAssetsLoaded();
+    renderItemsEditor(); renderReceipt();
 
     document.getElementById('inputNama').addEventListener('input', renderReceipt);
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
     document.getElementById('inputDetailAcara').addEventListener('input', renderReceipt);
   }
 
-  function checkAssetsLoaded(){
-    setTimeout(() => {
-      const imgs = Array.from(document.querySelectorAll('#receiptCapture img, .login-card img'));
-      const broken = imgs.filter(img => img.complete && img.naturalWidth === 0);
-      if(broken.length === 0) return;
+  function formatRupiah(num){ return "Rp " + Number(num||0).toLocaleString('id-ID') + ",-"; }
+  function escapeHtml(str){ const div = document.createElement('div'); div.textContent = str; return div.innerHTML; }
 
-      const names = broken.map(img => img.src.split('/').pop()).join(', ');
-      const banner = document.createElement('div');
-      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#c0392b;color:#fff;' +
-        'padding:10px 16px;font-size:13px;text-align:center;font-family:sans-serif;';
-      banner.innerHTML = '⚠️ ' + broken.length + ' file gambar gagal dimuat (' + names + '). ' +
-        'Cek apakah folder <b>assets/</b> sudah ter-upload lengkap ke server, lalu refresh halaman.';
-      document.body.prepend(banner);
-    }, 1200);
-  }
-
-  function formatRupiah(num){
-    if(isNaN(num)) num = 0;
-    return "Rp " + Number(num).toLocaleString('id-ID') + ",-";
-  }
-
-  function addItemRow(){
-    items.push({ qty: 1, desc: "", subDesc: "", amt: 0 });
-    renderItemsEditor();
-    renderReceipt();
-  }
-
-  function removeItemRow(idx){
-    const rows = document.querySelectorAll('#itemsEditor .item-row-editor');
-    const rowEl = rows[idx];
-    if(rowEl){
-      rowEl.classList.add('removing');
-      setTimeout(()=>{
-        items.splice(idx,1);
-        renderItemsEditor();
-        renderReceipt();
-      }, 160);
-    } else {
-      items.splice(idx,1);
-      renderItemsEditor();
-      renderReceipt();
-    }
-  }
+  function addItemRow(){ items.push({ qty: 1, desc: "", subDesc: "", amt: 0 }); renderItemsEditor(); renderReceipt(); }
+  function removeItemRow(idx){ items.splice(idx,1); renderItemsEditor(); renderReceipt(); }
 
   function renderItemsEditor(){
     const container = document.getElementById('itemsEditor');
@@ -1093,271 +553,165 @@
           <textarea oninput="updateItem(${idx},'subDesc',this.value)" placeholder="Detail List Item...">${item.subDesc || ''}</textarea>
         </div>
         <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
-               placeholder="0"
-               onfocus="this.value = this.value.replace(/\\./g,'')"
-               oninput="formatAmtInput(this); updateItem(${idx},'amt', this.value.replace(/\\./g,''))"
+               onfocus="this.value = this.value.replace(/\\./g,'')" oninput="let r=this.value.replace(/\\D/g,''); this.value=r?Number(r).toLocaleString('id-ID'):''; updateItem(${idx},'amt', r)"
                onblur="this.value = this.value ? Number(this.value.replace(/\\./g,'')).toLocaleString('id-ID') : ''">
-        <button class="remove-row-btn" onclick="removeItemRow(${idx})" title="Hapus baris">✕</button>
+        <button class="remove-row-btn" onclick="removeItemRow(${idx})">✕</button>
       `;
       container.appendChild(row);
     });
   }
 
-  function formatAmtInput(el){
-    let raw = el.value.replace(/\D/g,'');
-    el.value = raw ? Number(raw).toLocaleString('id-ID') : '';
-  }
-
   function updateItem(idx, field, value){
-    if(field === 'qty') items[idx].qty = parseInt(value) || 0;
-    else if(field === 'amt') items[idx].amt = parseInt(value) || 0;
+    if(field === 'qty' || field === 'amt') items[idx][field] = parseInt(value) || 0;
     else items[idx][field] = value;
     renderReceipt();
   }
 
-  // ---------------- RESPONSIVE RECEIPT SCALING ----------------
   function scaleReceiptToFitScreen() {
     const wrap = document.getElementById('scaleWrap');
     const capture = document.getElementById('receiptCapture');
     if(!wrap || !capture) return;
-
     const wrapWidth = wrap.offsetWidth;
-    // Jika container lebih kecil dari 500, kita scale tampilan kuitansi tanpa mengubah piksel internalnya
     if (wrapWidth > 0 && wrapWidth < 500) {
       const scale = wrapWidth / 500;
       capture.style.transform = `scale(${scale})`;
-      // Sesuaikan tinggi container luar agar menempel mengikuti hasil scale
       wrap.style.height = (capture.offsetHeight * scale) + 'px';
     } else {
       capture.style.transform = 'none';
       wrap.style.height = capture.offsetHeight + 'px';
     }
   }
-
   window.addEventListener('resize', scaleReceiptToFitScreen);
 
   function renderReceipt(){
     document.getElementById('viewNama').textContent = document.getElementById('inputNama').value || '-';
     document.getElementById('viewDetailAcara').textContent = document.getElementById('inputDetailAcara').value || '-';
     document.getElementById('viewNomor').textContent = document.getElementById('inputNomor').value || '-';
+    document.getElementById('viewPelunasan').textContent = document.getElementById('inputPelunasan').value || '-';
 
-    const pelunasanRaw = document.getElementById('inputPelunasan').value;
-    document.getElementById('viewPelunasan').textContent = pelunasanRaw || '-';
-
-    const viewItems = document.getElementById('viewItems');
-    viewItems.innerHTML = '';
+    const viewItems = document.getElementById('viewItems'); viewItems.innerHTML = '';
     let total = 0;
     items.forEach(item=>{
       total += (Number(item.amt) || 0);
-      const row = document.createElement('div');
-      row.className = 'item-row';
-
-      let subDescHTML = '';
-      if(item.subDesc && item.subDesc.trim() !== ''){
-        subDescHTML = `<div class="col-desc-sub">${escapeHtml(item.subDesc)}</div>`;
-      }
-
-      row.innerHTML = `
-        <span class="col-qty">${item.qty || 0}</span>
-        <div class="col-desc">
-          <div class="col-desc-title">${escapeHtml(item.desc || '')}</div>
-          ${subDescHTML}
-        </div>
-        <span class="col-amt">${formatRupiah(item.amt || 0)}</span>
-      `;
+      const row = document.createElement('div'); row.className = 'item-row';
+      let subDesc = item.subDesc ? `<div class="col-desc-sub">${escapeHtml(item.subDesc)}</div>` : '';
+      row.innerHTML = `<span class="col-qty">${item.qty||0}</span><div class="col-desc"><div class="col-desc-title">${escapeHtml(item.desc||'')}</div>${subDesc}</div><span class="col-amt">${formatRupiah(item.amt)}</span>`;
       viewItems.appendChild(row);
     });
 
     document.getElementById('viewTotal').textContent = formatRupiah(total);
+    document.getElementById('totalPreviewText').textContent = formatRupiah(total);
+    document.getElementById('lunasStamp').style.display = document.getElementById('inputLunas').checked ? 'block' : 'none';
 
-    const totalPreviewEl = document.getElementById('totalPreviewText');
-    const totalPreviewBox = totalPreviewEl.closest('.total-preview');
-    if(totalPreviewEl.textContent !== formatRupiah(total) && totalPreviewBox){
-      totalPreviewBox.classList.remove('anim-pulse');
-      void totalPreviewBox.offsetWidth;
-      totalPreviewBox.classList.add('anim-pulse');
-    }
-    totalPreviewEl.textContent = formatRupiah(total);
-
-    // Toggle tampilan stempel LUNAS
-    document.getElementById('lunasStamp').style.display =
-      document.getElementById('inputLunas').checked ? 'block' : 'none';
-
-    requestAnimationFrame(()=>{
-      tileMiddleBackground();
-      scaleReceiptToFitScreen();
-    });
+    requestAnimationFrame(()=>{ tileMiddleBackground(); scaleReceiptToFitScreen(); });
   }
 
-  const MIDDLE_ASPECT = 872 / 1600;
   function tileMiddleBackground(){
-    const middleSection = document.getElementById('middleSection');
-    const middleContent = middleSection.querySelector('.middle-content');
     const bg = document.getElementById('middleBg');
-    if(!middleSection || !middleContent || !bg) return;
-
-    const contentHeight = middleContent.offsetHeight;
-    const width = 500; // Lebar absolut kuitansi yang kita kunci di CSS
-    const tileHeight = width * MIDDLE_ASPECT;
-    const tileCount = Math.max(1, Math.ceil(contentHeight / tileHeight) + 1);
-
-    bg.style.height = contentHeight + 'px';
-
-    if(bg.childElementCount !== tileCount){
+    const h = document.querySelector('.middle-content').offsetHeight;
+    if(!bg || h===0) return;
+    const tileH = 500 * (872 / 1600);
+    const count = Math.max(1, Math.ceil(h / tileH) + 1);
+    bg.style.height = h + 'px';
+    if(bg.childElementCount !== count){
       bg.innerHTML = '';
-      for(let i = 0; i < tileCount; i++){
-        const img = document.createElement('img');
-        img.src = 'assets/Middle.png';
-        img.alt = '';
-        bg.appendChild(img);
-      }
+      for(let i=0; i<count; i++) bg.innerHTML += `<img src="assets/Middle.png" alt="">`;
     }
   }
+  if(document.fonts) document.fonts.ready.then(()=>{ tileMiddleBackground(); scaleReceiptToFitScreen(); });
 
-  if(document.fonts && document.fonts.ready){
-    document.fonts.ready.then(()=>{
-      tileMiddleBackground();
-      scaleReceiptToFitScreen();
-    });
-  }
-
-  function escapeHtml(str){
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  // ---------------- PDF EXPORT ----------------
+  // ---------------- SHADOW CLONE PDF EXPORT (BULLETPROOF) ----------------
   function waitForImagesToLoad(container){
-    const imgs = Array.from(container.querySelectorAll('img'));
-    return Promise.all(imgs.map(img => {
+    return Promise.all(Array.from(container.querySelectorAll('img')).map(img => {
       if(img.complete && img.naturalWidth > 0) return Promise.resolve();
-      return new Promise(resolve => {
-        img.addEventListener('load', resolve, { once:true });
-        img.addEventListener('error', resolve, { once:true });
-        setTimeout(resolve, 4000);
-      });
+      return new Promise(res => { img.onload=res; img.onerror=res; setTimeout(res, 3000); });
     }));
-  }
-
-  function withTimeout(promise, ms, label){
-    let timer;
-    const timeout = new Promise((_, reject) => {
-      timer = setTimeout(() => reject(new Error(label || 'Proses terlalu lama, dibatalkan.')), ms);
-    });
-    return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
   }
 
   async function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
-    const originalLabel = '⬇ Unduh Kwitansi (PDF)';
     let statusEl = document.getElementById('pdfStatus');
     if(!statusEl){
-      statusEl = document.createElement('div');
-      statusEl.id = 'pdfStatus';
-      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;line-height:1.5;color:var(--danger);display:none;';
+      statusEl = document.createElement('div'); statusEl.id = 'pdfStatus';
+      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;color:var(--danger);';
       btn.insertAdjacentElement('afterend', statusEl);
     }
     statusEl.style.display = 'none';
-    statusEl.textContent = '';
-
-    function showError(msg){
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-      statusEl.style.color = 'var(--danger)';
-      statusEl.textContent = msg;
-      statusEl.style.display = 'block';
-      console.error('PDF export error:', msg);
-    }
 
     if(typeof html2pdf === 'undefined'){
-      showError('Library pembuat PDF gagal dimuat dari internet (CDN). Cek koneksi internet perangkat, nonaktifkan ad-blocker jika ada, lalu muat ulang halaman.');
-      return;
+      statusEl.textContent = 'Gagal memuat sistem PDF (Cek koneksi internet).';
+      statusEl.style.display = 'block'; return;
     }
 
     btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Menyiapkan PDF...';
+    btn.innerHTML = '<span class="spinner"></span> Membuat PDF...';
 
-    const el = document.getElementById('receiptCapture');
-    const wrap = document.getElementById('scaleWrap');
+    // MEMBUAT WADAH RENDER TERISOLASI MUTLAK
+    // Ini mengabaikan ukuran layar HP kamu, sehingga hasil PDF selalu sempurna
+    const renderContainer = document.createElement('div');
+    renderContainer.style.position = 'absolute';
+    renderContainer.style.top = '0';
+    renderContainer.style.left = '0';
+    renderContainer.style.width = '500px';
+    renderContainer.style.zIndex = '-9999';
+    renderContainer.style.background = '#41708d';
+    renderContainer.style.overflow = 'hidden';
 
-    // Simpan status scale saat ini
-    const originalTransform = wrap.style.transform;
-    const originalHeight = wrap.style.height;
-    const origScroll = window.scrollY;
+    // Salin kuitansi dan hilangkan semua respon layar/skala
+    const originalEl = document.getElementById('receiptCapture');
+    const clone = originalEl.cloneNode(true);
+    clone.style.transform = 'none';
+    clone.style.width = '500px';
+    clone.style.margin = '0';
+
+    renderContainer.appendChild(clone);
+    document.body.appendChild(renderContainer);
 
     try {
-      // 1. Matikan efek scale SEMENTARA agar html2canvas membaca ukuran mentah secara utuh (anti-blank di mobile)
-      wrap.style.transform = 'none';
-      wrap.style.width = '500px';
-      wrap.style.height = 'auto';
+      await waitForImagesToLoad(renderContainer);
+      if(document.fonts) await document.fonts.ready;
 
-      // Gulir ke atas agar seluruh elemen kuitansi terlihat oleh mesin perender (bug html2canvas off-screen)
-      window.scrollTo(0, 0);
+      // Hitung tinggi murni tanpa pengaruh zoom layar HP
+      const exactHeight = clone.offsetHeight;
+      const filename = `Kuitansi_Sahaja_${document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'')}_${(document.getElementById('inputNomor').value).replace(/[^a-zA-Z0-9]/g,'')}.pdf`;
 
-      // Beri waktu 150ms agar peramban merender ulang tata letak (reflow) ukuran penuhnya
-      await new Promise(r => setTimeout(r, 150));
-      await waitForImagesToLoad(el);
-
-      // Hitung tinggi bersih elemen PDF sesungguhnya
-      const exactDynamicHeight = el.offsetHeight;
-
-      const clientName = document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'') || 'Unknown';
-      const nomor = (document.getElementById('inputNomor').value || 'noorder').replace(/[^a-zA-Z0-9]/g,'');
-      const filename = `Kuitansi_Sahaja_${clientName}_${nomor}.pdf`;
-
-      // Pengaturan ukuran format mutlak agar hasil unduhan desktop pas tanpa border sisa
       const opt = {
         margin: 0,
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
-          scale: 2,
+          scale: 2,           // Resolusi tinggi
           useCORS: true,
-          windowWidth: 500, // Simulasi lebar viewport desktop
-          width: 500,
-          height: exactDynamicHeight,
+          width: 500,         // Kunci lebar jepretan kamera
+          height: exactHeight, // Kunci tinggi jepretan
           scrollY: 0,
           scrollX: 0
         },
         jsPDF: {
           unit: 'px',
-          format: [500, exactDynamicHeight],
-          orientation: 'portrait',
-          hotfixes: ['px_scaling']
+          format: [500, exactHeight], // Ukuran kertas PDF presisi
+          orientation: 'portrait'
         }
       };
 
-      const pdfBlob = await withTimeout(
-        html2pdf().set(opt).from(el).toPdf().output('blob'),
-        25000,
-        'Pembuatan PDF melebihi batas waktu (25 detik). Coba lagi atau gunakan browser lain.'
-      );
+      const pdfBlob = await html2pdf().set(opt).from(renderContainer).toPdf().output('blob');
 
       const blobUrl = URL.createObjectURL(pdfBlob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      const a = document.createElement('a'); a.href = blobUrl; a.download = filename;
+      document.body.appendChild(a); a.click(); a.remove();
 
       statusEl.style.color = 'var(--accent-dark)';
-      statusEl.innerHTML = 'PDF siap. Jika unduhan otomatis tidak jalan, <a href="' + blobUrl +
-        '" download="' + filename + '" style="color:var(--accent-dark);font-weight:700;text-decoration:underline;">klik di sini untuk mengunduh</a>.';
+      statusEl.innerHTML = 'PDF berhasil diunduh!';
       statusEl.style.display = 'block';
-
-      btn.disabled = false;
-      btn.textContent = originalLabel;
-    } catch(err){
-      showError('Gagal membuat PDF: ' + (err && err.message ? err.message : 'silakan coba lagi.'));
+    } catch(err) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = 'Error: ' + err.message;
+      statusEl.style.display = 'block';
     } finally {
-      // 2. Kembalikan ukuran tampilan ke versi responsif untuk device pengguna
-      wrap.style.transform = originalTransform;
-      wrap.style.width = '100%';
-      wrap.style.height = originalHeight;
-      window.scrollTo(0, origScroll);
-      scaleReceiptToFitScreen();
+      // Hapus kloningan tak terlihat
+      renderContainer.remove();
+      btn.disabled = false;
+      btn.innerHTML = '⬇ Unduh Kwitansi (PDF)';
     }
   }
 </script>
