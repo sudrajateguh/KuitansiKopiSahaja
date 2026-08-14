@@ -63,7 +63,7 @@
     overflow-x: hidden;
   }
 
-  /* BACKGROUND CANVAS PARTICLES (Coffee Steam Theme) */
+  /* BACKGROUND CANVAS PARTICLES (Coffee Steam & Crema Theme) */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -141,11 +141,12 @@
     -webkit-backdrop-filter: blur(20px);
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 40px;
-    padding: 42px 36px;
+    padding: 42px 36px 24px 36px;
     width: 100%;
     max-width: 380px;
     box-shadow: 0 35px 80px rgba(0, 0, 0, 0.18);
     text-align: center;
+    overflow: visible;
     animation: fadeInScale 1.2s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .login-card img.brand{
@@ -186,7 +187,7 @@
     background: rgba(255, 255, 255, 0.9);
     font-size: 15px;
     outline: none;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
     text-align: center;
     letter-spacing: normal;
     color: #4a6578;
@@ -221,21 +222,27 @@
     transform: translateY(35px);
     animation: fadeInUpWord 1.1s cubic-bezier(0.16, 1, 0.3, 1) 0.95s forwards;
     transition: all .25s ease;
+    margin-bottom: -22px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 6px 20px rgba(65, 112, 141, 0.4);
   }
   .login-card button:hover{
     background: var(--accent-dark);
-    box-shadow: 0 8px 20px rgba(44,80,105,0.3);
+    box-shadow: 0 10px 28px rgba(44,80,105,0.5), 0 0 18px rgba(65,112,141,0.6);
     transform: translateY(-2px);
   }
   .login-card button:active{ transform: scale(.96); }
 
   #loginError{
-    color: var(--danger);
-    font-size: 12.5px;
-    margin-top: 10px;
+    color: #ffe3e3;
+    font-size: 13px;
+    margin-top: 30px;
     margin-bottom: -4px;
     min-height: 16px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
     animation: fadeInUpWord .4s ease both;
+    font-weight: 500;
   }
 
   /* ---------------- APP LAYOUT ---------------- */
@@ -924,7 +931,6 @@
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        // Gerakan sedikit melayang ke atas menyerupai uap kopi hangat
         this.vx = (Math.random() - 0.5) * 0.6;
         this.vy = -Math.random() * 0.8 - 0.2;
         this.radius = Math.random() * 1.8 + 0.6;
@@ -932,7 +938,6 @@
       update() {
         this.x += this.vx;
         this.y += this.vy;
-        // Jika melewati batas atas, muncul kembali dari bawah
         if (this.y < 0) {
           this.y = height + 10;
           this.x = Math.random() * width;
@@ -942,7 +947,6 @@
       draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        // Nuansa warna busa kopi / crema hangat (krem keemasan lembut)
         ctx.fillStyle = 'rgba(255, 243, 224, 0.55)';
         ctx.fill();
       }
@@ -1392,6 +1396,7 @@
           backgroundColor: '#41708d',
           scrollY: 0,
           scrollX: 0,
+          windowWidth: 500, /* Memaksa render ukuran layout desktop agar selalu konsisten & proporsional di HP maupun laptop */
           imageTimeout: 15000,
           onclone: function(clonedDoc) {
             const style = clonedDoc.createElement('style');
