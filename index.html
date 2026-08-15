@@ -285,6 +285,10 @@
     color: var(--blue-900);
     animation: fadeInDown .5s ease both;
     gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-shadow: 0 2px 4px rgba(30,61,80,0.04), 0 8px 18px rgba(30,61,80,0.06);
   }
   .topbar-brand{ display:flex; align-items:center; gap: 10px; }
   .topbar-brand img{ width: 28px; height: 28px; object-fit: contain; border-radius: 7px; }
@@ -309,7 +313,7 @@
     border-radius: var(--radius-lg);
     padding: 28px 26px;
     flex: 1 1 400px; max-width: 480px;
-    box-shadow: 0 1px 2px rgba(30,61,80,0.04), 0 12px 28px rgba(30,61,80,0.06);
+    box-shadow: 0 2px 4px rgba(30,61,80,0.05), 0 14px 32px rgba(30,61,80,0.08);
     animation: fadeInUpWord .5s .05s cubic-bezier(.2,.8,.3,1) both;
   }
   .editor-panel h3{
@@ -350,11 +354,11 @@
   .desc-inputs { display: flex; flex-direction: column; gap: 6px; }
   .desc-inputs textarea { min-height: 40px; background: #fff; }
   .remove-row-btn{
-    width: 36px; height: 42px; border-radius: 14px; border: 1.5px solid var(--orange-soft); background: #fff;
-    color: var(--orange); font-size: 15px; cursor:pointer; display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 42px; border-radius: 14px; border: 1.5px solid #ed5b28; background: #ffe9e6;
+    color: #ed5b28; font-size: 15px; cursor:pointer; display: flex; align-items: center; justify-content: center;
     transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .remove-row-btn:hover{ background: var(--orange); color: #fff; border-color: var(--orange); }
+  .remove-row-btn:hover{ background: #ed5b28; color: #fff; border-color: #ed5b28; }
   .remove-row-btn:active{ transform: scale(.92); }
   .col-labels{ display:grid; grid-template-columns: 52px 1fr 128px 34px; gap: 8px; font-family: var(--font-body); font-size: 10.5px; font-weight: 700; color: var(--ink-muted); margin-bottom: 8px; padding: 0 2px; text-transform: uppercase; letter-spacing: .04em; }
   .add-row-btn{
@@ -374,21 +378,23 @@
 
   .total-preview{
     display:flex; justify-content: space-between; align-items:center;
-    background: var(--blue-800); border-radius: 100px; padding: 14px 20px; margin: 18px 0 16px;
-    font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 14.5px;
+    background: var(--blue-50); border: 1.5px solid var(--blue-200); border-radius: var(--radius-sm);
+    padding: 13px 18px; margin: 20px 0 18px;
+    font-family: var(--font-display); font-weight: 700; color: var(--blue-900); font-size: 13.5px;
   }
+  .total-preview span:first-child{ color: var(--ink-muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .total-preview span:last-child{ color: var(--blue-800); font-size: 16px; }
 
   .download-btn{
     width:100%; padding: 15px; border-radius: 100px; border:none;
-    background: linear-gradient(135deg, #ff6a45 0%, #f83b1d 55%, #c92a10 100%);
+    background: #f83b1d;
     color:#fff; font-size: 14.5px; font-family: var(--font-display); font-weight: 700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap: 9px;
     transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-    box-shadow: 0 4px 10px rgba(248,59,29,0.28), 0 16px 34px rgba(248,59,29,0.42);
+    box-shadow: 0 0 0 rgba(248,59,29,0), 0 8px 22px rgba(248,59,29,0.4), 0 0 26px rgba(248,59,29,0.35);
   }
-  .download-btn:hover:not(:disabled){ filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(248,59,29,0.32), 0 20px 42px rgba(248,59,29,0.5); }
+  .download-btn:hover:not(:disabled){ filter: brightness(1.08); transform: translateY(-1px); box-shadow: 0 10px 26px rgba(248,59,29,0.48), 0 0 34px rgba(248,59,29,0.45); }
   .download-btn:active:not(:disabled){ transform: scale(.98); }
   .download-btn:disabled{ opacity:.6; cursor:default; transform:none; }
-  .pdf-hint{ margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--ink-muted); text-align: center; }
   .spinner{ width: 15px; height: 15px; border: 2.5px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; display:inline-block; animation: spin .7s linear infinite; }
   @keyframes spin{ to{ transform: rotate(360deg); } }
 
@@ -407,8 +413,8 @@
 
   .receipt-scale-wrap {
     width: 100%; max-width: 500px; border-radius: var(--radius-md);
-    box-shadow: 0 1px 3px rgba(22,48,63,0.06), 0 22px 46px rgba(22,48,63,0.16);
-    background: transparent; overflow: hidden; transition: height 0.15s ease;
+    box-shadow: 0 2px 4px rgba(22,48,63,0.08), 0 26px 52px rgba(22,48,63,0.22);
+    background: transparent; overflow: visible; transition: height 0.15s ease;
   }
 
   #receiptCapture {
@@ -454,7 +460,7 @@
   .meta-value { display: block; font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); white-space: pre-line; line-height: 1.3; }
 
   /* detail acara: baris lokasi + baris tanggal&waktu (berdekatan), dgn ikon kecil */
-  .meta-detail-acara{ margin-top: 1px; }
+  .meta-detail-acara{ margin-top: 1px; white-space: normal; }
   .meta-detail-row{ display:flex; align-items:center; gap: 5px; margin-bottom: 2px; }
   .meta-detail-row:last-child{ margin-bottom: 0; }
   .meta-detail-row .meta-icon{ width: 10px; height: 10px; flex-shrink:0; color: var(--accent); display:flex; }
@@ -608,7 +614,6 @@
         <div class="total-preview"><span>Total</span><span id="totalPreviewText">Rp 0,-</span></div>
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg> Unduh Kwitansi (PDF)</button>
-        <div class="pdf-hint">Checkpoint 1.0.2 - Bug angka panjang & shadow PDF telah dihapus bersih.</div>
       </div>
 
       <!-- PREVIEW -->
@@ -629,8 +634,8 @@
                         <div class="meta-item">
                           <span class="meta-label">Detail Acara:</span>
                           <div class="meta-value meta-detail-acara">
-                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span id="viewLokasi">Komperta Tegal Kamulyan</span></div>
-                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span id="viewTanggalAcara">16 Agustus 2026</span><span class="meta-waktu" id="viewWaktuAcara">±19.30</span></div>
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.7 6.44 11.6 6.72 11.85a1.15 1.15 0 0 0 1.56 0c.28-.25 6.72-6.15 6.72-11.85C19.5 5.36 16.14 2 12 2Zm0 10.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5Z"/></svg></span><span id="viewLokasi">Komperta Tegal Kamulyan</span></div>
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 2a1 1 0 0 1 1 1v1h6V3a1 1 0 1 1 2 0v1h1a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h1V3a1 1 0 0 1 1-1Zm11 8H5v9a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-9Z"/></svg></span><span id="viewTanggalAcara">16 Agustus 2026</span><span class="meta-waktu" id="viewWaktuAcara">±19.30</span></div>
                           </div>
                         </div>
                       </div>
@@ -681,14 +686,14 @@
       height = canvas.height = window.innerHeight;
     }
 
-    const PARTICLE_COLORS = ['rgba(62,110,140,0.28)', 'rgba(90,140,166,0.22)', 'rgba(169,197,210,0.3)'];
+    const PARTICLE_COLORS = ['rgba(62,110,140,0.55)', 'rgba(90,140,166,0.45)', 'rgba(169,197,210,0.6)'];
     class Particle {
       constructor() {
         this.x = Math.random() * width;
         this.y = Math.random() * height;
-        this.vx = (Math.random() - 0.5) * 0.3;
-        this.vy = -Math.random() * 0.4 - 0.1;
-        this.radius = Math.random() * 1.6 + 0.6;
+        this.vx = (Math.random() - 0.5) * 0.45;
+        this.vy = -Math.random() * 0.6 - 0.15;
+        this.radius = Math.random() * 2.6 + 1.1;
         this.color = PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)];
       }
       update() {
@@ -707,7 +712,7 @@
 
     function init() {
       resize(); particles = [];
-      const particleCount = window.innerWidth < 768 ? 10 : 26;
+      const particleCount = window.innerWidth < 768 ? 20 : 42;
       for (let i = 0; i < particleCount; i++) particles.push(new Particle());
       window.addEventListener('resize', resize); animate();
     }
@@ -902,7 +907,7 @@
     let statusEl = document.getElementById('pdfStatus');
     if(!statusEl){
       statusEl = document.createElement('div'); statusEl.id = 'pdfStatus';
-      statusEl.style.cssText = 'margin-top:10px;font-size:12.5px;color:var(--danger);';
+      statusEl.style.cssText = 'margin-top:12px;font-size:12.5px;color:var(--danger);text-align:center;';
       btn.insertAdjacentElement('afterend', statusEl);
     }
     statusEl.style.display = 'none';
@@ -915,15 +920,18 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Membuat PDF...';
 
+    const SHADOW_TOP = 22, SHADOW_SIDE = 26, SHADOW_BOTTOM = 30;
     const renderContainer = document.createElement('div');
     renderContainer.style.position = 'absolute';
     renderContainer.style.top = '0';
     renderContainer.style.left = '0';
     renderContainer.style.width = '500px';
+    renderContainer.style.boxSizing = 'content-box';
     renderContainer.style.zIndex = '-9999';
     // Sama ratakan warna di background agar rapi
-    renderContainer.style.background = '#41708d';
-    renderContainer.style.overflow = 'hidden';
+    renderContainer.style.background = '#eef3f6';
+    renderContainer.style.overflow = 'visible';
+    renderContainer.style.padding = SHADOW_TOP + 'px ' + SHADOW_SIDE + 'px ' + SHADOW_BOTTOM + 'px';
 
     const originalEl = document.getElementById('receiptCapture');
     const clone = originalEl.cloneNode(true);
@@ -936,9 +944,6 @@
       el.style.animation = 'none';
       el.style.transition = 'none';
     });
-
-    // Sembunyikan ikon lokasi/tanggal/waktu — hanya tampil di preview layar, tidak di PDF
-    clone.querySelectorAll('.meta-icon').forEach(el => { el.style.display = 'none'; });
 
     const stampClone = clone.querySelector('.lunas-stamp');
     if (stampClone) {
@@ -954,6 +959,8 @@
       if(document.fonts) await document.fonts.ready;
 
       const exactHeight = clone.offsetHeight;
+      const pdfWidth = 500 + SHADOW_SIDE * 2;
+      const pdfHeight = exactHeight + SHADOW_TOP + SHADOW_BOTTOM;
       const filename = `Kuitansi_Sahaja_${document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'')}_${(document.getElementById('inputNomor').value).replace(/[^a-zA-Z0-9]/g,'')}.pdf`;
 
       const opt = {
@@ -963,13 +970,13 @@
         html2canvas: {
           scale: 2,
           useCORS: true,
-          width: 500,
-          height: exactHeight,
+          width: pdfWidth,
+          height: pdfHeight,
           scrollY: 0, scrollX: 0
         },
         jsPDF: {
           unit: 'px',
-          format: [500, exactHeight],
+          format: [pdfWidth, pdfHeight],
           orientation: 'portrait'
         }
       };
