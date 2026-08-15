@@ -63,7 +63,7 @@
     overflow-x: hidden;
   }
 
-  /* Z-INDEX 0 AGAR PARTIKEL BERADA DI BAWAH APLIKASI TAPI DI ATAS BACKGROUND */
+  /* KANVAS PARTIKEL EKSKLUSIF HALAMAN LOGIN */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -329,9 +329,10 @@
   /* --- LUNAS STAMP BASE --- */
   .lunas-stamp {
     position: absolute;
-    width: 85px;
-    left: -36px;          /* Digeser menjorok ke kiri, sesuai request potong di pinggir kertas */
+    width: 140px;         /* Diperbesar agar sesuai proporsi di gambar */
+    left: -102px;         /* Posisi mutlak: Pusat stempel akan tepat membelah garis batas kiri kertas kuitansi */
     top: 50%;
+    margin-top: 22px;     /* Diturunkan sedikit agar posisinya pas menimpa batas baris total */
     transform: translateY(-50%) rotate(-10deg);
     z-index: 10;
     pointer-events: none;
@@ -353,7 +354,6 @@
 
     .col-labels { display: none; }
 
-    /* Grid diubah jadi Flex responsif untuk mobile lewat fitur ORDER */
     .item-row-editor {
       display: flex;
       flex-wrap: wrap;
@@ -382,7 +382,7 @@
 </head>
 <body>
 
-  <!-- LAYER 0: PARTIKEL DILUAR LOGIN AGAR TETAP JALAN -->
+  <!-- LAYER 0: PARTIKEL (Hanya muncul saat status di halaman login) -->
   <canvas id="particlesCanvas"></canvas>
 
   <div id="loginScreen" class="no-print">
@@ -551,7 +551,6 @@
     }
     init();
   }
-  window.addEventListener('DOMContentLoaded', initParticles);
 
   // ---------------- AUTH ----------------
   const APP_PASSWORD = "@Nara2026!";
@@ -561,6 +560,11 @@
     if(val === APP_PASSWORD){
       sessionStorage.setItem('nara_kwitansi_auth', '1');
       document.getElementById('loginScreen').style.display = 'none';
+
+      // Stop dan sembunyikan animasi saat masuk halaman utama
+      cancelAnimationFrame(animationFrameId);
+      document.getElementById('particlesCanvas').style.display = 'none';
+
       document.getElementById('app').classList.add('visible');
       initApp();
     } else {
@@ -574,13 +578,21 @@
     document.getElementById('app').classList.remove('visible');
     document.getElementById('loginScreen').style.display = 'flex';
     document.getElementById('passwordInput').value = '';
+
+    // Mulai dan tampilkan kembali animasi saat kembali ke halaman login
+    document.getElementById('particlesCanvas').style.display = 'block';
+    initParticles();
   }
 
   window.addEventListener('DOMContentLoaded', ()=>{
     if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
       document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('particlesCanvas').style.display = 'none'; // Sembunyikan jika memuat ulang di dalam app
       document.getElementById('app').classList.add('visible');
       initApp();
+    } else {
+      // Hanya mulai partikel jika status tidak login (berada di halaman muka)
+      initParticles();
     }
   });
 
@@ -619,7 +631,6 @@
   function addItemRow(){ items.push({ qty: 1, desc: "", subDesc: "", amt: 0 }); renderItemsEditor(); renderReceipt(); }
   function removeItemRow(idx){ items.splice(idx,1); renderItemsEditor(); renderReceipt(); }
 
-  // STRUKTUR HTML DIKEMBALIKAN KE FORMAT GRID DESKTOP
   function renderItemsEditor(){
     const container = document.getElementById('itemsEditor');
     container.innerHTML = '';
@@ -726,7 +737,6 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Membuat PDF...';
 
-    // Wadah khusus yang tak kasat mata
     const renderContainer = document.createElement('div');
     renderContainer.style.position = 'absolute';
     renderContainer.style.top = '0';
@@ -742,13 +752,11 @@
     clone.style.width = '500px';
     clone.style.margin = '0';
 
-    // Matikan SELURUH animasi di clone agar PDF tidak menangkap elemen yang sedang pudar/setengah transisi
     clone.querySelectorAll('*').forEach(el => {
       el.style.animation = 'none';
       el.style.transition = 'none';
     });
 
-    // Kunci paksa state stempel LUNAS (Warna solid, rotasi & posisi aman)
     const stampClone = clone.querySelector('.lunas-stamp');
     if (stampClone) {
       stampClone.style.opacity = '1';
