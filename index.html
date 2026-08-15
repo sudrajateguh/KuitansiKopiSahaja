@@ -370,8 +370,7 @@
   .add-row-btn:active{ transform: scale(.99); }
 
   .checkbox-row{
-    display:flex; align-items:center; gap: 10px; padding: 11px 13px; background: var(--blue-50);
-    border: 1px solid var(--blue-200); border-radius: var(--radius-sm);
+    display:flex; align-items:center; gap: 10px; padding: 2px 0;
   }
   .checkbox-row input[type="checkbox"]{ width:18px; height:18px; accent-color: var(--blue-600); cursor:pointer; }
   .checkbox-row label{ font-size:13.5px; font-weight:500; color: var(--ink); text-transform:none; margin:0; cursor:pointer; }
@@ -967,7 +966,7 @@
       const opt = {
         margin: 0,
         filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
+        image: { type: 'png', quality: 1 },
         html2canvas: {
           scale: 2,
           useCORS: true,
