@@ -63,7 +63,7 @@
     overflow-x: hidden;
   }
 
-  /* KANVAS PARTIKEL EKSKLUSIF HALAMAN LOGIN */
+  /* LAYER 0: PARTIKEL (Hanya muncul saat status di halaman login) */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -91,7 +91,6 @@
   @keyframes fadeInScale{ from{ opacity:0; transform: scale(.85) translateY(50px); } to{ opacity:1; transform: scale(1) translateY(0); } }
   @keyframes rowIn{ from{ opacity:0; transform: translateX(-8px); } to{ opacity:1; transform: translateX(0); } }
   @keyframes pulseTotal{ 0%{ transform: scale(1); } 35%{ transform: scale(1.06); } 100%{ transform: scale(1); } }
-  @keyframes spin{ to{ transform: rotate(360deg); } }
 
   @keyframes stampPop{
     0%{ opacity:0; transform: translateY(-50%) scale(.5) rotate(-18deg); }
@@ -286,14 +285,16 @@
 
   .receipt-scale-wrap {
     width: 100%; max-width: 500px; border-radius: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.25);
-    background: var(--body-bg); overflow: hidden; transition: height 0.15s ease;
+    background: transparent; overflow: hidden; transition: height 0.15s ease;
   }
 
+  /* Menggunakan Gradient pada background area Capture agar shadow kontras terlihat di PDF */
   #receiptCapture {
-    background: var(--body-bg); position: relative; width: 500px; margin: 0; transform-origin: top left;
+    background: linear-gradient(155deg, #4a7893 0%, var(--body-bg) 55%, #35586c 100%);
+    position: relative; width: 500px; margin: 0; transform-origin: top left;
   }
 
-  .receipt-frame{ background: var(--body-bg); padding: 15% 15% 10%; }
+  .receipt-frame{ background: transparent; padding: 15% 15% 10%; }
   .paper-wrap{ position: relative; width: 100%; box-shadow: 0 25px 50px rgba(0,0,0,0.4); }
   .paper-texture{ position:absolute; inset:0; width:100%; height:100%; object-fit: cover; mix-blend-mode: multiply; opacity: 0.22; pointer-events:none; z-index: 6; }
   img.cap-img{ display:block; width:100%; height:auto; }
@@ -326,13 +327,13 @@
   .total-row .col-desc{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); flex: 1; }
   .total-row .col-amt{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); min-width: 32%; text-align: right; margin-left: auto; }
 
-  /* --- LUNAS STAMP BASE --- */
+  /* --- LUNAS STAMP CHECKPOINT 1.0 --- */
   .lunas-stamp {
     position: absolute;
-    width: 140px;         /* Diperbesar agar sesuai proporsi di gambar */
-    left: -102px;         /* Posisi mutlak: Pusat stempel akan tepat membelah garis batas kiri kertas kuitansi */
+    width: 140px;         /* Diperbesar proporsional */
+    left: -102px;         /* Mutlak: Titik tengah membelah garis tepi bergerigi kuitansi */
     top: 50%;
-    margin-top: 22px;     /* Diturunkan sedikit agar posisinya pas menimpa batas baris total */
+    margin-top: 22px;     /* Diturunkan agar pas membingkai area TOTAL */
     transform: translateY(-50%) rotate(-10deg);
     z-index: 10;
     pointer-events: none;
@@ -376,7 +377,7 @@
     .no-print{ display:none !important; }
     #app, .main-layout, .preview-panel{ display:block !important; padding:0 !important; max-width: 100% !important; }
     .receipt-scale-wrap{ box-shadow:none !important; margin:0 auto !important; height: auto !important; }
-    #receiptCapture{ transform: none !important; margin: 0 auto !important; }
+    #receiptCapture{ transform: none !important; margin: 0 auto !important; background: transparent !important; }
   }
 </style>
 </head>
@@ -435,7 +436,7 @@
         <div class="total-preview"><span>Total</span><span id="totalPreviewText">Rp 0,-</span></div>
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
-        <div class="pdf-hint">Sistem PDF kini dikunci murni untuk hasil cetak tajam.</div>
+        <div class="pdf-hint">Checkpoint 1.0 - PDF dikunci presisi beserta shadow kertas.</div>
       </div>
 
       <!-- PREVIEW -->
@@ -587,7 +588,7 @@
   window.addEventListener('DOMContentLoaded', ()=>{
     if(sessionStorage.getItem('nara_kwitansi_auth') === '1'){
       document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('particlesCanvas').style.display = 'none'; // Sembunyikan jika memuat ulang di dalam app
+      document.getElementById('particlesCanvas').style.display = 'none';
       document.getElementById('app').classList.add('visible');
       initApp();
     } else {
@@ -711,7 +712,7 @@
   }
   if(document.fonts) document.fonts.ready.then(()=>{ tileMiddleBackground(); scaleReceiptToFitScreen(); });
 
-  // ---------------- SHADOW CLONE PDF EXPORT (ANTI-PUDAR & PRESISI) ----------------
+  // ---------------- SHADOW CLONE PDF EXPORT (ANTI-PUDAR & PENAMBAHAN SHADOW KERTAS) ----------------
   function waitForImagesToLoad(container){
     return Promise.all(Array.from(container.querySelectorAll('img')).map(img => {
       if(img.complete && img.naturalWidth > 0) return Promise.resolve();
@@ -743,6 +744,7 @@
     renderContainer.style.left = '0';
     renderContainer.style.width = '500px';
     renderContainer.style.zIndex = '-9999';
+    // Sama ratakan warna di background agar tak ada margin putih jika terjadi offset
     renderContainer.style.background = '#41708d';
     renderContainer.style.overflow = 'hidden';
 
@@ -751,6 +753,20 @@
     clone.style.transform = 'none';
     clone.style.width = '500px';
     clone.style.margin = '0';
+
+    // Suntikan CSS Khusus Render PDF (Penekanan Shadow agar terbaca oleh html2canvas)
+    const renderStyle = document.createElement('style');
+    renderStyle.innerHTML = `
+      .paper-wrap {
+        /* Gandakan kekuatan shadow khusus di mode PDF */
+        box-shadow: 0 30px 60px rgba(0,0,0,0.6) !important;
+      }
+      #receiptCapture {
+        /* Pastikan canvas membaca latar belakang secara utuh */
+        background: linear-gradient(155deg, #4a7893 0%, #41708d 55%, #35586c 100%) !important;
+      }
+    `;
+    clone.appendChild(renderStyle);
 
     clone.querySelectorAll('*').forEach(el => {
       el.style.animation = 'none';
