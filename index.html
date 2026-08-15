@@ -78,6 +78,11 @@
     --danger:     #D64545;
     --danger-soft:#FBEAEA;
 
+    /* -- aksen kedua: oranye hangat (dipakai terbatas: tombol hapus & CTA utama) -- */
+    --orange:      #E07A34;
+    --orange-dark: #C4611F;
+    --orange-soft: #FCEADA;
+
     /* alias supaya kompatibel dgn nama variabel lama (kertas kuitansi) */
     --body-bg: var(--blue-600);
     --panel-bg: var(--white);
@@ -90,9 +95,9 @@
     --item-color: #1a1a1a;
     --bar-bg: #dedede;
 
-    --radius-lg: 18px;
-    --radius-md: 14px;
-    --radius-sm: 10px;
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 16px;
     --font-display: 'Manrope', 'SF Pro Display Heavy', sans-serif;
     --font-body: 'SF Pro Display Regular', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   }
@@ -234,8 +239,8 @@
   }
   .login-card button{
     width:100%;
-    padding: 13px;
-    border-radius: var(--radius-sm);
+    padding: 14px;
+    border-radius: 100px;
     border:none;
     background: var(--blue-800);
     color:#fff;
@@ -284,7 +289,7 @@
   .topbar h2{ font-family: var(--font-display); font-weight: 800; font-size: 15.5px; letter-spacing: -0.01em; margin:0; }
   .logout-btn{
     background: var(--white); border: 1px solid var(--blue-200);
-    color: var(--blue-700); padding: 8px 16px; border-radius: var(--radius-sm); font-family: var(--font-body);
+    color: var(--blue-700); padding: 8px 18px; border-radius: 100px; font-family: var(--font-body);
     font-weight: 600; font-size: 12.5px; cursor:pointer; transition: transform .15s ease, background .2s ease, border-color .2s ease;
   }
   .logout-btn:hover{ background: var(--blue-50); border-color: var(--blue-300); }
@@ -326,6 +331,16 @@
   input:focus, textarea:focus{ border-color: var(--blue-600); background:#fff; box-shadow: 0 0 0 3px rgba(62,110,140,0.12); }
   #inputPelunasan { cursor: pointer; }
 
+  /* input dgn ikon prefix — dipakai utk Lokasi/Tanggal/Waktu Acara */
+  .input-icon-group{ position: relative; }
+  .input-icon-group .input-icon{
+    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
+    width: 16px; height: 16px; color: var(--blue-500); pointer-events: none; display:flex;
+  }
+  .input-icon-group .input-icon svg{ width:100%; height:100%; }
+  .input-icon-group input{ padding-left: 38px; }
+  #inputTanggalAcara, #inputPelunasan{ cursor: pointer; }
+
   .items-table{ margin-top: 4px; }
   .item-row-editor{
     display:grid; grid-template-columns: 52px 1fr 128px 34px; gap: 8px; margin-bottom: 10px; align-items:start;
@@ -338,15 +353,15 @@
   .desc-inputs { display: flex; flex-direction: column; gap: 6px; }
   .desc-inputs textarea { min-height: 40px; background: #fff; }
   .remove-row-btn{
-    width: 34px; height: 40px; border-radius: 8px; border: 1px solid var(--blue-200); background: #fff;
-    color: var(--ink-muted); font-size: 15px; cursor:pointer; display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 42px; border-radius: 14px; border: 1.5px solid var(--orange-soft); background: #fff;
+    color: var(--orange); font-size: 15px; cursor:pointer; display: flex; align-items: center; justify-content: center;
     transition: transform .15s ease, background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .remove-row-btn:hover{ background: var(--danger-soft); color: var(--danger); border-color: #f2c9c9; }
+  .remove-row-btn:hover{ background: var(--orange); color: #fff; border-color: var(--orange); }
   .remove-row-btn:active{ transform: scale(.92); }
   .col-labels{ display:grid; grid-template-columns: 52px 1fr 128px 34px; gap: 8px; font-family: var(--font-body); font-size: 10.5px; font-weight: 700; color: var(--ink-muted); margin-bottom: 8px; padding: 0 2px; text-transform: uppercase; letter-spacing: .04em; }
   .add-row-btn{
-    width:100%; padding: 11px; border-radius: var(--radius-sm); border: 1.5px dashed var(--blue-300);
+    width:100%; padding: 11px; border-radius: 100px; border: 1.5px dashed var(--blue-300);
     background: var(--blue-50); color: var(--blue-700); font-family: var(--font-body); font-size: 13.5px; font-weight: 600; cursor:pointer; margin-top: 4px;
     transition: background .15s ease, border-color .15s ease;
   }
@@ -362,17 +377,18 @@
 
   .total-preview{
     display:flex; justify-content: space-between; align-items:center;
-    background: var(--blue-800); border-radius: var(--radius-sm); padding: 14px 16px; margin: 18px 0 20px;
+    background: var(--blue-800); border-radius: 100px; padding: 14px 20px; margin: 18px 0 16px;
     font-family: var(--font-display); font-weight: 700; color: #fff; font-size: 14.5px;
   }
 
   .download-btn{
-    width:100%; padding: 14px; border-radius: var(--radius-sm); border:none; background: var(--blue-900);
+    width:100%; padding: 15px; border-radius: 100px; border:none;
+    background: linear-gradient(135deg, #EB8B44 0%, var(--orange) 55%, var(--orange-dark) 100%);
     color:#fff; font-size: 14.5px; font-family: var(--font-display); font-weight: 700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap: 9px;
-    transition: transform .15s ease, background .2s ease, box-shadow .2s ease;
-    box-shadow: 0 10px 22px rgba(22,48,63,0.28);
+    transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+    box-shadow: 0 4px 10px rgba(224,122,52,0.28), 0 16px 34px rgba(224,122,52,0.42);
   }
-  .download-btn:hover:not(:disabled){ background: #0F2531; transform: translateY(-1px); }
+  .download-btn:hover:not(:disabled){ filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(224,122,52,0.32), 0 20px 42px rgba(224,122,52,0.5); }
   .download-btn:active:not(:disabled){ transform: scale(.98); }
   .download-btn:disabled{ opacity:.6; cursor:default; transform:none; }
   .pdf-hint{ margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--ink-muted); text-align: center; }
@@ -406,17 +422,23 @@
   .receipt-frame{ background: transparent; padding: 15% 15% 10%; }
 
   /* --- FIX SHADOW PDF ---------------------------------------------------
-     box-shadow tidak konsisten dirender oleh html2canvas (keterbatasan
-     lama). Diganti dgn "glow" radial-gradient di ::before, karena
-     background-gradient jauh lebih reliable dirender html2canvas
-     dibanding box-shadow/filter. Otomatis menyesuaikan tinggi kertas
-     krn posisinya relatif (inset), bukan ukuran tetap. */
-  .paper-wrap{ position: relative; width: 100%; }
+     Sebelumnya shadow tidak muncul krn 2 hal: (1) box-shadow memang tidak
+     reliable dirender html2canvas, (2) .paper-wrap tidak membentuk
+     stacking-context sendiri (position:relative TANPA z-index), sehingga
+     ::before dgn z-index negatif "kabur" ke stacking context nenek-moyang
+     yang jauh & ketutup background #receiptCapture. Fix: kasih z-index
+     eksplisit ke .paper-wrap (bikin local stacking context), dan pakai
+     GAMBAR (Shadow.png, di-stretch background-size 100% 100%) bukan
+     gradient/box-shadow — gambar adalah konten paling reliable dirender
+     html2canvas, otomatis menyesuaikan tinggi kertas krn stretch penuh. */
+  .paper-wrap{ position: relative; z-index: 0; width: 100%; }
   .paper-wrap::before{
     content: '';
     position: absolute;
-    top: -16px; left: -22px; right: -22px; bottom: -26px;
-    background: radial-gradient(62% 58% at 50% 46%, rgba(14,30,40,0.32) 0%, rgba(14,30,40,0.14) 45%, rgba(14,30,40,0) 74%);
+    top: -22px; left: -26px; right: -26px; bottom: -30px;
+    background-image: url('assets/Shadow.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
     z-index: -1;
     pointer-events: none;
   }
@@ -433,6 +455,14 @@
   .meta-item { margin-bottom: 7px; }
   .meta-label { display: block; font-size: 8.5px; color: var(--ink-dark); margin-bottom: 2px; }
   .meta-value { display: block; font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); white-space: pre-line; line-height: 1.3; }
+
+  /* detail acara: 3 baris dgn ikon kecil (lokasi/tanggal/waktu) */
+  .meta-detail-acara{ margin-top: 1px; }
+  .meta-detail-row{ display:flex; align-items:center; gap: 5px; margin-bottom: 3px; }
+  .meta-detail-row:last-child{ margin-bottom: 0; }
+  .meta-detail-row .meta-icon{ width: 10px; height: 10px; flex-shrink:0; color: var(--accent); display:flex; }
+  .meta-detail-row .meta-icon svg{ width:100%; height:100%; }
+  .meta-detail-row span:last-child{ font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); line-height: 1.3; }
 
   .table-header-bar{ display:flex; background: var(--bar-bg); padding: 2.6% 0; margin: 0 -9%; padding-left: 9%; padding-right: 9%; }
   .col-qty{ width: 14%; } .col-desc{ flex:1; } .col-amt{ width: 32%; text-align:right; }
@@ -543,12 +573,36 @@
           <div class="field-group"><label>No. Kuitansi</label><input type="text" id="inputNomor" value="001/KS/VIII/26"></div>
         </div>
 
+        <div class="field-group">
+          <label>Lokasi Acara</label>
+          <div class="input-icon-group">
+            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <input type="text" id="inputLokasi" placeholder="Nama lokasi / venue" value="Komperta Tegal Kamulyan">
+          </div>
+        </div>
+
         <div class="field-row">
           <div class="field-group">
-            <label>Detail Acara</label>
-            <textarea id="inputDetailAcara" rows="2">Komperta Tegal Kamulyan&#10;16 Agustus 2026; ±19.30</textarea>
+            <label>Tanggal Acara</label>
+            <div class="input-icon-group">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
+              <input type="text" id="inputTanggalAcara" placeholder="Pilih tanggal...">
+            </div>
           </div>
-          <div class="field-group"><label>Tanggal Pelunasan</label><input type="text" id="inputPelunasan" placeholder="Pilih Tanggal..."></div>
+          <div class="field-group">
+            <label>±Waktu</label>
+            <div class="input-icon-group">
+              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
+              <input type="text" id="inputWaktuAcara" placeholder="19.30" value="19.30">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group"><label>Tanggal Pelunasan</label>
+          <div class="input-icon-group">
+            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m8.5 15 2 2 4-4"/></svg></span>
+            <input type="text" id="inputPelunasan" placeholder="Pilih Tanggal...">
+          </div>
         </div>
 
         <h3><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"/><path d="M17 9h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2c0 .9-.7 1.1-.7 2S8 5.1 8 6M12 2c0 .9-.7 1.1-.7 2s.7 1.1.7 2"/></svg></span>Daftar Item</h3>
@@ -585,7 +639,14 @@
                     <div class="meta-block">
                       <div class="meta-col-left">
                         <div class="meta-item"><span class="meta-label">Nama:</span><span class="meta-value" id="viewNama">Ardian</span></div>
-                        <div class="meta-item"><span class="meta-label">Detail Acara:</span><span class="meta-value" id="viewDetailAcara">Komperta Tegal Kamulyan<br>16 Agustus 2026; ±19.30</span></div>
+                        <div class="meta-item">
+                          <span class="meta-label">Detail Acara:</span>
+                          <div class="meta-value meta-detail-acara">
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span id="viewLokasi">Komperta Tegal Kamulyan</span></div>
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span id="viewTanggalAcara">16 Agustus 2026</span></div>
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span id="viewWaktuAcara">±19.30</span></div>
+                          </div>
+                        </div>
                       </div>
                       <div class="meta-col-right">
                         <div class="meta-item"><span class="meta-label">No. Kuitansi:</span><span class="meta-value" id="viewNomor">001/KS/VIII/26</span></div>
@@ -739,11 +800,17 @@
     });
     if (flatpickrInstance.selectedDates.length > 0) syncNomorWithDate(flatpickrInstance.selectedDates[0]);
 
+    flatpickr("#inputTanggalAcara", {
+      locale: "id", dateFormat: "j F Y", defaultDate: "2026-08-16", disableMobile: true,
+      onChange: function(){ renderReceipt(); }
+    });
+
     renderItemsEditor(); renderReceipt();
 
     document.getElementById('inputNama').addEventListener('input', renderReceipt);
     document.getElementById('inputNomor').addEventListener('input', renderReceipt);
-    document.getElementById('inputDetailAcara').addEventListener('input', renderReceipt);
+    document.getElementById('inputLokasi').addEventListener('input', renderReceipt);
+    document.getElementById('inputWaktuAcara').addEventListener('input', renderReceipt);
   }
 
   function formatRupiah(num){ return "Rp " + Number(num||0).toLocaleString('id-ID') + ",-"; }
@@ -797,7 +864,10 @@
 
   function renderReceipt(){
     document.getElementById('viewNama').textContent = document.getElementById('inputNama').value || '-';
-    document.getElementById('viewDetailAcara').textContent = document.getElementById('inputDetailAcara').value || '-';
+    document.getElementById('viewLokasi').textContent = document.getElementById('inputLokasi').value || '-';
+    document.getElementById('viewTanggalAcara').textContent = document.getElementById('inputTanggalAcara').value || '-';
+    const waktuVal = document.getElementById('inputWaktuAcara').value;
+    document.getElementById('viewWaktuAcara').textContent = waktuVal ? ('±' + waktuVal) : '-';
     document.getElementById('viewNomor').textContent = document.getElementById('inputNomor').value || '-';
     document.getElementById('viewPelunasan').textContent = document.getElementById('inputPelunasan').value || '-';
 
@@ -930,7 +1000,7 @@
     } finally {
       renderContainer.remove();
       btn.disabled = false;
-      btn.innerHTML = '⬇ Unduh Kwitansi (PDF)';
+      btn.innerHTML = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v13m0 0-4-4m4 4 4-4"/><path d="M4 19h16"/></svg> Unduh Kwitansi (PDF)';
     }
   }
 </script>
