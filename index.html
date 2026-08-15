@@ -63,13 +63,14 @@
     overflow-x: hidden;
   }
 
+  /* Z-INDEX 0 AGAR PARTIKEL BERADA DI ATAS BACKGROUND GRADIENT BODY */
   #particlesCanvas {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
   }
 
@@ -91,7 +92,13 @@
   @keyframes rowIn{ from{ opacity:0; transform: translateX(-8px); } to{ opacity:1; transform: translateX(0); } }
   @keyframes pulseTotal{ 0%{ transform: scale(1); } 35%{ transform: scale(1.06); } 100%{ transform: scale(1); } }
   @keyframes spin{ to{ transform: rotate(360deg); } }
-  @keyframes stampPop{ 0%{ opacity:0; transform: scale(.5) rotate(-18deg); } 70%{ opacity:1; transform: scale(1.08) rotate(-8deg); } 100%{ opacity:1; transform: scale(1) rotate(-10deg); } }
+
+  /* ANIMASI STEMPEL (Translasi mutlak dari CSS dasar) */
+  @keyframes stampPop{
+    0%{ opacity:0; transform: translateY(-50%) scale(.5) rotate(-18deg); }
+    70%{ opacity:1; transform: translateY(-50%) scale(1.08) rotate(-8deg); }
+    100%{ opacity:1; transform: translateY(-50%) scale(1) rotate(-10deg); }
+  }
 
   .anim-pulse{ animation: pulseTotal .35s ease; }
 
@@ -103,7 +110,7 @@
     justify-content:center;
     padding: 24px;
     position: relative;
-    z-index: 10;
+    z-index: 10; /* Berada di atas partikel */
   }
   .login-card{
     background: rgba(255, 255, 255, 0.94);
@@ -250,7 +257,7 @@
   .desc-inputs textarea { min-height: 40px; }
   .remove-row-btn{
     width: 34px; height: 40px; border-radius: 9px; border: 1.5px solid #f0c7c0; background: #fdf1ef;
-    color: var(--danger); font-size: 16px; cursor:pointer;
+    color: var(--danger); font-size: 16px; cursor:pointer; display: flex; align-items: center; justify-content: center;
   }
   .col-labels{ display:grid; grid-template-columns: 52px 1fr 130px 34px; gap: 8px; font-size: 11px; font-weight: 700; color: var(--ink-muted); margin-bottom: 6px; }
   .add-row-btn{
@@ -278,13 +285,11 @@
     animation: fadeInUpWord .6s .15s cubic-bezier(.2,.8,.3,1) both;
   }
 
-  /* Wrapper yang di-scale via JS agar muat di HP, namun tidak mengubah pixel intinya */
   .receipt-scale-wrap {
     width: 100%; max-width: 500px; border-radius: 14px; box-shadow: 0 25px 60px rgba(0,0,0,0.25);
     background: var(--body-bg); overflow: hidden; transition: height 0.15s ease;
   }
 
-  /* Elemen Capture MURNI, ukurannya TAK PERNAH diubah CSS/Media Query */
   #receiptCapture {
     background: var(--body-bg); position: relative; width: 500px; margin: 0; transform-origin: top left;
   }
@@ -322,16 +327,16 @@
   .total-row .col-desc{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); flex: 1; }
   .total-row .col-amt{ font-family: 'SF Pro Display Heavy', sans-serif; font-size: 12px; color: var(--total-color); min-width: 32%; text-align: right; margin-left: auto; }
 
-  /* --- STEMPEL LUNAS UKURAN FIX KECIL ELEGANT (ANTI-KEBESARAN) --- */
+  /* --- LUNAS STAMP BASE --- */
   .lunas-stamp {
     position: absolute;
-    width: 85px;          /* Ukuran mutlak, tidak akan membesar/mengecil */
-    left: -18px;          /* Menjorok sedikit keluar kertas di bagian kiri */
-    top: 50%;             /* Dipusatkan terhadap baris total */
-    margin-top: -38px;    /* Koreksi tinggi stempel agar pas tengah */
+    width: 85px;
+    left: -22px;          /* Di-geser lebih ke KIRI agar persis seperti request */
+    top: 50%;
+    transform: translateY(-50%) rotate(-10deg); /* Transform dasar dikunci di sini */
     z-index: 10;
-    transform: rotate(-10deg);
     pointer-events: none;
+    opacity: 1;           /* Default opacity solid */
     animation: stampPop .45s cubic-bezier(.3,1.4,.5,1) both;
   }
 
@@ -339,19 +344,36 @@
   .footer-section{ background:#fff; padding: 3.5% 9%; }
   .footer-section img{ display:block; width:100%; height:auto; max-width: 420px; margin: 0 auto; }
 
-  /* MEDIA QUERIES EDITOR ONLY */
+  /* ---------------- RESPONSIVITAS MOBILE FORM & EDITOR ---------------- */
   @media (max-width: 768px){
     .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
     .editor-panel, .preview-panel{ max-width: 100%; width: 100%; }
+
+    /* Perbaikan Form Info Kuitansi: disusun ke bawah agar tidak kekecilan di layar sempit */
+    .field-row { flex-direction: column; gap: 14px; margin-bottom: 14px; }
+    .field-row .field-group { margin-bottom: 0; }
+
     .col-labels { display: none; }
-    .item-row-editor { display: flex; flex-wrap: wrap; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1.5px solid #e2e8f0; margin-bottom: 12px; }
-    .item-row-editor input[type="number"] { width: 70px !important; flex: none; }
-    .item-row-editor input[type="text"] { flex: 1; min-width: 130px; }
-    .item-row-editor .desc-inputs { width: 100% !important; order: 3; }
-    .item-row-editor .remove-row-btn { margin-left: auto; height: 38px; }
+
+    /* Perbaikan Baris Item Desktop (Grid) menjadi Flex Responsif */
+    .item-row-editor {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1.5px solid #e2e8f0;
+      margin-bottom: 12px;
+    }
+    /* Baris atas: QTY(Fix) - HARGA(Flex) - Tombol X(Fix) */
+    .item-row-editor input[type="number"] { flex: 0 0 60px !important; }
+    .item-row-editor input[type="text"] { flex: 1; min-width: 0; }
+    .item-row-editor .remove-row-btn { flex: 0 0 42px; height: 40px; margin: 0; }
+    /* Baris bawah: Judul dan Deskripsi Item 100% width */
+    .item-row-editor .desc-inputs { width: 100% !important; order: 4; margin-top: 4px; }
   }
 
-  /* MEDIA PRINT KHUSUS PRINTER ASLI, BUKAN HTML2PDF */
   @media print{
     @page{ margin: 10mm; }
     html, body{ background:#fff !important; }
@@ -364,6 +386,7 @@
 </head>
 <body>
 
+  <!-- LAYER 0: PARTIKEL (Sekarang dijamin muncul) -->
   <canvas id="particlesCanvas"></canvas>
 
   <div id="loginScreen" class="no-print">
@@ -416,7 +439,7 @@
         <div class="total-preview"><span>Total</span><span id="totalPreviewText">Rp 0,-</span></div>
 
         <button class="download-btn" id="downloadBtn" onclick="downloadPDF()">⬇ Unduh Kwitansi (PDF)</button>
-        <div class="pdf-hint">Sistem baru: PDF dijamin presisi tanpa terpotong.</div>
+        <div class="pdf-hint">Sistem PDF kini dikunci murni untuk hasil cetak tajam.</div>
       </div>
 
       <!-- PREVIEW -->
@@ -448,7 +471,7 @@
 
                     <div class="items-list" id="viewItems"></div>
 
-                    <!-- LUNAS STAMP POSISI PASTI DI SINI -->
+                    <!-- LUNAS STAMP POSISI PASTI -->
                     <div class="total-row" id="totalRow">
                       <span class="col-qty"></span><span class="col-desc">TOTAL</span><span class="col-amt" id="viewTotal">Rp 0,-</span>
                       <img class="lunas-stamp" id="lunasStamp" src="assets/Lunas.png" alt="Lunas">
@@ -473,8 +496,68 @@
 <script>
   // ---------------- PARTICLES ----------------
   let animationFrameId;
-  function initParticles() { /* ... kode sama ... */ }
+  function initParticles() {
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
 
+    function resize() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * width;
+        this.y = Math.random() * height;
+        this.vx = (Math.random() - 0.5) * 0.6;
+        this.vy = -Math.random() * 0.8 - 0.2;
+        this.radius = Math.random() * 1.8 + 0.6;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.y < 0) { this.y = height + 10; this.x = Math.random() * width; }
+        if (this.x < 0 || this.x > width) this.vx = -this.vx;
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(255, 243, 224, 0.55)';
+        ctx.fill();
+      }
+    }
+
+    function init() {
+      resize(); particles = [];
+      const particleCount = window.innerWidth < 768 ? 25 : 65;
+      for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+      window.addEventListener('resize', resize); animate();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      particles.forEach(p => { p.update(); p.draw(); });
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 110) {
+            ctx.beginPath(); ctx.strokeStyle = `rgba(255, 243, 224, ${0.15 - dist/800})`;
+            ctx.lineWidth = 0.5; ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y); ctx.stroke();
+          }
+        }
+      }
+      animationFrameId = requestAnimationFrame(animate);
+    }
+    init();
+  }
+  window.addEventListener('DOMContentLoaded', initParticles);
+
+  // ---------------- AUTH ----------------
   const APP_PASSWORD = "@Nara2026!";
   function tryLogin(){
     const val = document.getElementById('passwordInput').value;
@@ -548,14 +631,14 @@
       row.className = 'item-row-editor';
       row.innerHTML = `
         <input type="number" min="0" value="${item.qty}" oninput="updateItem(${idx},'qty',this.value)">
-        <div class="desc-inputs">
-          <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Judul Package...">${item.desc}</textarea>
-          <textarea oninput="updateItem(${idx},'subDesc',this.value)" placeholder="Detail List Item...">${item.subDesc || ''}</textarea>
-        </div>
         <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
                onfocus="this.value = this.value.replace(/\\./g,'')" oninput="let r=this.value.replace(/\\D/g,''); this.value=r?Number(r).toLocaleString('id-ID'):''; updateItem(${idx},'amt', r)"
                onblur="this.value = this.value ? Number(this.value.replace(/\\./g,'')).toLocaleString('id-ID') : ''">
         <button class="remove-row-btn" onclick="removeItemRow(${idx})">✕</button>
+        <div class="desc-inputs">
+          <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Judul Package...">${item.desc}</textarea>
+          <textarea oninput="updateItem(${idx},'subDesc',this.value)" placeholder="Detail List Item...">${item.subDesc || ''}</textarea>
+        </div>
       `;
       container.appendChild(row);
     });
@@ -620,7 +703,7 @@
   }
   if(document.fonts) document.fonts.ready.then(()=>{ tileMiddleBackground(); scaleReceiptToFitScreen(); });
 
-  // ---------------- SHADOW CLONE PDF EXPORT (BULLETPROOF) ----------------
+  // ---------------- SHADOW CLONE PDF EXPORT (ANTI-PUDAR & PRESISI) ----------------
   function waitForImagesToLoad(container){
     return Promise.all(Array.from(container.querySelectorAll('img')).map(img => {
       if(img.complete && img.naturalWidth > 0) return Promise.resolve();
@@ -646,8 +729,7 @@
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Membuat PDF...';
 
-    // MEMBUAT WADAH RENDER TERISOLASI MUTLAK
-    // Ini mengabaikan ukuran layar HP kamu, sehingga hasil PDF selalu sempurna
+    // Wadah khusus yang tak kasat mata
     const renderContainer = document.createElement('div');
     renderContainer.style.position = 'absolute';
     renderContainer.style.top = '0';
@@ -657,12 +739,25 @@
     renderContainer.style.background = '#41708d';
     renderContainer.style.overflow = 'hidden';
 
-    // Salin kuitansi dan hilangkan semua respon layar/skala
     const originalEl = document.getElementById('receiptCapture');
     const clone = originalEl.cloneNode(true);
     clone.style.transform = 'none';
     clone.style.width = '500px';
     clone.style.margin = '0';
+
+    // Matikan SELURUH animasi di clone agar PDF tidak menangkap elemen yang sedang pudar/setengah transisi
+    clone.querySelectorAll('*').forEach(el => {
+      el.style.animation = 'none';
+      el.style.transition = 'none';
+    });
+
+    // Kunci paksa state stempel LUNAS (Warna solid, rotasi & posisi aman)
+    const stampClone = clone.querySelector('.lunas-stamp');
+    if (stampClone) {
+      stampClone.style.opacity = '1';
+      stampClone.style.transform = 'translateY(-50%) rotate(-10deg)';
+      // Posisi left akan diwarisi dari CSS terbaru (-22px) yang sudah pas kiri
+    }
 
     renderContainer.appendChild(clone);
     document.body.appendChild(renderContainer);
@@ -671,7 +766,6 @@
       await waitForImagesToLoad(renderContainer);
       if(document.fonts) await document.fonts.ready;
 
-      // Hitung tinggi murni tanpa pengaruh zoom layar HP
       const exactHeight = clone.offsetHeight;
       const filename = `Kuitansi_Sahaja_${document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'')}_${(document.getElementById('inputNomor').value).replace(/[^a-zA-Z0-9]/g,'')}.pdf`;
 
@@ -680,16 +774,15 @@
         filename: filename,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: {
-          scale: 2,           // Resolusi tinggi
+          scale: 2,
           useCORS: true,
-          width: 500,         // Kunci lebar jepretan kamera
-          height: exactHeight, // Kunci tinggi jepretan
-          scrollY: 0,
-          scrollX: 0
+          width: 500,
+          height: exactHeight,
+          scrollY: 0, scrollX: 0
         },
         jsPDF: {
           unit: 'px',
-          format: [500, exactHeight], // Ukuran kertas PDF presisi
+          format: [500, exactHeight],
           orientation: 'portrait'
         }
       };
@@ -708,7 +801,6 @@
       statusEl.textContent = 'Error: ' + err.message;
       statusEl.style.display = 'block';
     } finally {
-      // Hapus kloningan tak terlihat
       renderContainer.remove();
       btn.disabled = false;
       btn.innerHTML = '⬇ Unduh Kwitansi (PDF)';
