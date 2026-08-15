@@ -178,7 +178,7 @@
     background: var(--white);
     border: 1px solid var(--blue-200);
     border-radius: var(--radius-lg);
-    padding: 44px 38px 36px 38px;
+    padding: 44px 38px 30px 38px;
     width: 100%;
     max-width: 372px;
     box-shadow: 0 1px 2px rgba(30,61,80,0.04), 0 18px 40px rgba(30,61,80,0.08);
@@ -264,10 +264,12 @@
   #loginError{
     color: var(--danger);
     font-size: 13px;
-    margin-top: 16px;
-    min-height: 16px;
+    margin-top: 0;
+    min-height: 0;
     font-weight: 600;
+    transition: margin-top .15s ease;
   }
+  #loginError:not(:empty){ margin-top: 14px; }
 
   /* ---------------- APP LAYOUT ---------------- */
   #app{ display:none; position: relative; z-index: 10; }
@@ -323,23 +325,18 @@
     display:block; font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--ink-muted);
     margin-bottom: 7px; text-transform: uppercase; letter-spacing: .04em;
   }
-  input[type="text"], textarea, input[type="number"]{
+  input[type="text"], textarea, input[type="number"], input[type="time"]{
     width:100%; padding: 10px 13px; border-radius: var(--radius-sm); border: 1.5px solid var(--blue-200);
     background: var(--blue-50); font-size: 14px; font-family: var(--font-body); color: var(--ink); outline:none; resize: vertical;
     transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
   }
   input:focus, textarea:focus{ border-color: var(--blue-600); background:#fff; box-shadow: 0 0 0 3px rgba(62,110,140,0.12); }
   #inputPelunasan { cursor: pointer; }
-
-  /* input dgn ikon prefix — dipakai utk Lokasi/Tanggal/Waktu Acara */
-  .input-icon-group{ position: relative; }
-  .input-icon-group .input-icon{
-    position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-    width: 16px; height: 16px; color: var(--blue-500); pointer-events: none; display:flex;
-  }
-  .input-icon-group .input-icon svg{ width:100%; height:100%; }
-  .input-icon-group input{ padding-left: 38px; }
   #inputTanggalAcara, #inputPelunasan{ cursor: pointer; }
+
+  /* ±Waktu — native time input agar bisa scroll pilih jam/menit */
+  input[type="time"]{ cursor: pointer; }
+  input[type="time"]::-webkit-calendar-picker-indicator{ cursor: pointer; filter: invert(35%) sepia(15%) saturate(900%) hue-rotate(165deg); }
 
   .items-table{ margin-top: 4px; }
   .item-row-editor{
@@ -383,12 +380,12 @@
 
   .download-btn{
     width:100%; padding: 15px; border-radius: 100px; border:none;
-    background: linear-gradient(135deg, #EB8B44 0%, var(--orange) 55%, var(--orange-dark) 100%);
+    background: linear-gradient(135deg, #ff6a45 0%, #f83b1d 55%, #c92a10 100%);
     color:#fff; font-size: 14.5px; font-family: var(--font-display); font-weight: 700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap: 9px;
     transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-    box-shadow: 0 4px 10px rgba(224,122,52,0.28), 0 16px 34px rgba(224,122,52,0.42);
+    box-shadow: 0 4px 10px rgba(248,59,29,0.28), 0 16px 34px rgba(248,59,29,0.42);
   }
-  .download-btn:hover:not(:disabled){ filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(224,122,52,0.32), 0 20px 42px rgba(224,122,52,0.5); }
+  .download-btn:hover:not(:disabled){ filter: brightness(1.06); transform: translateY(-1px); box-shadow: 0 6px 14px rgba(248,59,29,0.32), 0 20px 42px rgba(248,59,29,0.5); }
   .download-btn:active:not(:disabled){ transform: scale(.98); }
   .download-btn:disabled{ opacity:.6; cursor:default; transform:none; }
   .pdf-hint{ margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--ink-muted); text-align: center; }
@@ -456,13 +453,15 @@
   .meta-label { display: block; font-size: 8.5px; color: var(--ink-dark); margin-bottom: 2px; }
   .meta-value { display: block; font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); white-space: pre-line; line-height: 1.3; }
 
-  /* detail acara: 3 baris dgn ikon kecil (lokasi/tanggal/waktu) */
+  /* detail acara: baris lokasi + baris tanggal&waktu (berdekatan), dgn ikon kecil */
   .meta-detail-acara{ margin-top: 1px; }
-  .meta-detail-row{ display:flex; align-items:center; gap: 5px; margin-bottom: 3px; }
+  .meta-detail-row{ display:flex; align-items:center; gap: 5px; margin-bottom: 2px; }
   .meta-detail-row:last-child{ margin-bottom: 0; }
   .meta-detail-row .meta-icon{ width: 10px; height: 10px; flex-shrink:0; color: var(--accent); display:flex; }
   .meta-detail-row .meta-icon svg{ width:100%; height:100%; }
-  .meta-detail-row span:last-child{ font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); line-height: 1.3; }
+  .meta-detail-row span{ font-family: 'SF Pro Display Semibold', sans-serif; font-weight: 600; font-size: 10.5px; color: var(--ink-dark); line-height: 1.3; }
+  /* waktu ditempel di sebelah tanggal, dipisah bullet tipis */
+  .meta-waktu{ margin-left: 4px; padding-left: 6px; border-left: 1px solid var(--blue-300); }
 
   .table-header-bar{ display:flex; background: var(--bar-bg); padding: 2.6% 0; margin: 0 -9%; padding-left: 9%; padding-right: 9%; }
   .col-qty{ width: 14%; } .col-desc{ flex:1; } .col-amt{ width: 32%; text-align:right; }
@@ -575,34 +574,22 @@
 
         <div class="field-group">
           <label>Lokasi Acara</label>
-          <div class="input-icon-group">
-            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
-            <input type="text" id="inputLokasi" placeholder="Nama lokasi / venue" value="Komperta Tegal Kamulyan">
-          </div>
+          <input type="text" id="inputLokasi" placeholder="Nama lokasi / venue" value="Komperta Tegal Kamulyan">
         </div>
 
         <div class="field-row">
           <div class="field-group">
             <label>Tanggal Acara</label>
-            <div class="input-icon-group">
-              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span>
-              <input type="text" id="inputTanggalAcara" placeholder="Pilih tanggal...">
-            </div>
+            <input type="text" id="inputTanggalAcara" placeholder="Pilih tanggal...">
           </div>
           <div class="field-group">
             <label>±Waktu</label>
-            <div class="input-icon-group">
-              <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span>
-              <input type="text" id="inputWaktuAcara" placeholder="19.30" value="19.30">
-            </div>
+            <input type="time" id="inputWaktuAcara" value="19:30">
           </div>
         </div>
 
         <div class="field-group"><label>Tanggal Pelunasan</label>
-          <div class="input-icon-group">
-            <span class="input-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="m8.5 15 2 2 4-4"/></svg></span>
-            <input type="text" id="inputPelunasan" placeholder="Pilih Tanggal...">
-          </div>
+          <input type="text" id="inputPelunasan" placeholder="Pilih Tanggal...">
         </div>
 
         <h3><span class="section-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"/><path d="M17 9h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M8 2c0 .9-.7 1.1-.7 2S8 5.1 8 6M12 2c0 .9-.7 1.1-.7 2s.7 1.1.7 2"/></svg></span>Daftar Item</h3>
@@ -643,8 +630,7 @@
                           <span class="meta-label">Detail Acara:</span>
                           <div class="meta-value meta-detail-acara">
                             <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span><span id="viewLokasi">Komperta Tegal Kamulyan</span></div>
-                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span id="viewTanggalAcara">16 Agustus 2026</span></div>
-                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></span><span id="viewWaktuAcara">±19.30</span></div>
+                            <div class="meta-detail-row"><span class="meta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></span><span id="viewTanggalAcara">16 Agustus 2026</span><span class="meta-waktu" id="viewWaktuAcara">±19.30</span></div>
                           </div>
                         </div>
                       </div>
@@ -867,7 +853,8 @@
     document.getElementById('viewLokasi').textContent = document.getElementById('inputLokasi').value || '-';
     document.getElementById('viewTanggalAcara').textContent = document.getElementById('inputTanggalAcara').value || '-';
     const waktuVal = document.getElementById('inputWaktuAcara').value;
-    document.getElementById('viewWaktuAcara').textContent = waktuVal ? ('±' + waktuVal) : '-';
+    document.getElementById('viewWaktuAcara').textContent = waktuVal ? ('±' + waktuVal.replace(':', '.')) : '';
+    document.getElementById('viewWaktuAcara').style.display = waktuVal ? '' : 'none';
     document.getElementById('viewNomor').textContent = document.getElementById('inputNomor').value || '-';
     document.getElementById('viewPelunasan').textContent = document.getElementById('inputPelunasan').value || '-';
 
@@ -949,6 +936,9 @@
       el.style.animation = 'none';
       el.style.transition = 'none';
     });
+
+    // Sembunyikan ikon lokasi/tanggal/waktu — hanya tampil di preview layar, tidak di PDF
+    clone.querySelectorAll('.meta-icon').forEach(el => { el.style.display = 'none'; });
 
     const stampClone = clone.querySelector('.lunas-stamp');
     if (stampClone) {
