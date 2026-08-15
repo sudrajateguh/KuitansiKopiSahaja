@@ -63,7 +63,7 @@
     overflow-x: hidden;
   }
 
-  /* Z-INDEX 0 AGAR PARTIKEL BERADA DI ATAS BACKGROUND GRADIENT BODY */
+  /* Z-INDEX 0 AGAR PARTIKEL BERADA DI BAWAH APLIKASI TAPI DI ATAS BACKGROUND */
   #particlesCanvas {
     position: fixed;
     top: 0;
@@ -93,7 +93,6 @@
   @keyframes pulseTotal{ 0%{ transform: scale(1); } 35%{ transform: scale(1.06); } 100%{ transform: scale(1); } }
   @keyframes spin{ to{ transform: rotate(360deg); } }
 
-  /* ANIMASI STEMPEL (Translasi mutlak dari CSS dasar) */
   @keyframes stampPop{
     0%{ opacity:0; transform: translateY(-50%) scale(.5) rotate(-18deg); }
     70%{ opacity:1; transform: translateY(-50%) scale(1.08) rotate(-8deg); }
@@ -110,7 +109,7 @@
     justify-content:center;
     padding: 24px;
     position: relative;
-    z-index: 10; /* Berada di atas partikel */
+    z-index: 10;
   }
   .login-card{
     background: rgba(255, 255, 255, 0.94);
@@ -331,12 +330,12 @@
   .lunas-stamp {
     position: absolute;
     width: 85px;
-    left: -22px;          /* Di-geser lebih ke KIRI agar persis seperti request */
+    left: -36px;          /* Digeser menjorok ke kiri, sesuai request potong di pinggir kertas */
     top: 50%;
-    transform: translateY(-50%) rotate(-10deg); /* Transform dasar dikunci di sini */
+    transform: translateY(-50%) rotate(-10deg);
     z-index: 10;
     pointer-events: none;
-    opacity: 1;           /* Default opacity solid */
+    opacity: 1;
     animation: stampPop .45s cubic-bezier(.3,1.4,.5,1) both;
   }
 
@@ -349,13 +348,12 @@
     .main-layout{ flex-direction:column; padding: 16px; align-items: center; }
     .editor-panel, .preview-panel{ max-width: 100%; width: 100%; }
 
-    /* Perbaikan Form Info Kuitansi: disusun ke bawah agar tidak kekecilan di layar sempit */
     .field-row { flex-direction: column; gap: 14px; margin-bottom: 14px; }
     .field-row .field-group { margin-bottom: 0; }
 
     .col-labels { display: none; }
 
-    /* Perbaikan Baris Item Desktop (Grid) menjadi Flex Responsif */
+    /* Grid diubah jadi Flex responsif untuk mobile lewat fitur ORDER */
     .item-row-editor {
       display: flex;
       flex-wrap: wrap;
@@ -366,12 +364,10 @@
       border: 1.5px solid #e2e8f0;
       margin-bottom: 12px;
     }
-    /* Baris atas: QTY(Fix) - HARGA(Flex) - Tombol X(Fix) */
-    .item-row-editor input[type="number"] { flex: 0 0 60px !important; }
-    .item-row-editor input[type="text"] { flex: 1; min-width: 0; }
-    .item-row-editor .remove-row-btn { flex: 0 0 42px; height: 40px; margin: 0; }
-    /* Baris bawah: Judul dan Deskripsi Item 100% width */
-    .item-row-editor .desc-inputs { width: 100% !important; order: 4; margin-top: 4px; }
+    .item-row-editor input[type="number"] { order: 1; flex: 0 0 60px !important; }
+    .item-row-editor input[type="text"] { order: 2; flex: 1; min-width: 0; }
+    .item-row-editor .remove-row-btn { order: 3; flex: 0 0 42px; height: 40px; margin: 0; }
+    .item-row-editor .desc-inputs { order: 4; width: 100% !important; margin-top: 4px; }
   }
 
   @media print{
@@ -386,7 +382,7 @@
 </head>
 <body>
 
-  <!-- LAYER 0: PARTIKEL (Sekarang dijamin muncul) -->
+  <!-- LAYER 0: PARTIKEL DILUAR LOGIN AGAR TETAP JALAN -->
   <canvas id="particlesCanvas"></canvas>
 
   <div id="loginScreen" class="no-print">
@@ -623,6 +619,7 @@
   function addItemRow(){ items.push({ qty: 1, desc: "", subDesc: "", amt: 0 }); renderItemsEditor(); renderReceipt(); }
   function removeItemRow(idx){ items.splice(idx,1); renderItemsEditor(); renderReceipt(); }
 
+  // STRUKTUR HTML DIKEMBALIKAN KE FORMAT GRID DESKTOP
   function renderItemsEditor(){
     const container = document.getElementById('itemsEditor');
     container.innerHTML = '';
@@ -631,14 +628,14 @@
       row.className = 'item-row-editor';
       row.innerHTML = `
         <input type="number" min="0" value="${item.qty}" oninput="updateItem(${idx},'qty',this.value)">
-        <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
-               onfocus="this.value = this.value.replace(/\\./g,'')" oninput="let r=this.value.replace(/\\D/g,''); this.value=r?Number(r).toLocaleString('id-ID'):''; updateItem(${idx},'amt', r)"
-               onblur="this.value = this.value ? Number(this.value.replace(/\\./g,'')).toLocaleString('id-ID') : ''">
-        <button class="remove-row-btn" onclick="removeItemRow(${idx})">✕</button>
         <div class="desc-inputs">
           <textarea oninput="updateItem(${idx},'desc',this.value)" placeholder="Judul Package...">${item.desc}</textarea>
           <textarea oninput="updateItem(${idx},'subDesc',this.value)" placeholder="Detail List Item...">${item.subDesc || ''}</textarea>
         </div>
+        <input type="text" inputmode="numeric" value="${item.amt ? Number(item.amt).toLocaleString('id-ID') : ''}"
+               onfocus="this.value = this.value.replace(/\\./g,'')" oninput="let r=this.value.replace(/\\D/g,''); this.value=r?Number(r).toLocaleString('id-ID'):''; updateItem(${idx},'amt', r)"
+               onblur="this.value = this.value ? Number(this.value.replace(/\\./g,'')).toLocaleString('id-ID') : ''">
+        <button class="remove-row-btn" onclick="removeItemRow(${idx})">✕</button>
       `;
       container.appendChild(row);
     });
@@ -756,7 +753,6 @@
     if (stampClone) {
       stampClone.style.opacity = '1';
       stampClone.style.transform = 'translateY(-50%) rotate(-10deg)';
-      // Posisi left akan diwarisi dari CSS terbaru (-22px) yang sudah pas kiri
     }
 
     renderContainer.appendChild(clone);
