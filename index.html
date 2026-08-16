@@ -931,17 +931,28 @@
     // (box-shadow kertas di .paper-wrap tetap tampil, tidak disentuh di sini)
     clone.style.borderRadius = '0';
     clone.style.boxShadow = 'none';
-    // Fix warna PDF sedikit lebih cerah dari preview: html2canvas kurang akurat
-    // merender gradient sudut miring (155deg). Preview tetap pakai gradient asli
-    // (tidak disentuh); khusus clone utk PDF, gradient diratakan ke arah vertikal
-    // murni (paling presisi utk html2canvas) dgn titik warna sama persis dgn preview.
-    clone.style.background = 'linear-gradient(180deg, #4a7893 0%, #3E6E8C 55%, #35586c 100%)';
+    // (background gradient TIDAK di-override sama sekali di sini: clone masih
+    // membawa id="receiptCapture", jadi otomatis mewarisi gradient yang sama
+    // persis dari CSS #receiptCapture di atas -- 100% identik dgn preview.)
 
     // Matikan Animasi
     clone.querySelectorAll('*').forEach(el => {
       el.style.animation = 'none';
       el.style.transition = 'none';
     });
+
+    // Fix warna PDF lebih cerah dari preview: root cause-nya BUKAN gradient,
+    // tapi .paper-texture (Texture.jpg dgn mix-blend-mode:multiply) -- mode blend
+    // ini tidak didukung html2canvas sama sekali, sehingga jatuh ke overlay biasa
+    // dan malah MENCERAHKAN alih-alih menggelapkan (texture-nya sendiri cerah).
+    // Fix: matikan texture di clone, ganti dengan overlay gelap rata yang
+    // dikalibrasi (rgba 0,0,0,0.06) menyamai tone asli di preview -- primitif
+    // warna solid inilah satu-satunya yang direproduksi akurat oleh html2canvas.
+    const textureClone = clone.querySelector('.paper-texture');
+    if (textureClone) textureClone.style.opacity = '0';
+    const darkenOverlay = document.createElement('div');
+    darkenOverlay.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:rgba(0,0,0,0.06);pointer-events:none;z-index:6;';
+    clone.appendChild(darkenOverlay);
 
     const stampClone = clone.querySelector('.lunas-stamp');
     if (stampClone) {
