@@ -6,8 +6,9 @@
 <title>Kuitansi Kopi Sahaja</title>
 <link rel="icon" type="image/png" href="assets/KopiSahajaKotakBiru.png">
 
-<!-- CDN html2pdf -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- CDN modern-screenshot (rendering asli via browser, bukan rekonstruksi manual) + jsPDF -->
+<script src="https://cdn.jsdelivr.net/npm/modern-screenshot@4/dist/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- CDN Flatpickr -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -903,33 +904,6 @@
     }));
   }
 
-  // Hitung garis gradien sesuai spesifikasi CSS (agar sudut & titik gradien
-  // 100% sama persis dgn cara browser menghitung linear-gradient asli)
-  function cssAngleGradientLine(width, height, angleDeg){
-    const rad = (angleDeg * Math.PI) / 180;
-    const length = Math.abs(width * Math.sin(rad)) + Math.abs(height * Math.cos(rad));
-    const half = length / 2;
-    const cx = width / 2, cy = height / 2;
-    const dx = Math.sin(rad) * half;
-    const dy = -Math.cos(rad) * half;
-    return { x1: cx - dx, y1: cy - dy, x2: cx + dx, y2: cy + dy };
-  }
-
-  // "Bakar" gradien CSS jadi bitmap PNG persis di ukuran akhir kertas —
-  // supaya html2canvas tinggal menggambar gambar statis (akurat), bukan
-  // merekonstruksi ulang linear-gradient (yg suka meleset warnanya).
-  function bakeLinearGradientDataURL(width, height, angleDeg, stops){
-    const canvas = document.createElement('canvas');
-    canvas.width = width; canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    const { x1, y1, x2, y2 } = cssAngleGradientLine(width, height, angleDeg);
-    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
-    stops.forEach(s => grad.addColorStop(s.offset, s.color));
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, height);
-    return canvas.toDataURL('image/png');
-  }
-
   async function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
     let statusEl = document.getElementById('pdfStatus');
@@ -940,7 +914,7 @@
     }
     statusEl.style.display = 'none';
 
-    if(typeof html2pdf === 'undefined'){
+    if(typeof modernScreenshot === 'undefined' || typeof window.jspdf === 'undefined'){
       statusEl.textContent = 'Gagal memuat sistem PDF (Cek koneksi internet).';
       statusEl.style.display = 'block'; return;
     }
@@ -988,39 +962,22 @@
       if(document.fonts) await document.fonts.ready;
 
       const exactHeight = clone.offsetHeight;
-
-      // Ganti gradien CSS dgn bitmap gradien yg sudah "dibakar" persis di
-      // ukuran akhir kertas — supaya biru di PDF identik dgn di preview.
-      const gradientDataUrl = bakeLinearGradientDataURL(500, exactHeight, 155, [
-        { offset: 0,    color: '#4a7893' },
-        { offset: 0.55, color: '#3E6E8C' },
-        { offset: 1,    color: '#35586c' }
-      ]);
-      clone.style.background = `url(${gradientDataUrl})`;
-      clone.style.backgroundSize = '100% 100%';
-      clone.style.backgroundRepeat = 'no-repeat';
-
       const filename = `Kuitansi_Sahaja_${document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'')}_${(document.getElementById('inputNomor').value).replace(/[^a-zA-Z0-9]/g,'')}.pdf`;
 
-      const opt = {
-        margin: 0,
-        filename: filename,
-        image: { type: 'png', quality: 1 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          width: 500,
-          height: exactHeight,
-          scrollY: 0, scrollX: 0
-        },
-        jsPDF: {
-          unit: 'px',
-          format: [500, exactHeight],
-          orientation: 'portrait'
-        }
-      };
+      // Render DOM asli via foreignObject (browser sendiri yg menggambar,
+      // bukan rekonstruksi manual) — gradient & warna dijamin identik dgn preview.
+      const canvas = await modernScreenshot.domToCanvas(clone, {
+        width: 500,
+        height: exactHeight,
+        scale: 2,
+        backgroundColor: null
+      });
+      const imgData = canvas.toDataURL('image/png');
 
-      const pdfBlob = await html2pdf().set(opt).from(renderContainer).toPdf().output('blob');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({ unit: 'px', format: [500, exactHeight], orientation: 'portrait' });
+      pdf.addImage(imgData, 'PNG', 0, 0, 500, exactHeight);
+      const pdfBlob = pdf.output('blob');
 
       const blobUrl = URL.createObjectURL(pdfBlob);
       const a = document.createElement('a'); a.href = blobUrl; a.download = filename;
