@@ -425,17 +425,26 @@
 
   .receipt-frame{ background: transparent; padding: 15% 15% 10%; }
 
-  /* --- SHADOW KERTAS: box-shadow CSS langsung -----------------------------
-     Sebelumnya pakai Shadow.png yang di-stretch (background-size 100% 100%)
-     mengikuti tinggi kertas. Masalahnya gambar aslinya cuma blur pendek,
-     sedangkan kuitansi bisa jauh lebih tinggi — hasil stretch bikin gradasi
-     blur jadi encer & nyaris hilang di tengah kertas panjang.
-     Fix: box-shadow CSS biasa di .paper-wrap (bentuknya kotak lurus, jadi
-     kasus paling aman utk html2canvas), konsisten secara matematis di
-     ukuran berapa pun tinggi kuitansinya, sama persis preview & PDF. */
-  .paper-wrap{
-    position: relative; z-index: 0; width: 100%;
-    box-shadow: 0 18px 40px rgba(15,31,41,0.28), 0 6px 14px rgba(15,31,41,0.18);
+  /* --- FIX SHADOW PDF ---------------------------------------------------
+     Sebelumnya shadow tidak muncul krn 2 hal: (1) box-shadow memang tidak
+     reliable dirender html2canvas, (2) .paper-wrap tidak membentuk
+     stacking-context sendiri (position:relative TANPA z-index), sehingga
+     ::before dgn z-index negatif "kabur" ke stacking context nenek-moyang
+     yang jauh & ketutup background #receiptCapture. Fix: kasih z-index
+     eksplisit ke .paper-wrap (bikin local stacking context), dan pakai
+     GAMBAR (Shadow.png, di-stretch background-size 100% 100%) bukan
+     gradient/box-shadow — gambar adalah konten paling reliable dirender
+     html2canvas, otomatis menyesuaikan tinggi kertas krn stretch penuh. */
+  .paper-wrap{ position: relative; z-index: 0; width: 100%; }
+  .paper-wrap::before{
+    content: '';
+    position: absolute;
+    top: -22px; left: -26px; right: -26px; bottom: -30px;
+    background-image: url('assets/Shadow.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: -1;
+    pointer-events: none;
   }
   .paper-texture{ position:absolute; inset:0; width:100%; height:100%; object-fit: cover; mix-blend-mode: multiply; opacity: 0.22; pointer-events:none; z-index: 6; }
   img.cap-img{ display:block; width:100%; height:auto; }
@@ -927,32 +936,16 @@
     clone.style.transform = 'none';
     clone.style.width = '500px';
     clone.style.margin = '0';
-    // Unduhan PDF: rectangle flat, tanpa rounded corner & tanpa shadow kartu luar
-    // (box-shadow kertas di .paper-wrap tetap tampil, tidak disentuh di sini)
+    // Unduhan PDF: rectangle flat, tanpa rounded corner & tanpa shadow kartu
+    // (shadow kertas Shadow.png di dalam .paper-wrap tetap tampil)
     clone.style.borderRadius = '0';
     clone.style.boxShadow = 'none';
-    // (background gradient TIDAK di-override sama sekali di sini: clone masih
-    // membawa id="receiptCapture", jadi otomatis mewarisi gradient yang sama
-    // persis dari CSS #receiptCapture di atas -- 100% identik dgn preview.)
 
     // Matikan Animasi
     clone.querySelectorAll('*').forEach(el => {
       el.style.animation = 'none';
       el.style.transition = 'none';
     });
-
-    // Fix warna PDF lebih cerah dari preview: root cause-nya BUKAN gradient,
-    // tapi .paper-texture (Texture.jpg dgn mix-blend-mode:multiply) -- mode blend
-    // ini tidak didukung html2canvas sama sekali, sehingga jatuh ke overlay biasa
-    // dan malah MENCERAHKAN alih-alih menggelapkan (texture-nya sendiri cerah).
-    // Fix: matikan texture di clone, ganti dengan overlay gelap rata yang
-    // dikalibrasi (rgba 0,0,0,0.06) menyamai tone asli di preview -- primitif
-    // warna solid inilah satu-satunya yang direproduksi akurat oleh html2canvas.
-    const textureClone = clone.querySelector('.paper-texture');
-    if (textureClone) textureClone.style.opacity = '0';
-    const darkenOverlay = document.createElement('div');
-    darkenOverlay.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;background:rgba(0,0,0,0.06);pointer-events:none;z-index:6;';
-    clone.appendChild(darkenOverlay);
 
     const stampClone = clone.querySelector('.lunas-stamp');
     if (stampClone) {
