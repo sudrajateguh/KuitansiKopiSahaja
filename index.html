@@ -903,6 +903,33 @@
     }));
   }
 
+  // Hitung garis gradien sesuai spesifikasi CSS (agar sudut & titik gradien
+  // 100% sama persis dgn cara browser menghitung linear-gradient asli)
+  function cssAngleGradientLine(width, height, angleDeg){
+    const rad = (angleDeg * Math.PI) / 180;
+    const length = Math.abs(width * Math.sin(rad)) + Math.abs(height * Math.cos(rad));
+    const half = length / 2;
+    const cx = width / 2, cy = height / 2;
+    const dx = Math.sin(rad) * half;
+    const dy = -Math.cos(rad) * half;
+    return { x1: cx - dx, y1: cy - dy, x2: cx + dx, y2: cy + dy };
+  }
+
+  // "Bakar" gradien CSS jadi bitmap PNG persis di ukuran akhir kertas —
+  // supaya html2canvas tinggal menggambar gambar statis (akurat), bukan
+  // merekonstruksi ulang linear-gradient (yg suka meleset warnanya).
+  function bakeLinearGradientDataURL(width, height, angleDeg, stops){
+    const canvas = document.createElement('canvas');
+    canvas.width = width; canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    const { x1, y1, x2, y2 } = cssAngleGradientLine(width, height, angleDeg);
+    const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+    stops.forEach(s => grad.addColorStop(s.offset, s.color));
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height);
+    return canvas.toDataURL('image/png');
+  }
+
   async function downloadPDF(){
     const btn = document.getElementById('downloadBtn');
     let statusEl = document.getElementById('pdfStatus');
@@ -961,6 +988,18 @@
       if(document.fonts) await document.fonts.ready;
 
       const exactHeight = clone.offsetHeight;
+
+      // Ganti gradien CSS dgn bitmap gradien yg sudah "dibakar" persis di
+      // ukuran akhir kertas — supaya biru di PDF identik dgn di preview.
+      const gradientDataUrl = bakeLinearGradientDataURL(500, exactHeight, 155, [
+        { offset: 0,    color: '#4a7893' },
+        { offset: 0.55, color: '#3E6E8C' },
+        { offset: 1,    color: '#35586c' }
+      ]);
+      clone.style.background = `url(${gradientDataUrl})`;
+      clone.style.backgroundSize = '100% 100%';
+      clone.style.backgroundRepeat = 'no-repeat';
+
       const filename = `Kuitansi_Sahaja_${document.getElementById('inputNama').value.replace(/[^a-zA-Z0-9]/g,'')}_${(document.getElementById('inputNomor').value).replace(/[^a-zA-Z0-9]/g,'')}.pdf`;
 
       const opt = {
